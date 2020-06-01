@@ -21,14 +21,17 @@ import java.io.File;
  * Created by Tom.
  */
 public class GPDispatchServlet extends HttpServlet {
+    // 保存配置文件的内容
     private Properties contextConfig = new Properties();
 
     //享元模式，缓存
+    // 保存扫描的所有类名
     private List<String> classNames = new ArrayList<String>();
 
     //IoC容器，key默认是类名首字母小写，value就是对应的实例对象
     private Map<String,Object> ioc = new HashMap<String,Object>();
 
+    // 保存url和Method的对应关系
     private Map<String,Method> handlerMapping = new HashMap<String, Method>();
 
     @Override
@@ -36,6 +39,13 @@ public class GPDispatchServlet extends HttpServlet {
         this.doPost(req,resp);
     }
 
+    /**
+     * doPost()方法中，用了委派模式，委派逻辑的具体逻辑在doDispatch()方法中
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -104,7 +114,7 @@ public class GPDispatchServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        //1、加载配置文件
+        //1、加载配置文件(application.properties),参数在web.xml中配置
         doLoadConfig(config.getInitParameter("contextConfigLocation"));
 
         //2、扫描相关的类
@@ -190,6 +200,9 @@ public class GPDispatchServlet extends HttpServlet {
         }
     }
 
+    /**
+     * 工厂模式的具体体现
+     */
     private void doInstance() {
         if(classNames.isEmpty()){return;}
 
@@ -234,14 +247,21 @@ public class GPDispatchServlet extends HttpServlet {
 
     }
 
-    //自己写，自己用
+    /**
+     * 实现类名首字母小写   自己写，自己用
+     */
     private String toLowerFirstCase(String simpleName) {
         char [] chars = simpleName.toCharArray();
 //        if(chars[0] > )
+        // 因为大小写字母的ASCII码相差32
         chars[0] += 32;
         return String.valueOf(chars);
     }
 
+    /**
+     * 扫描出相关的类
+     * @param scanPackage
+     */
     private void doScanner(String scanPackage) {
         //jar 、 war 、zip 、rar
         URL url = this.getClass().getClassLoader().getResource("/" + scanPackage.replaceAll("\\.","/"));
@@ -261,6 +281,10 @@ public class GPDispatchServlet extends HttpServlet {
         }
     }
 
+    /**
+     * 加载配置文件
+     * @param contextConfigLocation
+     */
     private void doLoadConfig(String contextConfigLocation) {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream(contextConfigLocation);
         try {
