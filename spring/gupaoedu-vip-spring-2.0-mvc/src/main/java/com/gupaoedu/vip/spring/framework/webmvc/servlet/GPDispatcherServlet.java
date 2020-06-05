@@ -63,13 +63,13 @@ public class GPDispatcherServlet extends HttpServlet {
             return;
         }
         
-        //2、根据一个HandlerMaping获得一个HandlerAdapter
+        //2、准备调用前的参数，根据一个HandlerMaping获得一个HandlerAdapter
         GPHandlerAdapter ha = getHandlerAdapter(handler);
 
-        //3、解析某一个方法的形参和返回值之后，统一封装为ModelAndView对象
+        //3、真正调用的方法，解析某一个方法的形参和返回值之后，统一封装为ModelAndView对象
         GPModelAndView mv = ha.handler(req,resp,handler);
 
-        // 就把ModelAndView变成一个ViewResolver
+        // 就把ModelAndView变成一个ViewResolver，这一步才是真正的输出
         processDispatchResult(req,resp,mv);
 
     }

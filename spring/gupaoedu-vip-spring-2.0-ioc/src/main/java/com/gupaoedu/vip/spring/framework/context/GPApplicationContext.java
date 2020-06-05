@@ -13,30 +13,35 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 职责：完成Bean的创建和DI
+ * (IOC)容器模块 职责：完成Bean的创建和DI,   依赖注入的入口是从getBean()方法开始的
  * Created by Tom.
  */
 public class GPApplicationContext {
 
     private GPBeanDefinitionReader reader;
 
+    // 存储注册信息的BeanDefinition
     private Map<String,GPBeanDefinition> beanDefinitionMap = new HashMap<String, GPBeanDefinition>();
 
+    // 通用的IOC容器
     private Map<String,GPBeanWrapper> factoryBeanInstanceCache = new HashMap<String, GPBeanWrapper>();
+
+    // 单列的IOC容器缓存
     private Map<String,Object> factoryBeanObjectCache = new HashMap<String, Object>();
 
     public GPApplicationContext(String... configLocations) {
 
-        //1、加载配置文件
+        //1、定位、定位配置文件(加载配置文件)
         reader = new GPBeanDefinitionReader(configLocations);
 
         try {
-            //2、解析配置文件，封装成BeanDefinition
+            //2、加载配置文件，扫描相关的类，封装成BeanDefinition
             List<GPBeanDefinition> beanDefinitions = reader.loadBeanDefinitions();
 
-            //3、把BeanDefintion缓存起来
+            //3、注册，把配置信息(BeanDefintion)放到容器里面(伪IOC容器)
             doRegistBeanDefinition(beanDefinitions);
 
+            // 4、完成自动依赖注入
             doAutowrited();
         }catch (Exception e){
             e.printStackTrace();
@@ -62,22 +67,32 @@ public class GPApplicationContext {
         }
     }
 
-    //Bean的实例化，DI是从而这个方法开始的
+    /**
+     * Bean的实例化，DI是从而这个方法开始的，然后通过反射，创建一个对象并返回
+     * Spring做法是，不会把最原始的兑现放回去，会用一个BeanWapper进行一次包装，
+     */
     public Object getBean(String beanName){
-        //1、先拿到BeanDefinition配置信息
+        //1、读取配置信息   先拿到BeanDefinition配置信息
         GPBeanDefinition beanDefinition = this.beanDefinitionMap.get(beanName);
-        //2、反射实例化newInstance();
+
+        //2、实例化   反射实例化newInstance();
         Object instance = instantiateBean(beanName,beanDefinition);
+
         //3、封装成一个叫做BeanWrapper
         GPBeanWrapper beanWrapper = new GPBeanWrapper(instance);
+
         //4、保存到IoC容器
         factoryBeanInstanceCache.put(beanName,beanWrapper);
+
         //5、执行依赖注入
         populateBean(beanName,beanDefinition,beanWrapper);
 
         return beanWrapper.getWrapperInstance();
     }
 
+    /**
+     * DI(依赖注入)
+     */
     private void populateBean(String beanName, GPBeanDefinition beanDefinition, GPBeanWrapper beanWrapper) {
         //可能涉及到循环依赖？
         //A{ B b}
@@ -91,6 +106,7 @@ public class GPApplicationContext {
         Class<?> clazz = beanWrapper.getWrappedClass();
 
         //在Spring中@Component
+        // 判断只有加了注解到的类，才可以执行依赖注入
         if(!(clazz.isAnnotationPresent(GPController.class) || clazz.isAnnotationPresent(GPService.class))){
             return;
         }
@@ -128,7 +144,10 @@ public class GPApplicationContext {
 
     //创建真正的实例对象
     private Object instantiateBean(String beanName, GPBeanDefinition beanDefinition) {
+        // 拿到实例化对象的类名
         String className = beanDefinition.getBeanClassName();
+
+        // 反射实例化，得到一个对象
         Object instance = null;
         try {
             Class<?> clazz = Class.forName(className);

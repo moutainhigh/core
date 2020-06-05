@@ -28,6 +28,7 @@ public class GPBeanDefinitionReader {
         doScanner(contextConfig.getProperty("scanPackage"));
     }
 
+    // 把配置文件中扫描到的所有的配置信息转化为GPBeanDefinition对象，以便于之后的IOC操作方便
     public List<GPBeanDefinition> loadBeanDefinitions() {
         List<GPBeanDefinition> result = new ArrayList<GPBeanDefinition>();
         try {
@@ -52,6 +53,9 @@ public class GPBeanDefinitionReader {
         return result;
     }
 
+    /**
+     * 把每一个配置信息解析成一个BeanDefinition
+     */
     private GPBeanDefinition doCreateBeanDefinition(String beanName, String beanClassName) {
         GPBeanDefinition beanDefinition = new GPBeanDefinition();
         beanDefinition.setFactoryBeanName(beanName);
@@ -61,6 +65,7 @@ public class GPBeanDefinitionReader {
 
 
     private void doLoadConfig(String contextConfigLocation) {
+        // 通过URL定位找到其对应的文件，然后转换成文件流
         InputStream is = this.getClass().getClassLoader().getResourceAsStream(contextConfigLocation.replaceAll("classpath:",""));
         try {
             contextConfig.load(is);
@@ -79,6 +84,7 @@ public class GPBeanDefinitionReader {
 
     private void doScanner(String scanPackage) {
         //jar 、 war 、zip 、rar
+        // 转化为文件路径，实际上就是把.替换成/就OK了
         URL url = this.getClass().getClassLoader().getResource("/" + scanPackage.replaceAll("\\.","/"));
         File classPath = new File(url.getFile());
 

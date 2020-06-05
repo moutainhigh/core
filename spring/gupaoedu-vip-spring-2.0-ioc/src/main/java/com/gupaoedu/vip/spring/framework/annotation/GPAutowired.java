@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * 自动注入
+ * 自定义配置模块   自动注入
  * @author Tom
  *
  */

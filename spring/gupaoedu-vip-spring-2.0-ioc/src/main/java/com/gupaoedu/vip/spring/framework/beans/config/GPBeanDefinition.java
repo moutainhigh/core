@@ -1,7 +1,7 @@
 package com.gupaoedu.vip.spring.framework.beans.config;
 
 /**
- * Created by Tom.
+ * bean(配置封装)模块
  */
 public class GPBeanDefinition {
     private String factoryBeanName;
