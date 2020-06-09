@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,6 +34,8 @@ package java.net;
 public interface ProtocolFamily {
     /**
      * Returns the name of the protocol family.
+     *
+     * @return the name of the protocol family
      */
     String name();
 }

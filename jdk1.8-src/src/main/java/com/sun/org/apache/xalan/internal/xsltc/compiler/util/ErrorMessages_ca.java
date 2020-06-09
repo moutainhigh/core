@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -90,7 +90,13 @@ public class ErrorMessages_ca extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    private static final Object[][] _contents = new Object[][] {
+    /** Get the lookup table for error messages.
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+      return new Object[][] {
         {ErrorMsg.MULTIPLE_STYLESHEET_ERR,
         "S'ha definit m\u00e9s d'un full d'estils en el mateix fitxer."},
 
@@ -442,6 +448,12 @@ public class ErrorMessages_ca extends ListResourceBundle {
          */
         {ErrorMsg.MISSING_XSLT_TARGET_ERR,
         "No s''ha trobat la destinaci\u00f3 ''{0}'' del full d''estils."},
+
+        /*
+         * Note to translators:  access to the stylesheet target is denied
+         */
+        {ErrorMsg.ACCESSING_XSLT_TARGET_ERR,
+        "Could not read stylesheet target ''{0}'', because ''{1}'' access is not allowed."},
 
         /*
          * Note to translators:  This message represents an internal error in
@@ -847,12 +859,5 @@ public class ErrorMessages_ca extends ListResourceBundle {
         "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
 
-    /** Get the lookup table for error messages.
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-      return _contents;
     }
 }

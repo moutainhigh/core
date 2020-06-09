@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,11 +27,11 @@ package java.awt.peer;
 
 import java.awt.*;
 import java.awt.event.PaintEvent;
-import java.awt.image.ImageProducer;
-import java.awt.image.ImageObserver;
 import java.awt.image.ColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.awt.image.VolatileImage;
-import java.awt.GraphicsConfiguration;
+
 import sun.awt.CausedFocusEvent;
 import sun.java2d.pipe.Region;
 
@@ -258,15 +258,6 @@ public interface ComponentPeer {
      * @see Component#getColorModel()
      */
     ColorModel getColorModel();
-
-    /**
-     * Returns the toolkit that is responsible for the component.
-     *
-     * @return the toolkit that is responsible for the component
-     *
-     * @see Component#getToolkit()
-     */
-    Toolkit getToolkit();
 
     /**
      * Returns a graphics object to paint on the component.

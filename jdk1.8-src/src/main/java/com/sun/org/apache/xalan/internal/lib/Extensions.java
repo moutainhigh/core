@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -22,28 +22,24 @@
  */
 package com.sun.org.apache.xalan.internal.lib;
 
-import java.util.Hashtable;
-import java.util.StringTokenizer;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
+import com.sun.org.apache.xalan.internal.utils.ObjectFactory;
 import com.sun.org.apache.xalan.internal.xslt.EnvironmentCheck;
 import com.sun.org.apache.xpath.internal.NodeSet;
 import com.sun.org.apache.xpath.internal.objects.XBoolean;
 import com.sun.org.apache.xpath.internal.objects.XNumber;
 import com.sun.org.apache.xpath.internal.objects.XObject;
-import com.sun.org.apache.xalan.internal.utils.ObjectFactory;
-
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.StringTokenizer;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.traversal.NodeIterator;
-
 import org.xml.sax.SAXNotSupportedException;
 
 /**
@@ -56,6 +52,7 @@ import org.xml.sax.SAXNotSupportedException;
  */
 public class Extensions
 {
+    static final String JDK_DEFAULT_DOM = "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
   /**
    * Constructor Extensions
    *
@@ -114,23 +111,14 @@ public class Extensions
 
       // This no longer will work right since the DTM.
       // Document myDoc = myProcessor.getContextNode().getOwnerDocument();
-      try
-      {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db = dbf.newDocumentBuilder();
-        Document myDoc = db.newDocument();
+      Document myDoc = getDocument();
 
         Text textNode = myDoc.createTextNode(textNodeValue);
         DocumentFragment docFrag = myDoc.createDocumentFragment();
 
         docFrag.appendChild(textNode);
 
-        return new NodeSet(docFrag);
-      }
-      catch(ParserConfigurationException pce)
-      {
-        throw new com.sun.org.apache.xml.internal.utils.WrappedRuntimeException(pce);
-      }
+      return new NodeSet(docFrag);
     }
   }
 
@@ -249,8 +237,7 @@ public class Extensions
   public static NodeList tokenize(String toTokenize, String delims)
   {
 
-    Document doc = DocumentHolder.m_doc;
-
+    Document doc = getDocument();
 
     StringTokenizer lTokenizer = new StringTokenizer(toTokenize, delims);
     NodeSet resultSet = new NodeSet();
@@ -308,17 +295,7 @@ public class Extensions
   public static Node checkEnvironment(ExpressionContext myContext)
   {
 
-    Document factoryDocument;
-    try
-    {
-      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-      DocumentBuilder db = dbf.newDocumentBuilder();
-      factoryDocument = db.newDocument();
-    }
-    catch(ParserConfigurationException pce)
-    {
-      throw new com.sun.org.apache.xml.internal.utils.WrappedRuntimeException(pce);
-    }
+    Document factoryDocument = getDocument();
 
     Node resultNode = null;
     try
@@ -332,7 +309,7 @@ public class Extensions
 
       // If reflection failed, fallback to our internal EnvironmentCheck
       EnvironmentCheck envChecker = new EnvironmentCheck();
-      Hashtable h = envChecker.getEnvironmentHash();
+      Map<String, Object> h = envChecker.getEnvironmentHash();
       resultNode = factoryDocument.createElement("checkEnvironmentExtension");
       envChecker.appendEnvironmentReport(resultNode, factoryDocument, h);
       envChecker = null;
@@ -391,30 +368,21 @@ public class Extensions
   }
 
     /**
-     * This class is not loaded until first referenced (see Java Language
-     * Specification by Gosling/Joy/Steele, section 12.4.1)
-     *
-     * The static members are created when this class is first referenced, as a
-     * lazy initialization not needing checking against null or any
-     * synchronization.
-     *
+   * @return an instance of DOM Document
      */
-    private static class DocumentHolder
-    {
-        // Reuse the Document object to reduce memory usage.
-        private static final Document m_doc;
-        static
+   private static Document getDocument()
+   {
+        try
         {
-            try
-            {
-                m_doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            if (System.getSecurityManager() == null) {
+                return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            } else {
+                return DocumentBuilderFactory.newInstance(JDK_DEFAULT_DOM, null).newDocumentBuilder().newDocument();
             }
-
-            catch(ParserConfigurationException pce)
-            {
-                  throw new com.sun.org.apache.xml.internal.utils.WrappedRuntimeException(pce);
-            }
-
+        }
+        catch(ParserConfigurationException pce)
+        {
+            throw new com.sun.org.apache.xml.internal.utils.WrappedRuntimeException(pce);
         }
     }
 }

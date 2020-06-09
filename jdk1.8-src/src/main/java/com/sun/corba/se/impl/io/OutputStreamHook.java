@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2015, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,10 +32,12 @@
 package com.sun.corba.se.impl.io;
 
 import java.io.IOException;
+import java.io.NotActiveException;
 import java.io.OutputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectOutput;
-import java.util.Hashtable;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.omg.CORBA.INTERNAL;
 
@@ -49,7 +51,7 @@ public abstract class OutputStreamHook extends ObjectOutputStream
      */
     private class HookPutFields extends ObjectOutputStream.PutField
     {
-        private Hashtable fields = new Hashtable();
+        private Map<String,Object> fields = new HashMap<>();
 
         /**
          * Put the value of the named boolean field into the persistent field.
@@ -140,7 +142,6 @@ public abstract class OutputStreamHook extends ObjectOutputStream
     public OutputStreamHook()
         throws java.io.IOException {
         super();
-
     }
 
     public void defaultWriteObject() throws IOException {
@@ -154,7 +155,9 @@ public abstract class OutputStreamHook extends ObjectOutputStream
 
     public ObjectOutputStream.PutField putFields()
         throws IOException {
-        putFields = new HookPutFields();
+        if (putFields == null) {
+            putFields = new HookPutFields();
+        }
         return putFields;
     }
 
@@ -175,11 +178,14 @@ public abstract class OutputStreamHook extends ObjectOutputStream
         throws IOException {
 
         writeObjectState.defaultWriteObject(this);
-
-        putFields.write(this);
+        if (putFields != null) {
+            putFields.write(this);
+        } else {
+            throw new NotActiveException("no current PutField object");
+        }
     }
 
-    public abstract org.omg.CORBA_2_3.portable.OutputStream getOrbStream();
+    abstract org.omg.CORBA_2_3.portable.OutputStream getOrbStream();
 
     protected abstract void beginOptionalCustomData();
 

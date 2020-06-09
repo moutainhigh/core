@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -170,7 +170,7 @@ public interface Synthesizer extends MidiDevice {
      * already had been), <code>false</code> if the instrument could not be
      * loaded (for example, if the synthesizer has insufficient
      * memory to load it)
-     * @throws <code>IllegalArgumentException</code> if this
+     * @throws IllegalArgumentException if this
      * <code>Synthesizer</code> doesn't support the specified instrument's
      * soundbank
      * @see #unloadInstrument
@@ -186,7 +186,7 @@ public interface Synthesizer extends MidiDevice {
     /**
      * Unloads a particular instrument.
      * @param instrument instrument to unload
-     * @throws <code>IllegalArgumentException</code> if this
+     * @throws IllegalArgumentException if this
      * <code>Synthesizer</code> doesn't support the specified instrument's
      * soundbank
      * @see #loadInstrument
@@ -212,12 +212,12 @@ public interface Synthesizer extends MidiDevice {
      * @param from the <code>Instrument</code> object to be replaced
      * @param to the <code>Instrument</code> object to be used in place
      * of the old instrument, it should be loaded into the synthesizer
-     * @return <code>true</code> if the instrument succeessfully remapped,
+     * @return <code>true</code> if the instrument successfully remapped,
      * <code>false</code> if feature is not implemented by synthesizer
-     * @throws <code>IllegalArgumentException</code> if instrument
+     * @throws IllegalArgumentException if instrument
      * <code>from</code> or instrument <code>to</code> aren't supported by
      * synthesizer or if instrument <code>to</code> is not loaded
-     * @throws <code>NullPointerException</code> if <code>from</code> or
+     * @throws NullPointerException if <code>from</code> or
      * <code>to</code> parameters have null value
      * @see #loadInstrument
      * @see #loadInstruments

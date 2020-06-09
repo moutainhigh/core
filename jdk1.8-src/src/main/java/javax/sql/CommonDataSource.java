@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 /**
  * Interface that defines the methods which are common between <code>DataSource</code>,
  * <code>XADataSource</code> and <code>ConnectionPoolDataSource</code>.
- *<p>
+ *
  */
 public interface CommonDataSource {
 
@@ -122,7 +122,8 @@ public interface CommonDataSource {
      * In the worst case, this may be the root Logger.
      *
      * @return the parent Logger for this data source
-     * @throws SQLFeatureNotSupportedException if the data source does not use <code>java.util.logging<code>.
+     * @throws SQLFeatureNotSupportedException if the data source does not use
+     * {@code java.util.logging}
      * @since 1.7
      */
     public Logger getParentLogger() throws SQLFeatureNotSupportedException;

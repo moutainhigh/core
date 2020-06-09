@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -30,7 +30,6 @@ package java.lang;
  * inappropriate argument.
  *
  * @author  unascribed
- * @see     java.lang.Thread#setPriority(int)
  * @since   JDK1.0
  */
 public

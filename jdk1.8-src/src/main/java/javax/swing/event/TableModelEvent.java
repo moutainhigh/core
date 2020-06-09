@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import javax.swing.table.*;
  * and all references to rows and columns are in the co-ordinate
  * system of the model.
  * Depending on the parameters used in the constructors, the TableModelevent
- * can be used to specify the following types of changes: <p>
+ * can be used to specify the following types of changes:
  *
  * <pre>
  * TableModelEvent(source);              //  The data, ie. all rows changed
@@ -57,7 +57,7 @@ import javax.swing.table.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -67,7 +67,7 @@ import javax.swing.table.*;
  */
 public class TableModelEvent extends java.util.EventObject
 {
-    /** Identifies the addtion of new rows or columns. */
+    /** Identifies the addition of new rows or columns. */
     public static final int INSERT =  1;
     /** Identifies a change to existing data. */
     public static final int UPDATE =  0;

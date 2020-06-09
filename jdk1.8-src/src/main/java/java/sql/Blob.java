@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,7 +29,7 @@ import java.io.InputStream;
 
 /**
  * The representation (mapping) in
- * the Java<sup><font size=-2>TM</font></sup> programming
+ * the Java&trade; programming
  * language of an SQL
  * <code>BLOB</code> value.  An SQL <code>BLOB</code> is a built-in type
  * that stores a Binary Large Object as a column value in a row of
@@ -158,7 +158,7 @@ public interface Blob {
      * in the <code>Blob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Blob</code> value is reached
      * while writing the array of bytes, then the length of the <code>Blob</code>
-     * value will be increased to accomodate the extra bytes.
+     * value will be increased to accommodate the extra bytes.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>BLOB</code> value then the
@@ -190,7 +190,7 @@ public interface Blob {
      * in the <code>Blob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Blob</code> value is reached
      * while writing the array of bytes, then the length of the <code>Blob</code>
-     * value will be increased to accomodate the extra bytes.
+     * value will be increased to accommodate the extra bytes.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>BLOB</code> value then the
@@ -224,7 +224,7 @@ public interface Blob {
      * in the <code>Blob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Blob</code> value is reached
      * while writing to the stream, then the length of the <code>Blob</code>
-     * value will be increased to accomodate the extra bytes.
+     * value will be increased to accommodate the extra bytes.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>BLOB</code> value then the

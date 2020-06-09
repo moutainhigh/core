@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,7 +44,7 @@ import java.io.Serializable;
  * of a single line of text.
  * For information on and examples of using text fields,
  * see
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/textfield.html">How to Use Text Fields</a>
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/textfield.html">How to Use Text Fields</a>
  * in <em>The Java Tutorial.</em>
  *
  * <p>
@@ -128,7 +128,7 @@ import java.io.Serializable;
 &nbsp;                return;
 &nbsp;            }
 &nbsp;            char[] upper = str.toCharArray();
-&nbsp;            for (int i = 0; i < upper.length; i++) {
+&nbsp;            for (int i = 0; i &lt; upper.length; i++) {
 &nbsp;                upper[i] = Character.toUpperCase(upper[i]);
 &nbsp;            }
 &nbsp;            super.insertString(offs, new String(upper), a);
@@ -148,7 +148,7 @@ import java.io.Serializable;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -223,10 +223,10 @@ public class JTextField extends JTextComponent implements SwingConstants {
      *          <code>createDefaultModel</code> method
      * @param text  the initial string to display, or <code>null</code>
      * @param columns  the number of columns to use to calculate
-     *   the preferred width >= 0; if <code>columns</code>
+     *   the preferred width &gt;= 0; if <code>columns</code>
      *   is set to zero, the preferred width will be whatever
      *   naturally results from the component implementation
-     * @exception IllegalArgumentException if <code>columns</code> < 0
+     * @exception IllegalArgumentException if <code>columns</code> &lt; 0
      */
     public JTextField(Document doc, String text, int columns) {
         if (columns < 0) {
@@ -367,7 +367,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
     /**
      * Returns the number of columns in this <code>TextField</code>.
      *
-     * @return the number of columns >= 0
+     * @return the number of columns &gt;= 0
      */
     public int getColumns() {
         return columns;
@@ -377,7 +377,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
      * Sets the number of columns in this <code>TextField</code>,
      * and then invalidate the layout.
      *
-     * @param columns the number of columns >= 0
+     * @param columns the number of columns &gt;= 0
      * @exception IllegalArgumentException if <code>columns</code>
      *          is less than 0
      * @beaninfo
@@ -402,7 +402,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
      * character <em>m</em> for the font used.  This method can be
      * redefined to be some alternative amount
      *
-     * @return the column width >= 1
+     * @return the column width &gt;= 1
      */
     protected int getColumnWidth() {
         if (columnWidth == 0) {
@@ -744,7 +744,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
     /**
      * Gets the scroll offset, in pixels.
      *
-     * @return the offset >= 0
+     * @return the offset &gt;= 0
      */
     public int getScrollOffset() {
         return visibility.getValue();
@@ -753,7 +753,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
     /**
      * Sets the scroll offset, in pixels.
      *
-     * @param scrollOffset the offset >= 0
+     * @param scrollOffset the offset &gt;= 0
      */
     public void setScrollOffset(int scrollOffset) {
         visibility.setValue(scrollOffset);
@@ -939,7 +939,7 @@ public class JTextField extends JTextComponent implements SwingConstants {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */

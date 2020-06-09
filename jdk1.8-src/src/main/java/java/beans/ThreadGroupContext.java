@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,7 +29,6 @@ import com.sun.beans.finder.BeanInfoFinder;
 import com.sun.beans.finder.PropertyEditorFinder;
 
 import java.awt.GraphicsEnvironment;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -42,24 +41,20 @@ import java.util.WeakHashMap;
  */
 final class ThreadGroupContext {
 
-    private static final Map<ThreadGroup, ThreadGroupContext> contexts = new WeakHashMap<>();
+    private static final WeakIdentityMap<ThreadGroupContext> contexts = new WeakIdentityMap<ThreadGroupContext>() {
+        protected ThreadGroupContext create(Object key) {
+            return new ThreadGroupContext();
+        }
+    };
 
     /**
-     * Returns the appropriate {@code AppContext} for the caller,
+     * Returns the appropriate {@code ThreadGroupContext} for the caller,
      * as determined by its {@code ThreadGroup}.
      *
      * @return  the application-dependent context
      */
     static ThreadGroupContext getContext() {
-        ThreadGroup group = Thread.currentThread().getThreadGroup();
-        synchronized (contexts) {
-            ThreadGroupContext context = contexts.get(group);
-            if (context == null) {
-                context = new ThreadGroupContext();
-                contexts.put(group, context);
-            }
-            return context;
-        }
+        return contexts.get(Thread.currentThread().getThreadGroup());
     }
 
     private volatile boolean isDesignTime;
@@ -69,6 +64,8 @@ final class ThreadGroupContext {
     private BeanInfoFinder beanInfoFinder;
     private PropertyEditorFinder propertyEditorFinder;
 
+    private ThreadGroupContext() {
+    }
 
     boolean isDesignTime() {
         return this.isDesignTime;

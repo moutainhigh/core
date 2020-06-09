@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,12 +41,12 @@ import java.awt.*;
  * example registers a painter for all <code>JButton</code>s that will
  * render the image <code>myImage.png</code>:
  * <pre>
- *  &lt;style id="buttonStyle">
+ *  &lt;style id="buttonStyle"&gt;
  *    &lt;imagePainter path="myImage.png" sourceInsets="2 2 2 2"
- *                  paintCenter="true" stretch="true"/>
- *    &lt;insets top="2" bottom="2" left="2" right="2"/>
- *  &lt;/style>
- *  &lt;bind style="buttonStyle" type="REGION" key="button"/>
+ *                  paintCenter="true" stretch="true"/&gt;
+ *    &lt;insets top="2" bottom="2" left="2" right="2"/&gt;
+ *  &lt;/style&gt;
+ *  &lt;bind style="buttonStyle" type="REGION" key="button"/&gt;
  *</pre>
  * <p>
  * <code>SynthPainter</code> is abstract in so far as it does no painting,

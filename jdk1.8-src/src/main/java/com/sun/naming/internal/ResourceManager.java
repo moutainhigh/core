@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,11 +27,9 @@ package com.sun.naming.internal;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -69,6 +67,14 @@ public final class ResourceManager {
     private static final String JRELIB_PROPERTY_FILE_NAME = "jndi.properties";
 
     /*
+     * Internal environment property, that when set to "true", disables
+     * application resource files lookup to prevent recursion issues
+     * when validating signed JARs.
+     */
+    private static final String DISABLE_APP_RESOURCE_FILES =
+        "com.sun.naming.disable.app.resource.files";
+
+    /*
      * The standard JNDI properties that specify colon-separated lists.
      */
     private static final String[] listProperties = {
@@ -89,7 +95,9 @@ public final class ResourceManager {
      * One from application resource files is keyed on the thread's
      * context class loader.
      */
-    private static final WeakHashMap propertiesCache = new WeakHashMap(11);
+    // WeakHashMap<Class | ClassLoader, Hashtable>
+    private static final WeakHashMap<Object, Hashtable<? super String, Object>>
+            propertiesCache = new WeakHashMap<>(11);
 
     /*
      * A cache of factory objects (ObjectFactory, StateFactory, ControlFactory).
@@ -99,7 +107,9 @@ public final class ResourceManager {
      * weakly referenced so as not to prevent GC of the class loader.
      * Used in getFactories().
      */
-    private static final WeakHashMap factoryCache = new WeakHashMap(11);
+    private static final
+        WeakHashMap<ClassLoader, Map<String, List<NamedWeakReference<Object>>>>
+            factoryCache = new WeakHashMap<>(11);
 
     /*
      * A cache of URL factory objects (ObjectFactory).
@@ -110,8 +120,11 @@ public final class ResourceManager {
      * NO_FACTORY if a previous search revealed no factory.  Used in
      * getFactory().
      */
-    private static final WeakHashMap urlFactoryCache = new WeakHashMap(11);
-    private static final WeakReference NO_FACTORY = new WeakReference(null);
+    private static final
+        WeakHashMap<ClassLoader, Map<String, WeakReference<Object>>>
+            urlFactoryCache = new WeakHashMap<>(11);
+    private static final WeakReference<Object> NO_FACTORY =
+            new WeakReference<>(null);
 
     /**
      * A class to allow JNDI properties be specified as applet parameters
@@ -152,10 +165,9 @@ public final class ResourceManager {
                 throw new ClassCastException(applet.getClass().getName());
             try {
                 return getMethod.invoke(applet, name);
-            } catch (InvocationTargetException e) {
+            } catch (InvocationTargetException |
+                     IllegalAccessException e) {
                 throw new AssertionError(e);
-            } catch (IllegalAccessException iae) {
-                throw new AssertionError(iae);
             }
         }
     }
@@ -183,12 +195,14 @@ public final class ResourceManager {
      * @throws NamingException if an error occurs while reading a
      *          resource file
      */
-    public static Hashtable getInitialEnvironment(Hashtable env)
+    @SuppressWarnings("unchecked")
+    public static Hashtable<?, ?> getInitialEnvironment(
+            Hashtable<?, ?> env)
             throws NamingException
     {
         String[] props = VersionHelper.PROPS;   // system/applet properties
         if (env == null) {
-            env = new Hashtable(11);
+            env = new Hashtable<>(11);
         }
         Object applet = env.get(Context.APPLET);
 
@@ -213,14 +227,21 @@ public final class ResourceManager {
                         : helper.getJndiProperty(i);
                 }
                 if (val != null) {
-                    env.put(props[i], val);
+                    ((Hashtable<String, Object>)env).put(props[i], val);
                 }
             }
         }
 
+        // Return without merging if application resource files lookup
+        // is disabled.
+        String disableAppRes = (String)env.get(DISABLE_APP_RESOURCE_FILES);
+        if (disableAppRes != null && disableAppRes.equalsIgnoreCase("true")) {
+            return env;
+        }
+
         // Merge the above with the values read from all application
         // resource files.  Colon-separated lists are concatenated.
-        mergeTables(env, getApplicationResources());
+        mergeTables((Hashtable<Object, Object>)env, getApplicationResources());
         return env;
     }
 
@@ -244,7 +265,7 @@ public final class ResourceManager {
       * @throws NamingException if an error occurs while reading the provider
       * resource file.
       */
-    public static String getProperty(String propName, Hashtable env,
+    public static String getProperty(String propName, Hashtable<?,?> env,
         Context ctx, boolean concat)
             throws NamingException {
 
@@ -305,8 +326,8 @@ public final class ResourceManager {
      * @see javax.naming.spi.DirectoryManager#getStateToBind
      * @see javax.naming.ldap.ControlFactory#getControlInstance
      */
-    public static FactoryEnumeration getFactories(String propName, Hashtable env,
-        Context ctx) throws NamingException {
+    public static FactoryEnumeration getFactories(String propName,
+        Hashtable<?,?> env, Context ctx) throws NamingException {
 
         String facProp = getProperty(propName, env, ctx, true);
         if (facProp == null)
@@ -315,17 +336,18 @@ public final class ResourceManager {
         // Cache is based on context class loader and property val
         ClassLoader loader = helper.getContextClassLoader();
 
-        Map perLoaderCache = null;
+        Map<String, List<NamedWeakReference<Object>>> perLoaderCache = null;
         synchronized (factoryCache) {
-            perLoaderCache = (Map) factoryCache.get(loader);
+            perLoaderCache = factoryCache.get(loader);
             if (perLoaderCache == null) {
-                perLoaderCache = new HashMap(11);
+                perLoaderCache = new HashMap<>(11);
                 factoryCache.put(loader, perLoaderCache);
             }
         }
 
         synchronized (perLoaderCache) {
-            List factories = (List) perLoaderCache.get(facProp);
+            List<NamedWeakReference<Object>> factories =
+                    perLoaderCache.get(facProp);
             if (factories != null) {
                 // Cached list
                 return factories.size() == 0 ? null
@@ -334,13 +356,13 @@ public final class ResourceManager {
                 // Populate list with classes named in facProp; skipping
                 // those that we cannot load
                 StringTokenizer parser = new StringTokenizer(facProp, ":");
-                factories = new ArrayList(5);
+                factories = new ArrayList<>(5);
                 while (parser.hasMoreTokens()) {
                     try {
                         // System.out.println("loading");
                         String className = parser.nextToken();
-                        Class c = helper.loadClass(className, loader);
-                        factories.add(new NamedWeakReference(c, className));
+                        Class<?> c = helper.loadClass(className, loader);
+                        factories.add(new NamedWeakReference<Object>(c, className));
                     } catch (Exception e) {
                         // ignore ClassNotFoundException, IllegalArgumentException
                     }
@@ -388,8 +410,9 @@ public final class ResourceManager {
      * @see javax.naming.spi.NamingManager#getURLContext
      * @see javax.naming.spi.NamingManager#getURLObject
      */
-    public static Object getFactory(String propName, Hashtable env, Context ctx,
-        String classSuffix, String defaultPkgPrefix) throws NamingException {
+    public static Object getFactory(String propName, Hashtable<?,?> env,
+            Context ctx, String classSuffix, String defaultPkgPrefix)
+            throws NamingException {
 
         // Merge property with provider property and supplied default
         String facProp = getProperty(propName, env, ctx, true);
@@ -403,11 +426,11 @@ public final class ResourceManager {
         ClassLoader loader = helper.getContextClassLoader();
         String key = classSuffix + " " + facProp;
 
-        Map perLoaderCache = null;
+        Map<String, WeakReference<Object>> perLoaderCache = null;
         synchronized (urlFactoryCache) {
-            perLoaderCache = (Map) urlFactoryCache.get(loader);
+            perLoaderCache = urlFactoryCache.get(loader);
             if (perLoaderCache == null) {
-                perLoaderCache = new HashMap(11);
+                perLoaderCache = new HashMap<>(11);
                 urlFactoryCache.put(loader, perLoaderCache);
             }
         }
@@ -415,7 +438,7 @@ public final class ResourceManager {
         synchronized (perLoaderCache) {
             Object factory = null;
 
-            WeakReference factoryRef = (WeakReference) perLoaderCache.get(key);
+            WeakReference<Object> factoryRef = perLoaderCache.get(key);
             if (factoryRef == NO_FACTORY) {
                 return null;
             } else if (factoryRef != null) {
@@ -451,7 +474,7 @@ public final class ResourceManager {
 
             // Cache it.
             perLoaderCache.put(key, (factory != null)
-                                        ? new WeakReference(factory)
+                                        ? new WeakReference<>(factory)
                                         : NO_FACTORY);
             return factory;
         }
@@ -468,16 +491,18 @@ public final class ResourceManager {
      *
      * @throws NamingException if an error occurs while reading the file.
      */
-    private static Hashtable getProviderResource(Object obj)
+    private static Hashtable<? super String, Object>
+        getProviderResource(Object obj)
             throws NamingException
     {
         if (obj == null) {
-            return (new Hashtable(1));
+            return (new Hashtable<>(1));
         }
         synchronized (propertiesCache) {
-            Class c = obj.getClass();
+            Class<?> c = obj.getClass();
 
-            Hashtable props = (Hashtable)propertiesCache.get(c);
+            Hashtable<? super String, Object> props =
+                    propertiesCache.get(c);
             if (props != null) {
                 return props;
             }
@@ -518,27 +543,39 @@ public final class ResourceManager {
      * @throws NamingException if an error occurs while reading a resource
      *  file.
      */
-    private static Hashtable getApplicationResources() throws NamingException {
+    private static Hashtable<? super String, Object> getApplicationResources()
+            throws NamingException {
 
         ClassLoader cl = helper.getContextClassLoader();
 
         synchronized (propertiesCache) {
-            Hashtable result = (Hashtable)propertiesCache.get(cl);
+            Hashtable<? super String, Object> result = propertiesCache.get(cl);
             if (result != null) {
                 return result;
             }
 
             try {
-                NamingEnumeration resources =
+                NamingEnumeration<InputStream> resources =
                     helper.getResources(cl, APP_RESOURCE_FILE_NAME);
-                while (resources.hasMore()) {
-                    Properties props = new Properties();
-                    props.load((InputStream)resources.next());
+                try {
+                    while (resources.hasMore()) {
+                        Properties props = new Properties();
+                        InputStream istream = resources.next();
+                        try {
+                            props.load(istream);
+                        } finally {
+                            istream.close();
+                        }
 
-                    if (result == null) {
-                        result = props;
-                    } else {
-                        mergeTables(result, props);
+                        if (result == null) {
+                            result = props;
+                        } else {
+                            mergeTables(result, props);
+                        }
+                    }
+                } finally {
+                    while (resources.hasMore()) {
+                        resources.next().close();
                     }
                 }
 
@@ -546,13 +583,17 @@ public final class ResourceManager {
                 InputStream istream =
                     helper.getJavaHomeLibStream(JRELIB_PROPERTY_FILE_NAME);
                 if (istream != null) {
-                    Properties props = new Properties();
-                    props.load(istream);
+                    try {
+                        Properties props = new Properties();
+                        props.load(istream);
 
-                    if (result == null) {
-                        result = props;
-                    } else {
-                        mergeTables(result, props);
+                        if (result == null) {
+                            result = props;
+                        } else {
+                            mergeTables(result, props);
+                        }
+                    } finally {
+                        istream.close();
                     }
                 }
 
@@ -563,7 +604,7 @@ public final class ResourceManager {
                 throw ne;
             }
             if (result == null) {
-                result = new Hashtable(11);
+                result = new Hashtable<>(11);
             }
             propertiesCache.put(cl, result);
             return result;
@@ -577,11 +618,10 @@ public final class ResourceManager {
      * standard JNDI properties that specify colon-separated lists,
      * the values are concatenated and stored in props1.
      */
-    private static void mergeTables(Hashtable props1, Hashtable props2) {
-        Enumeration keys = props2.keys();
-
-        while (keys.hasMoreElements()) {
-            String prop = (String)keys.nextElement();
+    private static void mergeTables(Hashtable<? super String, Object> props1,
+                                    Hashtable<? super String, Object> props2) {
+        for (Object key : props2.keySet()) {
+            String prop = (String)key;
             Object val1 = props1.get(prop);
             if (val1 == null) {
                 props1.put(prop, props2.get(prop));

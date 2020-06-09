@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,10 +36,10 @@ import java.net.SocketPermission;
 import java.net.NetPermission;
 import java.util.Hashtable;
 import java.net.InetAddress;
-import java.lang.reflect.Member;
 import java.lang.reflect.*;
 import java.net.URL;
 
+import sun.reflect.CallerSensitive;
 import sun.security.util.SecurityConstants;
 
 /**
@@ -56,7 +56,7 @@ import sun.security.util.SecurityConstants;
  * are called by various methods in the Java libraries before those
  * methods perform certain potentially sensitive operations. The
  * invocation of such a <code>check</code> method typically looks like this:
- * <p><blockquote><pre>
+ * <blockquote><pre>
  *     SecurityManager security = System.getSecurityManager();
  *     if (security != null) {
  *         security.check<i>XXX</i>(argument, &nbsp;.&nbsp;.&nbsp;.&nbsp;);
@@ -323,7 +323,7 @@ class SecurityManager {
      * by {@link ClassLoader#getSystemClassLoader}) or one of its ancestors.
      * <p>
      * This method will return
-     * <code>null</code> in the following three cases:<p>
+     * <code>null</code> in the following three cases:
      * <ol>
      *   <li>All methods on the execution stack are from classes
      *   defined using the system class loader or one of its ancestors.
@@ -370,7 +370,7 @@ class SecurityManager {
      * by {@link ClassLoader#getSystemClassLoader}) or one of its ancestors.
      * <p>
      * This method will return
-     * <code>null</code> in the following three cases:<p>
+     * <code>null</code> in the following three cases:
      * <ol>
      *   <li>All methods on the execution stack are from classes
      *   defined using the system class loader or one of its ancestors.
@@ -400,7 +400,7 @@ class SecurityManager {
      */
     @Deprecated
     protected Class<?> currentLoadedClass() {
-        Class c = currentLoadedClass0();
+        Class<?> c = currentLoadedClass0();
         if ((c != null) && hasAllPermission())
             c = null;
         return c;
@@ -429,7 +429,7 @@ class SecurityManager {
      * by {@link ClassLoader#getSystemClassLoader}) or one of its ancestors.
      * <p>
      * This method will return
-     * -1 in the following three cases:<p>
+     * -1 in the following three cases:
      * <ol>
      *   <li>All methods on the execution stack are from classes
      *   defined using the system class loader or one of its ancestors.
@@ -1114,11 +1114,8 @@ class SecurityManager {
      * calling thread is not allowed to wait for a connection request on
      * the specified local port number.
      * <p>
-     * If port is not 0, this method calls
-     * <code>checkPermission</code> with the
+     * This method calls <code>checkPermission</code> with the
      * <code>SocketPermission("localhost:"+port,"listen")</code>.
-     * If port is zero, this method calls <code>checkPermission</code>
-     * with <code>SocketPermission("localhost:1024-","listen").</code>
      * <p>
      * If you override this method, then you should make a call to
      * <code>super.checkListen</code>
@@ -1131,12 +1128,8 @@ class SecurityManager {
      * @see        #checkPermission(java.security.Permission) checkPermission
      */
     public void checkListen(int port) {
-        if (port == 0) {
-            checkPermission(SecurityConstants.LOCAL_LISTEN_PERMISSION);
-        } else {
-            checkPermission(new SocketPermission("localhost:"+port,
-                SecurityConstants.SOCKET_LISTEN_ACTION));
-        }
+        checkPermission(new SocketPermission("localhost:"+port,
+            SecurityConstants.SOCKET_LISTEN_ACTION));
     }
 
     /**
@@ -1281,7 +1274,6 @@ class SecurityManager {
      * This method calls <code>checkPermission</code> with the
      * <code>PropertyPermission(key, "read")</code> permission.
      * <p>
-     * <p>
      * If you override this method, then you should make a call to
      * <code>super.checkPropertyAccess</code>
      * at the point the overridden method would normally throw an
@@ -1320,6 +1312,9 @@ class SecurityManager {
      * <code>AWTPermission("showWindowWithoutWarningBanner")</code> permission,
      * and returns <code>true</code> if a SecurityException is not thrown,
      * otherwise it returns <code>false</code>.
+     * In the case of subset Profiles of Java SE that do not include the
+     * {@code java.awt} package, {@code checkPermission} is instead called
+     * to check the permission {@code java.security.AllPermission}.
      * <p>
      * If you override this method, then you should make a call to
      * <code>super.checkTopLevelWindow</code>
@@ -1333,15 +1328,26 @@ class SecurityManager {
      *             top-level windows; <code>false</code> otherwise.
      * @exception  NullPointerException if the <code>window</code> argument is
      *             <code>null</code>.
+     * @deprecated The dependency on {@code AWTPermission} creates an
+     *             impediment to future modularization of the Java platform.
+     *             Users of this method should instead invoke
+     *             {@link #checkPermission} directly.
+     *             This method will be changed in a future release to check
+     *             the permission {@code java.security.AllPermission}.
      * @see        java.awt.Window
      * @see        #checkPermission(java.security.Permission) checkPermission
      */
+    @Deprecated
     public boolean checkTopLevelWindow(Object window) {
         if (window == null) {
             throw new NullPointerException("window can't be null");
         }
+        Permission perm = SecurityConstants.AWT.TOPLEVEL_WINDOW_PERMISSION;
+        if (perm == null) {
+            perm = SecurityConstants.ALL_PERMISSION;
+        }
         try {
-            checkPermission(SecurityConstants.AWT.TOPLEVEL_WINDOW_PERMISSION);
+            checkPermission(perm);
             return true;
         } catch (SecurityException se) {
             // just return false
@@ -1379,6 +1385,9 @@ class SecurityManager {
      * This method calls <code>checkPermission</code> with the
      * <code>AWTPermission("accessClipboard")</code>
      * permission.
+     * In the case of subset Profiles of Java SE that do not include the
+     * {@code java.awt} package, {@code checkPermission} is instead called
+     * to check the permission {@code java.security.AllPermission}.
      * <p>
      * If you override this method, then you should make a call to
      * <code>super.checkSystemClipboardAccess</code>
@@ -1388,10 +1397,21 @@ class SecurityManager {
      * @since   JDK1.1
      * @exception  SecurityException  if the calling thread does not have
      *             permission to access the system clipboard.
+     * @deprecated The dependency on {@code AWTPermission} creates an
+     *             impediment to future modularization of the Java platform.
+     *             Users of this method should instead invoke
+     *             {@link #checkPermission} directly.
+     *             This method will be changed in a future release to check
+     *             the permission {@code java.security.AllPermission}.
      * @see        #checkPermission(java.security.Permission) checkPermission
      */
+    @Deprecated
     public void checkSystemClipboardAccess() {
-        checkPermission(SecurityConstants.AWT.ACCESS_CLIPBOARD_PERMISSION);
+        Permission perm = SecurityConstants.AWT.ACCESS_CLIPBOARD_PERMISSION;
+        if (perm == null) {
+            perm = SecurityConstants.ALL_PERMISSION;
+        }
+        checkPermission(perm);
     }
 
     /**
@@ -1400,6 +1420,10 @@ class SecurityManager {
      * <p>
      * This method calls <code>checkPermission</code> with the
      * <code>AWTPermission("accessEventQueue")</code> permission.
+     * In the case of subset Profiles of Java SE that do not include the
+     * {@code java.awt} package, {@code checkPermission} is instead called
+     * to check the permission {@code java.security.AllPermission}.
+     *
      * <p>
      * If you override this method, then you should make a call to
      * <code>super.checkAwtEventQueueAccess</code>
@@ -1409,10 +1433,21 @@ class SecurityManager {
      * @since   JDK1.1
      * @exception  SecurityException  if the calling thread does not have
      *             permission to access the AWT event queue.
+     * @deprecated The dependency on {@code AWTPermission} creates an
+     *             impediment to future modularization of the Java platform.
+     *             Users of this method should instead invoke
+     *             {@link #checkPermission} directly.
+     *             This method will be changed in a future release to check
+     *             the permission {@code java.security.AllPermission}.
      * @see        #checkPermission(java.security.Permission) checkPermission
      */
+    @Deprecated
     public void checkAwtEventQueueAccess() {
-        checkPermission(SecurityConstants.AWT.CHECK_AWT_EVENTQUEUE_PERMISSION);
+        Permission perm = SecurityConstants.AWT.CHECK_AWT_EVENTQUEUE_PERMISSION;
+        if (perm == null) {
+            perm = SecurityConstants.ALL_PERMISSION;
+        }
+        checkPermission(perm);
     }
 
     /*
@@ -1653,16 +1688,25 @@ class SecurityManager {
      *             permission to access members.
      * @exception  NullPointerException if the <code>clazz</code> argument is
      *             <code>null</code>.
+     *
+     * @deprecated This method relies on the caller being at a stack depth
+     *             of 4 which is error-prone and cannot be enforced by the runtime.
+     *             Users of this method should instead invoke {@link #checkPermission}
+     *             directly.  This method will be changed in a future release
+     *             to check the permission {@code java.security.AllPermission}.
+     *
      * @see java.lang.reflect.Member
      * @since JDK1.1
      * @see        #checkPermission(java.security.Permission) checkPermission
      */
+    @Deprecated
+    @CallerSensitive
     public void checkMemberAccess(Class<?> clazz, int which) {
         if (clazz == null) {
             throw new NullPointerException("class can't be null");
         }
         if (which != Member.PUBLIC) {
-            Class stack[] = getClassContext();
+            Class<?> stack[] = getClassContext();
             /*
              * stack depth of 4 should be the caller of one of the
              * methods in java.lang.Class that invoke checkMember
@@ -1715,7 +1759,7 @@ class SecurityManager {
         checkPermission(new SecurityPermission(target));
     }
 
-    private native Class currentLoadedClass0();
+    private native Class<?> currentLoadedClass0();
 
     /**
      * Returns the thread group into which to instantiate any new

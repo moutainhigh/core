@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -114,6 +114,12 @@ class ByteBufferAsIntBufferB                  // package-private
     public int get(int i) {
         return Bits.getIntB(bb, ix(checkIndex(i)));
     }
+
+
+
+
+
+
 
 
 

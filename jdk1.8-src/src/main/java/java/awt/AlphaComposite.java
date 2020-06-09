@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,6 +26,7 @@
 package java.awt;
 
 import java.awt.image.ColorModel;
+import java.lang.annotation.Native;
 import sun.java2d.SunCompositeContext;
 
 /**
@@ -174,7 +175,6 @@ import sun.java2d.SunCompositeContext;
  * <em>F<sub>s</sub></em> and <em>F<sub>d</sub></em> and then the resulting
  * premultiplied components <em>A<sub>r</sub></em> and <em>C<sub>r</sub></em>.
  *
- * <p>
  * <h3>Preparing Results</h3>
  *
  * <p>
@@ -192,11 +192,10 @@ import sun.java2d.SunCompositeContext;
  * by zero" and the color components are left as
  * all zeros.
  *
- * <p>
  * <h3>Performance Considerations</h3>
  *
  * <p>
- * For performance reasons, it is preferrable that
+ * For performance reasons, it is preferable that
  * <code>Raster</code> objects passed to the <code>compose</code>
  * method of a {@link CompositeContext} object created by the
  * <code>AlphaComposite</code> class have premultiplied data.
@@ -215,7 +214,6 @@ import sun.java2d.SunCompositeContext;
  * for their pixels.  Such sources supply an alpha of 1.0 for
  * all of their pixels.
  *
- * <p>
  * <li>
  * Many destinations also have no place to store the alpha values
  * that result from the blending calculations performed by this class.
@@ -226,7 +224,6 @@ import sun.java2d.SunCompositeContext;
  * values by the resulting alpha value before storing the color
  * values and discarding the alpha value.
  *
- * <p>
  * <li>
  * The accuracy of the results depends on the manner in which pixels
  * are stored in the destination.
@@ -247,7 +244,6 @@ import sun.java2d.SunCompositeContext;
  * the need to choose a pixel from a limited palette to match the
  * results of the blending equations.
  *
- * <p>
  * <li>
  * Nearly all formats store pixels as discrete integers rather than
  * the floating point values used in the reference equations above.
@@ -267,7 +263,6 @@ import sun.java2d.SunCompositeContext;
  * represents 0.0 and 0xff represents
  * 1.0.
  *
- * <p>
  * <li>
  * The internal implementation can approximate some of the equations
  * and it can also eliminate some steps to avoid unnecessary operations.
@@ -331,7 +326,6 @@ import sun.java2d.SunCompositeContext;
  * <p>
  * and thus they would all match.
  *
- * <p>
  * <li>
  * Because of the technique of simplifying the equations for
  * calculation efficiency, some implementations might perform
@@ -361,7 +355,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = 0
      *</pre>
      */
-    public static final int     CLEAR           = 1;
+    @Native public static final int     CLEAR           = 1;
 
     /**
      * The source is copied to the destination
@@ -374,7 +368,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>
      *</pre>
      */
-    public static final int     SRC             = 2;
+    @Native public static final int     SRC             = 2;
 
     /**
      * The destination is left untouched
@@ -387,7 +381,7 @@ public final class AlphaComposite implements Composite {
      *</pre>
      * @since 1.4
      */
-    public static final int     DST             = 9;
+    @Native public static final int     DST             = 9;
     // Note that DST was added in 1.4 so it is numbered out of order...
 
     /**
@@ -400,7 +394,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>s</sub></em> + <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
      *</pre>
      */
-    public static final int     SRC_OVER        = 3;
+    @Native public static final int     SRC_OVER        = 3;
 
     /**
      * The destination is composited over the source and
@@ -413,7 +407,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>C<sub>d</sub></em>
      *</pre>
      */
-    public static final int     DST_OVER        = 4;
+    @Native public static final int     DST_OVER        = 4;
 
     /**
      * The part of the source lying inside of the destination replaces
@@ -426,7 +420,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*<em>A<sub>d</sub></em>
      *</pre>
      */
-    public static final int     SRC_IN          = 5;
+    @Native public static final int     SRC_IN          = 5;
 
     /**
      * The part of the destination lying inside of the source
@@ -439,7 +433,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>d</sub></em>*<em>A<sub>s</sub></em>
      *</pre>
      */
-    public static final int     DST_IN          = 6;
+    @Native public static final int     DST_IN          = 6;
 
     /**
      * The part of the source lying outside of the destination
@@ -452,7 +446,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>)
      *</pre>
      */
-    public static final int     SRC_OUT         = 7;
+    @Native public static final int     SRC_OUT         = 7;
 
     /**
      * The part of the destination lying outside of the source
@@ -465,7 +459,7 @@ public final class AlphaComposite implements Composite {
      *  <em>C<sub>r</sub></em> = <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
      *</pre>
      */
-    public static final int     DST_OUT         = 8;
+    @Native public static final int     DST_OUT         = 8;
 
     // Rule 9 is DST which is defined above where it fits into the
     // list logically, rather than numerically
@@ -484,7 +478,7 @@ public final class AlphaComposite implements Composite {
      *</pre>
      * @since 1.4
      */
-    public static final int     SRC_ATOP        = 10;
+    @Native public static final int     SRC_ATOP        = 10;
 
     /**
      * The part of the destination lying inside of the source
@@ -498,7 +492,7 @@ public final class AlphaComposite implements Composite {
      *</pre>
      * @since 1.4
      */
-    public static final int     DST_ATOP        = 11;
+    @Native public static final int     DST_ATOP        = 11;
 
     /**
      * The part of the source that lies outside of the destination
@@ -513,7 +507,7 @@ public final class AlphaComposite implements Composite {
      *</pre>
      * @since 1.4
      */
-    public static final int     XOR             = 12;
+    @Native public static final int     XOR             = 12;
 
     /**
      * <code>AlphaComposite</code> object that implements the opaque CLEAR rule
@@ -603,8 +597,8 @@ public final class AlphaComposite implements Composite {
      */
     public static final AlphaComposite Xor      = new AlphaComposite(XOR);
 
-    private static final int MIN_RULE = CLEAR;
-    private static final int MAX_RULE = XOR;
+    @Native private static final int MIN_RULE = CLEAR;
+    @Native private static final int MAX_RULE = XOR;
 
     float extraAlpha;
     int rule;

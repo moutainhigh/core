@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -135,7 +135,7 @@ class JarOutputStream extends ZipOutputStream {
      * The bytes are assumed to be in Intel (little-endian) byte order.
      */
     private static int get16(byte[] b, int off) {
-        return (b[off] & 0xff) | ((b[off+1] & 0xff) << 8);
+        return Byte.toUnsignedInt(b[off]) | ( Byte.toUnsignedInt(b[off+1]) << 8);
     }
 
     /*

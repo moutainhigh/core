@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -98,7 +98,6 @@ public class InputContext {
      * an input method or keyboard layout has been successfully selected. The
      * following steps are taken until an input method has been selected:
      *
-     * <p>
      * <ul>
      * <li>
      * If the currently selected input method or keyboard layout supports the
@@ -118,7 +117,6 @@ public class InputContext {
      * Otherwise, an input method or keyboard layout that supports the requested
      * locale is selected in an implementation dependent way.</li>
      *
-     * <p>
      * </ul>
      * Before switching away from an input method, any currently uncommitted text
      * is committed. If no input method or keyboard layout supporting the requested

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -64,7 +64,7 @@ class LoweredBorder extends AbstractRegionPainter implements Border {
     /**
      * Actually performs the painting operation. Subclasses must implement this
      * method. The graphics object passed may represent the actual surface being
-     * rendererd to, or it may be an intermediate buffer. It has also been
+     * rendered to, or it may be an intermediate buffer. It has also been
      * pre-translated. Simply render the component as if it were located at 0, 0
      * and had a width of <code>width</code> and a height of
      * <code>height</code>. For performance reasons, you may want to read the

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -480,7 +480,7 @@ public abstract class SnmpTableSupport implements SnmpTableEntryFactory,
      * associated  SnmpIndex.
      * <p>
      * If the entry is going to be registered, then
-     * {@link com.sun.jmx.snmp.agent.SnmpTableSupport#addEntry(SnmpIndex, ObjectName, Object)} should be prefered.
+     * {@link com.sun.jmx.snmp.agent.SnmpTableSupport#addEntry(SnmpIndex, ObjectName, Object)} should be preferred.
      * <br> This function is mainly provided for backward compatibility.
      *
      * @param index The SnmpIndex built from the given entry.

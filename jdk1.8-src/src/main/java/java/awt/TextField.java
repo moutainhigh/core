@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,10 +42,10 @@ import javax.accessibility.*;
  * display the predefined text <code>"Hello"</code>.
  * <p>
  * <img src="doc-files/TextField-1.gif" alt="The preceding text describes this image."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * Here is the code that produces these four text fields:
- * <p>
+ *
  * <hr><blockquote><pre>
  * TextField tf1, tf2, tf3, tf4;
  * // a blank text field
@@ -405,7 +405,7 @@ public class TextField extends TextComponent {
     }
 
     /**
-     * Gets the minumum dimensions for a text field with
+     * Gets the minimum dimensions for a text field with
      * the specified number of columns.
      * @param    columns   the number of columns in
      *                          this text field.
@@ -430,7 +430,7 @@ public class TextField extends TextComponent {
     }
 
     /**
-     * Gets the minumum dimensions for this text field.
+     * Gets the minimum dimensions for this text field.
      * @return     the minimum dimensions for
      *                  displaying this text field.
      * @since      JDK1.1
@@ -503,11 +503,11 @@ public class TextField extends TextComponent {
      *
      * @see #addActionListener
      * @see #removeActionListener
-     * @see     java.awt.event#ActionListener
+     * @see java.awt.event.ActionListener
      * @since 1.4
      */
     public synchronized ActionListener[] getActionListeners() {
-        return (ActionListener[])(getListeners(ActionListener.class));
+        return getListeners(ActionListener.class);
     }
 
     /**
@@ -596,7 +596,7 @@ public class TextField extends TextComponent {
      * This method is not called unless action events are
      * enabled for this component. Action events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>ActionListener</code> object is registered
      * via <code>addActionListener</code>.
      * <li>Action events are enabled via <code>enableEvents</code>.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,7 +57,7 @@ import javax.management.RuntimeOperationsException;
  * Note that when the Type in this table is Number, a String that is the decimal
  * representation of a Long can also be used.</P>
  *
- * <table border="1" cellpadding="5">
+ * <table border="1" cellpadding="5" summary="ModelMBeanAttributeInfo Fields">
  * <tr><th>Name</th><th>Type</th><th>Meaning</th></tr>
  * <tr><td>name</td><td>String</td>
  *     <td>Attribute name.</td></tr>
@@ -189,7 +189,7 @@ public class ModelMBeanAttributeInfo
          *          May be null if the property is write-only.
          * @param setter The method used for writing the attribute value.
          *          May be null if the attribute is read-only.
-         * @exception IntrospectionException There is a consistency
+         * @exception javax.management.IntrospectionException There is a consistency
          * problem in the definition of this attribute.
          *
          */
@@ -233,7 +233,7 @@ public class ModelMBeanAttributeInfo
          * it is null, then a default descriptor will be created.  If
          * the descriptor does not contain the field "displayName" this field is added
          * in the descriptor with its default value.
-         * @exception IntrospectionException There is a consistency
+         * @exception javax.management.IntrospectionException There is a consistency
          * problem in the definition of this attribute.
          * @exception RuntimeOperationsException Wraps an
          * IllegalArgumentException. The descriptor is invalid, or descriptor

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -100,7 +100,7 @@ public interface Soundbank {
 
     /**
      * Extracts a list of non-Instrument resources contained in the sound bank.
-     * @return an array of resources, exclusing instruments.  If the sound bank contains
+     * @return an array of resources, excluding instruments.  If the sound bank contains
      * no resources (other than instruments), returns an array of length 0.
      */
     public SoundbankResource[] getResources();

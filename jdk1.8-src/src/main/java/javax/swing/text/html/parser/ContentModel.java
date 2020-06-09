@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import java.io.*;
  * A representation of a content model. A content model is
  * basically a restricted BNF expression. It is restricted in
  * the sense that it must be deterministic. This means that you
- * don't have to represent it as a finite state automata.<p>
+ * don't have to represent it as a finite state automaton.<p>
  * See Annex H on page 556 of the SGML handbook for more information.
  *
  * @author   Arthur van Hoff
@@ -42,7 +42,7 @@ import java.io.*;
  */
 public final class ContentModel implements Serializable {
     /**
-     * Type. Either '*', '?', '+', ',', '|', '&'.
+     * Type. Either '*', '?', '+', ',', '|', '&amp;'.
      */
     public int type;
 
@@ -52,7 +52,7 @@ public final class ContentModel implements Serializable {
     public Object content;
 
     /**
-     * The next content model (in a ',', '|' or '&' expression).
+     * The next content model (in a ',', '|' or '&amp;' expression).
      */
     public ContentModel next;
 
@@ -169,10 +169,9 @@ public final class ContentModel implements Serializable {
           case '|':
           case '&': {
             Element e = (Element) token;
-            if (valSet == null) {
-                valSet = new boolean[Element.maxIndex + 1];
-                val = new boolean[Element.maxIndex + 1];
-                // All Element instances are created before this ever executes
+            if (valSet == null || valSet.length <= Element.getMaxIndex()) {
+                valSet = new boolean[Element.getMaxIndex() + 1];
+                val = new boolean[valSet.length];
             }
             if (valSet[e.index]) {
                 return val[e.index];

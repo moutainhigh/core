@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -94,7 +94,7 @@ import javax.xml.namespace.NamespaceContext;
 final public class DatatypeConverter {
 
     // delegate to this instance of DatatypeConverter
-    private static DatatypeConverterInterface theConverter = null;
+    private static volatile DatatypeConverterInterface theConverter = null;
 
     private final static JAXBPermission SET_DATATYPE_CONVERTER_PERMISSION =
                            new JAXBPermission("setDatatypeConverter");

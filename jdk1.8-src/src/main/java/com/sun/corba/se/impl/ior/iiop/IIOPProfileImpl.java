@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -69,6 +69,8 @@ import com.sun.corba.se.impl.ior.EncapsulationUtility ;
 
 import com.sun.corba.se.impl.encoding.EncapsInputStream ;
 import com.sun.corba.se.impl.encoding.EncapsOutputStream ;
+
+import sun.corba.EncapsInputStreamFactory;
 
 import com.sun.corba.se.impl.util.JDKBridge;
 
@@ -170,8 +172,8 @@ public class IIOPProfileImpl extends IdentifiableBase implements IIOPProfile
             throw wrapper.invalidTaggedProfile() ;
         }
 
-        EncapsInputStream istr = new EncapsInputStream((ORB)orb, profile.profile_data,
-            profile.profile_data.length);
+        EncapsInputStream istr = EncapsInputStreamFactory.newEncapsInputStream((ORB)orb, profile.profile_data,
+                profile.profile_data.length);
         istr.consumeEndian();
         init( istr ) ;
     }
@@ -247,7 +249,8 @@ public class IIOPProfileImpl extends IdentifiableBase implements IIOPProfile
 
     public org.omg.IOP.TaggedProfile getIOPProfile()
     {
-        EncapsOutputStream os = new EncapsOutputStream( orb ) ;
+        EncapsOutputStream os =
+            sun.corba.OutputStreamFactory.newEncapsOutputStream(orb);
         os.write_long( getId() ) ;
         write( os ) ;
         InputStream is = (InputStream)(os.create_input_stream()) ;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -39,6 +39,11 @@ import java.math.BigInteger;
 public interface RSAPrivateKey extends java.security.PrivateKey, RSAKey
 {
 
+    /**
+     * The type fingerprint that is set to indicate
+     * serialization compatibility with a previous
+     * version of the type.
+     */
     static final long serialVersionUID = 5187144804936595022L;
 
     /**

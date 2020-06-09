@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2015, Oracle and/or its affiliates. All rights reserved.
  */
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -23,37 +23,41 @@
 
 package com.sun.org.apache.xalan.internal.xsltc.compiler;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
 import com.sun.java_cup.internal.runtime.Symbol;
-import javax.xml.XMLConstants;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.sun.org.apache.xalan.internal.XalanConstants;
+import com.sun.org.apache.xalan.internal.utils.FactoryImpl;
+import com.sun.org.apache.xalan.internal.utils.ObjectFactory;
+import com.sun.org.apache.xalan.internal.utils.SecuritySupport;
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MethodType;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.TypeCheckError;
-import com.sun.org.apache.xalan.internal.utils.FactoryImpl;
-import com.sun.org.apache.xalan.internal.utils.ObjectFactory;
+import com.sun.org.apache.xml.internal.serializer.utils.SystemIDResolver;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Stack;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * @author Jacek Ambroziak
@@ -74,14 +78,14 @@ public class Parser implements Constants, ContentHandler {
     private Vector _errors;           // Contains all compilation errors
     private Vector _warnings;         // Contains all compilation errors
 
-    private Hashtable   _instructionClasses; // Maps instructions to classes
-    private Hashtable   _instructionAttrs;;  // reqd and opt attrs
-    private Hashtable   _qNames;
-    private Hashtable   _namespaces;
+    private Map<String, String>   _instructionClasses; // Maps instructions to classes
+    private Map<String, String[]> _instructionAttrs;  // reqd and opt attrs
+    private Map<String, QName>   _qNames;
+    private Map<String, Map>     _namespaces;
     private QName       _useAttributeSets;
     private QName       _excludeResultPrefixes;
     private QName       _extensionElementPrefixes;
-    private Hashtable   _variableScope;
+    private Map<String, Object>   _variableScope;
     private Stylesheet  _currentStylesheet;
     private SymbolTable _symbolTable; // Maps QNames to syntax-tree nodes
     private Output      _output;
@@ -103,11 +107,11 @@ public class Parser implements Constants, ContentHandler {
     }
 
     public void init() {
-        _qNames              = new Hashtable(512);
-        _namespaces          = new Hashtable();
-        _instructionClasses  = new Hashtable();
-        _instructionAttrs    = new Hashtable();
-        _variableScope       = new Hashtable();
+        _qNames              = new HashMap<>(512);
+        _namespaces          = new HashMap<>();
+        _instructionClasses  = new HashMap<>();
+        _instructionAttrs    = new HashMap<>();
+        _variableScope       = new HashMap<>();
         _template            = null;
         _errors              = new Vector();
         _warnings            = new Vector();
@@ -166,7 +170,7 @@ public class Parser implements Constants, ContentHandler {
     }
 
     private void addVariableOrParam(VariableBase var) {
-        Object existing = _variableScope.get(var.getName());
+        Object existing = _variableScope.get(var.getName().getStringRep());
         if (existing != null) {
             if (existing instanceof Stack) {
                 Stack stack = (Stack)existing;
@@ -176,26 +180,26 @@ public class Parser implements Constants, ContentHandler {
                 Stack stack = new Stack();
                 stack.push(existing);
                 stack.push(var);
-                _variableScope.put(var.getName(), stack);
+                _variableScope.put(var.getName().getStringRep(), stack);
             }
         }
         else {
-            _variableScope.put(var.getName(), var);
+            _variableScope.put(var.getName().getStringRep(), var);
         }
     }
 
     public void removeVariable(QName name) {
-        Object existing = _variableScope.get(name);
+        Object existing = _variableScope.get(name.getStringRep());
         if (existing instanceof Stack) {
             Stack stack = (Stack)existing;
             if (!stack.isEmpty()) stack.pop();
             if (!stack.isEmpty()) return;
         }
-        _variableScope.remove(name);
+        _variableScope.remove(name.getStringRep());
     }
 
     public VariableBase lookupVariable(QName name) {
-        Object existing = _variableScope.get(name);
+        Object existing = _variableScope.get(name.getStringRep());
         if (existing instanceof VariableBase) {
             return((VariableBase)existing);
         }
@@ -302,7 +306,7 @@ public class Parser implements Constants, ContentHandler {
 
     public QName getQName(String namespace, String prefix, String localname) {
         if (namespace == null || namespace.equals(EMPTYSTRING)) {
-            QName name = (QName)_qNames.get(localname);
+            QName name = _qNames.get(localname);
             if (name == null) {
                 name = new QName(null, prefix, localname);
                 _qNames.put(localname, name);
@@ -310,7 +314,7 @@ public class Parser implements Constants, ContentHandler {
             return name;
         }
         else {
-            Dictionary space = (Dictionary)_namespaces.get(namespace);
+            Map<String, QName> space = _namespaces.get(namespace);
             String lexicalQName =
                        (prefix == null || prefix.length() == 0)
                             ? localname
@@ -318,12 +322,12 @@ public class Parser implements Constants, ContentHandler {
 
             if (space == null) {
                 final QName name = new QName(namespace, prefix, localname);
-                _namespaces.put(namespace, space = new Hashtable());
+                _namespaces.put(namespace, space = new HashMap<>());
                 space.put(lexicalQName, name);
                 return name;
             }
             else {
-                QName name = (QName)space.get(lexicalQName);
+                QName name = space.get(lexicalQName);
                 if (name == null) {
                     name = new QName(namespace, prefix, localname);
                     space.put(lexicalQName, name);
@@ -394,9 +398,9 @@ public class Parser implements Constants, ContentHandler {
             if (stylesheet != null) {
                 stylesheet.parseContents(this);
                 final int precedence = stylesheet.getImportPrecedence();
-                final Enumeration elements = stylesheet.elements();
-                while (elements.hasMoreElements()) {
-                    Object child = elements.nextElement();
+                final Iterator<SyntaxTreeNode> elements = stylesheet.elements();
+                while (elements.hasNext()) {
+                    SyntaxTreeNode child = elements.next();
                     if (child instanceof Text) {
                         final int l = getLineNumber();
                         ErrorMsg err =
@@ -410,7 +414,7 @@ public class Parser implements Constants, ContentHandler {
             }
         }
         catch (TypeCheckError e) {
-            reportError(ERROR, new ErrorMsg(e));
+            reportError(ERROR, new ErrorMsg(ErrorMsg.JAXP_COMPILE_ERR, e));
         }
     }
 
@@ -430,7 +434,7 @@ public class Parser implements Constants, ContentHandler {
         }
         catch (IOException e) {
             if (_xsltc.debug()) e.printStackTrace();
-            reportError(ERROR,new ErrorMsg(e));
+            reportError(ERROR,new ErrorMsg(ErrorMsg.JAXP_COMPILE_ERR, e));
         }
         catch (SAXException e) {
             Throwable ex = e.getException();
@@ -438,15 +442,15 @@ public class Parser implements Constants, ContentHandler {
                 e.printStackTrace();
                 if (ex != null) ex.printStackTrace();
             }
-            reportError(ERROR, new ErrorMsg(e));
+            reportError(ERROR, new ErrorMsg(ErrorMsg.JAXP_COMPILE_ERR, e));
         }
         catch (CompilerException e) {
             if (_xsltc.debug()) e.printStackTrace();
-            reportError(ERROR, new ErrorMsg(e));
+            reportError(ERROR, new ErrorMsg(ErrorMsg.JAXP_COMPILE_ERR, e));
         }
         catch (Exception e) {
             if (_xsltc.debug()) e.printStackTrace();
-            reportError(ERROR, new ErrorMsg(e));
+            reportError(ERROR, new ErrorMsg(ErrorMsg.JAXP_COMPILE_ERR, e));
         }
         return null;
     }
@@ -475,7 +479,30 @@ public class Parser implements Constants, ContentHandler {
                 factory.setNamespaceAware(true);
             }
             final SAXParser parser = factory.newSAXParser();
+            try {
+                parser.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,
+                        _xsltc.getProperty(XMLConstants.ACCESS_EXTERNAL_DTD));
+            } catch (SAXNotRecognizedException e) {
+                ErrorMsg err = new ErrorMsg(ErrorMsg.WARNING_MSG,
+                        parser.getClass().getName() + ": " + e.getMessage());
+                reportError(WARNING, err);
+            }
+
             final XMLReader reader = parser.getXMLReader();
+            try {
+                XMLSecurityManager securityManager =
+                        (XMLSecurityManager)_xsltc.getProperty(XalanConstants.SECURITY_MANAGER);
+                for (XMLSecurityManager.Limit limit : XMLSecurityManager.Limit.values()) {
+                    reader.setProperty(limit.apiProperty(), securityManager.getLimitValueAsString(limit));
+                }
+                if (securityManager.printEntityCountInfo()) {
+                    parser.setProperty(XalanConstants.JDK_ENTITY_COUNT_INFO, XalanConstants.JDK_YES);
+                }
+            } catch (SAXException se) {
+                System.err.println("Warning:  " + reader.getClass().getName() + ": "
+                            + se.getMessage());
+            }
+
             return(parse(reader, input));
         }
         catch (ParserConfigurationException e) {
@@ -547,6 +574,25 @@ public class Parser implements Constants, ContentHandler {
             return(element);
         }
         else {
+            try {
+                String path = _target;
+                if (path.indexOf(":")==-1) {
+                    path = "file:" + path;
+                }
+                path = SystemIDResolver.getAbsoluteURI(path);
+                String accessError = SecuritySupport.checkAccess(path,
+                        (String)_xsltc.getProperty(XMLConstants.ACCESS_EXTERNAL_STYLESHEET),
+                        XalanConstants.ACCESS_EXTERNAL_ALL);
+                if (accessError != null) {
+                    ErrorMsg msg = new ErrorMsg(ErrorMsg.ACCESSING_XSLT_TARGET_ERR,
+                            SecuritySupport.sanitizePath(_target), accessError,
+                            root);
+                    throw new CompilerException(msg.toString());
+                }
+            } catch (IOException ex) {
+                throw new CompilerException(ex);
+            }
+
             return(loadExternalStylesheet(_target));
         }
     }
@@ -564,11 +610,11 @@ public class Parser implements Constants, ContentHandler {
             String id = root.getAttribute("id");
             if (id.equals(href)) return root;
         }
-        Vector children = root.getContents();
+        List<SyntaxTreeNode> children = root.getContents();
         if (children != null) {
             final int count = children.size();
             for (int i = 0; i < count; i++) {
-                SyntaxTreeNode child = (SyntaxTreeNode)children.elementAt(i);
+                SyntaxTreeNode child = children.get(i);
                 SyntaxTreeNode node = findStylesheet(child, href);
                 if (node != null) return node;
             }
@@ -595,7 +641,7 @@ public class Parser implements Constants, ContentHandler {
     }
 
     private void initAttrTable(String elementName, String[] attrs) {
-        _instructionAttrs.put(getQName(XSLT_URI, XSL, elementName),
+        _instructionAttrs.put(getQName(XSLT_URI, XSL, elementName).getStringRep(),
                                 attrs);
     }
 
@@ -659,7 +705,7 @@ public class Parser implements Constants, ContentHandler {
 
 
     /**
-     * Initialize the _instructionClasses Hashtable, which maps XSL element
+     * Initialize the _instructionClasses map, which maps XSL element
      * names to Java classes in this package.
      */
     private void initStdClasses() {
@@ -701,12 +747,12 @@ public class Parser implements Constants, ContentHandler {
     }
 
     private void initStdClass(String elementName, String className) {
-        _instructionClasses.put(getQName(XSLT_URI, XSL, elementName),
+        _instructionClasses.put(getQName(XSLT_URI, XSL, elementName).getStringRep(),
                                 COMPILER_PACKAGE + '.' + className);
     }
 
     public boolean elementSupported(String namespace, String localName) {
-        return(_instructionClasses.get(getQName(namespace, XSL, localName)) != null);
+        return(_instructionClasses.get(getQName(namespace, XSL, localName).getStringRep()) != null);
     }
 
     public boolean functionSupported(String fname) {
@@ -719,12 +765,12 @@ public class Parser implements Constants, ContentHandler {
     }
 
     private void initExtClass(String elementName, String className) {
-        _instructionClasses.put(getQName(TRANSLET_URI, TRANSLET, elementName),
+        _instructionClasses.put(getQName(TRANSLET_URI, TRANSLET, elementName).getStringRep(),
                                 COMPILER_PACKAGE + '.' + className);
     }
 
     private void initExtClass(String namespace, String elementName, String className) {
-        _instructionClasses.put(getQName(namespace, TRANSLET, elementName),
+        _instructionClasses.put(getQName(namespace, TRANSLET, elementName).getStringRep(),
                                 COMPILER_PACKAGE + '.' + className);
     }
 
@@ -924,7 +970,7 @@ public class Parser implements Constants, ContentHandler {
     {
         SyntaxTreeNode node = null;
         QName  qname = getQName(uri, prefix, local);
-        String className = (String)_instructionClasses.get(qname);
+        String className = _instructionClasses.get(qname.getStringRep());
 
         if (className != null) {
             try {
@@ -1007,7 +1053,7 @@ public class Parser implements Constants, ContentHandler {
     {
         QName qname = node.getQName();
         boolean isStylesheet = (node instanceof Stylesheet);
-        String[] legal = (String[]) _instructionAttrs.get(qname);
+        String[] legal = _instructionAttrs.get(qname.getStringRep());
         if (versionIsOne && legal != null) {
             int j;
             final int n = attrs.getLength();
@@ -1205,7 +1251,7 @@ public class Parser implements Constants, ContentHandler {
     /************************ SAX2 ContentHandler INTERFACE *****************/
 
     private Stack _parentStack = null;
-    private Hashtable _prefixMapping = null;
+    private Map<String, String> _prefixMapping = null;
 
     /**
      * SAX2: Receive notification of the beginning of a document.
@@ -1229,7 +1275,7 @@ public class Parser implements Constants, ContentHandler {
      */
     public void startPrefixMapping(String prefix, String uri) {
         if (_prefixMapping == null) {
-            _prefixMapping = new Hashtable();
+            _prefixMapping = new HashMap<>();
         }
         _prefixMapping.put(prefix, uri);
     }

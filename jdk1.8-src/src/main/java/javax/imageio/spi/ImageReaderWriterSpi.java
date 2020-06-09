@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -538,7 +538,7 @@ public abstract class ImageReaderWriterSpi extends IIOServiceProvider {
      * Returns an <code>IIOMetadataFormat</code> object describing the
      * given image metadata format, or <code>null</code> if no
      * description is available.  The supplied name must be the native
-     * iamge metadata format name, the standard metadata format name,
+     * image metadata format name, the standard metadata format name,
      * or one of those returned by
      * <code>getExtraImageMetadataFormatNames</code>.
      *

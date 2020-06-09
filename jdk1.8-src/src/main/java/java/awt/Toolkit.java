@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,10 +26,6 @@
 package java.awt;
 
 import java.beans.PropertyChangeEvent;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.awt.event.*;
 import java.awt.peer.*;
 import java.awt.im.InputMethodHighlight;
@@ -48,8 +44,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import java.util.*;
-import sun.util.logging.PlatformLogger;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import sun.awt.AppContext;
@@ -58,6 +52,7 @@ import sun.awt.HeadlessToolkit;
 import sun.awt.NullComponentPeer;
 import sun.awt.PeerEvent;
 import sun.awt.SunToolkit;
+import sun.awt.AWTAccessor;
 import sun.security.util.SecurityConstants;
 
 import sun.util.CoreResourceBundleControl;
@@ -81,19 +76,19 @@ import sun.util.CoreResourceBundleControl;
  * <br>For example, calling <code>ScrollPane.setScrollPosition</code>
  *     and then <code>getScrollPosition</code> may return an incorrect
  *     value if the original request has not yet been processed.
- * <p>
+ *
  * <li>Moving the focus from one component to another.
  * <br>For more information, see
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html#transferTiming">Timing
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/misc/focus.html#transferTiming">Timing
  * Focus Transfers</a>, a section in
  * <a href="http://java.sun.com/docs/books/tutorial/uiswing/">The Swing
  * Tutorial</a>.
- * <p>
+ *
  * <li>Making a top-level container visible.
  * <br>Calling <code>setVisible(true)</code> on a <code>Window</code>,
  *     <code>Frame</code> or <code>Dialog</code> may occur
  *     asynchronously.
- * <p>
+ *
  * <li>Setting the size or location of a top-level container.
  * <br>Calls to <code>setSize</code>, <code>setBounds</code> or
  *     <code>setLocation</code> on a <code>Window</code>,
@@ -469,7 +464,7 @@ public abstract class Toolkit {
         GraphicsEnvironment.checkHeadless();
     }
 
-/**
+    /**
      * Controls whether the layout of Containers is validated dynamically
      * during resizing, or statically, after resizing is complete.
      * Use {@code isDynamicLayoutActive()} to detect if this feature enabled
@@ -499,9 +494,12 @@ public abstract class Toolkit {
      * @see       java.awt.GraphicsEnvironment#isHeadless
      * @since     1.4
      */
-    public void setDynamicLayout(boolean dynamic)
+    public void setDynamicLayout(final boolean dynamic)
         throws HeadlessException {
         GraphicsEnvironment.checkHeadless();
+        if (this != getDefaultToolkit()) {
+            getDefaultToolkit().setDynamicLayout(dynamic);
+        }
     }
 
     /**
@@ -706,9 +704,9 @@ public abstract class Toolkit {
         final Properties properties = new Properties();
 
 
-        atNames = (String)java.security.AccessController.doPrivileged(
-            new java.security.PrivilegedAction() {
-            public Object run() {
+        atNames = java.security.AccessController.doPrivileged(
+            new java.security.PrivilegedAction<String>() {
+            public String run() {
 
                 // Try loading the per-user accessibility properties file.
                 try {
@@ -798,7 +796,7 @@ public abstract class Toolkit {
             while (parser.hasMoreTokens()) {
                 atName = parser.nextToken();
                 try {
-                    Class clazz;
+                    Class<?> clazz;
                     if (cl != null) {
                         clazz = cl.loadClass(atName);
                     } else {
@@ -853,50 +851,39 @@ public abstract class Toolkit {
      */
     public static synchronized Toolkit getDefaultToolkit() {
         if (toolkit == null) {
-            try {
-                // We disable the JIT during toolkit initialization.  This
-                // tends to touch lots of classes that aren't needed again
-                // later and therefore JITing is counter-productiive.
-                java.lang.Compiler.disable();
-
-                java.security.AccessController.doPrivileged(
-                        new java.security.PrivilegedAction() {
-                    public Object run() {
-                        String nm = null;
-                        Class cls = null;
-                        try {
-                            nm = System.getProperty("awt.toolkit");
+            java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedAction<Void>() {
+                public Void run() {
+                    Class<?> cls = null;
+                    String nm = System.getProperty("awt.toolkit");
+                    try {
+                        cls = Class.forName(nm);
+                    } catch (ClassNotFoundException e) {
+                        ClassLoader cl = ClassLoader.getSystemClassLoader();
+                        if (cl != null) {
                             try {
-                                cls = Class.forName(nm);
-                            } catch (ClassNotFoundException e) {
-                                ClassLoader cl = ClassLoader.getSystemClassLoader();
-                                if (cl != null) {
-                                    try {
-                                        cls = cl.loadClass(nm);
-                                    } catch (ClassNotFoundException ee) {
-                                        throw new AWTError("Toolkit not found: " + nm);
-                                    }
-                                }
+                                cls = cl.loadClass(nm);
+                            } catch (final ClassNotFoundException ignored) {
+                                throw new AWTError("Toolkit not found: " + nm);
                             }
-                            if (cls != null) {
-                                toolkit = (Toolkit)cls.newInstance();
-                                if (GraphicsEnvironment.isHeadless()) {
-                                    toolkit = new HeadlessToolkit(toolkit);
-                                }
-                            }
-                        } catch (InstantiationException e) {
-                            throw new AWTError("Could not instantiate Toolkit: " + nm);
-                        } catch (IllegalAccessException e) {
-                            throw new AWTError("Could not access Toolkit: " + nm);
                         }
-                        return null;
                     }
-                });
-                loadAssistiveTechnologies();
-            } finally {
-                // Make sure to always re-enable the JIT.
-                java.lang.Compiler.enable();
-            }
+                    try {
+                        if (cls != null) {
+                            toolkit = (Toolkit)cls.newInstance();
+                            if (GraphicsEnvironment.isHeadless()) {
+                                toolkit = new HeadlessToolkit(toolkit);
+                            }
+                        }
+                    } catch (final InstantiationException ignored) {
+                        throw new AWTError("Could not instantiate Toolkit: " + nm);
+                    } catch (final IllegalAccessException ignored) {
+                        throw new AWTError("Could not access Toolkit: " + nm);
+                    }
+                    return null;
+                }
+            });
+            loadAssistiveTechnologies();
         }
         return toolkit;
     }
@@ -1241,7 +1228,8 @@ public abstract class Toolkit {
     }
 
     /**
-     * Emits an audio beep.
+     * Emits an audio beep depending on native system settings and hardware
+     * capabilities.
      * @since     JDK1.1
      */
     public abstract void beep();
@@ -1272,12 +1260,8 @@ public abstract class Toolkit {
      * <p>
      * Each actual implementation of this method should first check if there
      * is a security manager installed. If there is, the method should call
-     * the security manager's <code>checkSystemClipboardAccess</code> method
-     * to ensure it's ok to to access the system clipboard. If the default
-     * implementation of <code>checkSystemClipboardAccess</code> is used (that
-     * is, that method is not overriden), then this results in a call to the
-     * security manager's <code>checkPermission</code> method with an <code>
-     * AWTPermission("accessClipboard")</code> permission.
+     * the security manager's {@link SecurityManager#checkPermission
+     * checkPermission} method to check {@code AWTPermission("accessClipboard")}.
      *
      * @return    the system Clipboard
      * @exception HeadlessException if GraphicsEnvironment.isHeadless()
@@ -1320,14 +1304,9 @@ public abstract class Toolkit {
      * system selection <code>Clipboard</code> as described above.
      * <p>
      * Each actual implementation of this method should first check if there
-     * is a <code>SecurityManager</code> installed. If there is, the method
-     * should call the <code>SecurityManager</code>'s
-     * <code>checkSystemClipboardAccess</code> method to ensure that client
-     * code has access the system selection. If the default implementation of
-     * <code>checkSystemClipboardAccess</code> is used (that is, if the method
-     * is not overridden), then this results in a call to the
-     * <code>SecurityManager</code>'s <code>checkPermission</code> method with
-     * an <code>AWTPermission("accessClipboard")</code> permission.
+     * is a security manager installed. If there is, the method should call
+     * the security manager's {@link SecurityManager#checkPermission
+     * checkPermission} method to check {@code AWTPermission("accessClipboard")}.
      *
      * @return the system selection as a <code>Clipboard</code>, or
      *         <code>null</code> if the native platform does not support a
@@ -1463,7 +1442,7 @@ public abstract class Toolkit {
      * <p>Note that multi-frame images are invalid and may cause this
      * method to hang.
      *
-     * @param cursor the image to display when the cursor is actived
+     * @param cursor the image to display when the cursor is activated
      * @param hotSpot the X and Y of the large cursor's hot spot; the
      *   hotSpot values must be less than the Dimension returned by
      *   <code>getBestCursorSize</code>
@@ -1609,6 +1588,12 @@ public abstract class Toolkit {
      * here, so that only one copy is maintained.
      */
     private static ResourceBundle resources;
+    private static ResourceBundle platformResources;
+
+    // called by platform toolkit
+    private static void setPlatformResources(ResourceBundle bundle) {
+        platformResources = bundle;
+    }
 
     /**
      * Initialize JNI field and method ids
@@ -1646,15 +1631,28 @@ public abstract class Toolkit {
     static void loadLibraries() {
         if (!loaded) {
             java.security.AccessController.doPrivileged(
-                          new sun.security.action.LoadLibraryAction("awt"));
+                new java.security.PrivilegedAction<Void>() {
+                    public Void run() {
+                        System.loadLibrary("awt");
+                        return null;
+                    }
+                });
             loaded = true;
         }
     }
 
     static {
+        AWTAccessor.setToolkitAccessor(
+                new AWTAccessor.ToolkitAccessor() {
+                    @Override
+                    public void setPlatformResources(ResourceBundle bundle) {
+                        Toolkit.setPlatformResources(bundle);
+                    }
+                });
+
         java.security.AccessController.doPrivileged(
-                                 new java.security.PrivilegedAction() {
-            public Object run() {
+                                 new java.security.PrivilegedAction<Void>() {
+            public Void run() {
                 try {
                     resources =
                         ResourceBundle.getBundle("sun.awt.resources.awt",
@@ -1679,6 +1677,15 @@ public abstract class Toolkit {
      * This method returns defaultValue if the property is not found.
      */
     public static String getProperty(String key, String defaultValue) {
+        // first try platform specific bundle
+        if (platformResources != null) {
+            try {
+                return platformResources.getString(key);
+            }
+            catch (MissingResourceException e) {}
+        }
+
+        // then shared one
         if (resources != null) {
             try {
                 return resources.getString(key);
@@ -1696,25 +1703,20 @@ public abstract class Toolkit {
      * therefore not assume that the EventQueue instance returned
      * by this method will be shared by other applets or the system.
      *
-     * <p>First, if there is a security manager, its
-     * <code>checkAwtEventQueueAccess</code>
-     * method is called.
-     * If  the default implementation of <code>checkAwtEventQueueAccess</code>
-     * is used (that is, that method is not overriden), then this results in
-     * a call to the security manager's <code>checkPermission</code> method
-     * with an <code>AWTPermission("accessEventQueue")</code> permission.
+     * <p> If there is a security manager then its
+     * {@link SecurityManager#checkPermission checkPermission} method
+     * is called to check {@code AWTPermission("accessEventQueue")}.
      *
      * @return    the <code>EventQueue</code> object
      * @throws  SecurityException
-     *          if a security manager exists and its <code>{@link
-     *          java.lang.SecurityManager#checkAwtEventQueueAccess}</code>
-     *          method denies access to the <code>EventQueue</code>
+     *          if a security manager is set and it denies access to
+     *          the {@code EventQueue}
      * @see     java.awt.AWTPermission
     */
     public final EventQueue getSystemEventQueue() {
         SecurityManager security = System.getSecurityManager();
         if (security != null) {
-          security.checkAwtEventQueueAccess();
+            security.checkPermission(SecurityConstants.AWT.CHECK_AWT_EVENTQUEUE_PERMISSION);
         }
         return getSystemEventQueueImpl();
     }
@@ -1792,8 +1794,7 @@ public abstract class Toolkit {
 
         // This property should never be cached
         if (propertyName.equals("awt.dynamicLayoutSupported")) {
-            value = lazilyLoadDesktopProperty(propertyName);
-            return value;
+            return getDefaultToolkit().lazilyLoadDesktopProperty(propertyName);
         }
 
         value = desktopProperties.get(propertyName);
@@ -1978,13 +1979,13 @@ public abstract class Toolkit {
      */
     public abstract boolean isModalExclusionTypeSupported(Dialog.ModalExclusionType modalExclusionType);
 
-    private static final PlatformLogger log = PlatformLogger.getLogger("java.awt.Toolkit");
+    // 8014718: logging has been removed from SunToolkit
 
     private static final int LONG_BITS = 64;
     private int[] calls = new int[LONG_BITS];
     private static volatile long enabledOnToolkitMask;
     private AWTEventListener eventListener = null;
-    private WeakHashMap listener2SelectiveListener = new WeakHashMap();
+    private WeakHashMap<AWTEventListener, SelectiveAWTEventListener> listener2SelectiveListener = new WeakHashMap<>();
 
     /*
      * Extracts a "pure" AWTEventListener from a AWTEventListenerProxy,
@@ -2051,7 +2052,7 @@ public abstract class Toolkit {
         }
         synchronized (this) {
             SelectiveAWTEventListener selectiveListener =
-            (SelectiveAWTEventListener)listener2SelectiveListener.get(localL);
+                listener2SelectiveListener.get(localL);
 
             if (selectiveListener == null) {
                 // Create a new selectiveListener.
@@ -2121,7 +2122,7 @@ public abstract class Toolkit {
 
         synchronized (this) {
             SelectiveAWTEventListener selectiveListener =
-            (SelectiveAWTEventListener)listener2SelectiveListener.get(localL);
+                listener2SelectiveListener.get(localL);
 
             if (selectiveListener != null) {
                 listener2SelectiveListener.remove(localL);
@@ -2145,12 +2146,6 @@ public abstract class Toolkit {
         }
 
     synchronized int countAWTEventListeners(long eventMask) {
-        if (log.isLoggable(PlatformLogger.FINE)) {
-            if (eventMask == 0) {
-                log.fine("Assertion (eventMask != 0) failed");
-            }
-        }
-
         int ci = 0;
         for (; eventMask != 0; eventMask >>>= 1, ci++) {
         }
@@ -2244,7 +2239,7 @@ public abstract class Toolkit {
         synchronized (this) {
             EventListener[] la = ToolkitEventMulticaster.getListeners(eventListener,AWTEventListener.class);
 
-            java.util.List list = new ArrayList(la.length);
+            java.util.List<AWTEventListenerProxy> list = new ArrayList<>(la.length);
 
             for (int i = 0; i < la.length; i++) {
                 SelectiveAWTEventListener sael = (SelectiveAWTEventListener)la[i];
@@ -2254,7 +2249,7 @@ public abstract class Toolkit {
                                                        sael.getListener()));
                 }
             }
-            return (AWTEventListener[])list.toArray(new AWTEventListener[0]);
+            return list.toArray(new AWTEventListener[0]);
         }
     }
 
@@ -2457,7 +2452,9 @@ public abstract class Toolkit {
         }
     }
 
+    @SuppressWarnings("serial")
     private static class DesktopPropertyChangeSupport extends PropertyChangeSupport {
+
         private static final StringBuilder PROP_CHANGE_SUPPORT_KEY =
                 new StringBuilder("desktop property change support key");
         private final Object source;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,7 +53,7 @@ import java.io.Serializable;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -63,8 +63,7 @@ import java.io.Serializable;
 public class BasicComboPopup extends JPopupMenu implements ComboPopup {
     // An empty ListMode, this is used when the UI changes to allow
     // the JList to be gc'ed.
-    private static class EmptyListModelClass implements ListModel,
-                                                        Serializable {
+    private static class EmptyListModelClass implements ListModel<Object>, Serializable {
         public int getSize() { return 0; }
         public Object getElementAt(int index) { return null; }
         public void addListDataListener(ListDataListener l) {}
@@ -181,6 +180,8 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
      */
     protected ItemListener             itemListener;
 
+    private MouseWheelListener         scrollerMouseWheelListener;
+
     /**
      * This protected field is implementation specific. Do not access directly
      * or override.
@@ -287,6 +288,7 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
         uninstallComboBoxModelListeners(comboBox.getModel());
         uninstallKeyboardActions();
         uninstallListListeners();
+        uninstallScrollerListeners();
         // We do this, otherwise the listener the ui installs on
         // the model (the combobox model in this case) will keep a
         // reference to the list, causing the list (and us) to never get gced.
@@ -573,6 +575,7 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
         scroller.setFocusable( false );
         scroller.getVerticalScrollBar().setFocusable( false );
         scroller.setBorder( null );
+        installScrollerListeners();
     }
 
     /**
@@ -587,6 +590,20 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
         add( scroller );
         setDoubleBuffered( true );
         setFocusable( false );
+    }
+
+    private void installScrollerListeners() {
+        scrollerMouseWheelListener = getHandler();
+        if (scrollerMouseWheelListener != null) {
+            scroller.addMouseWheelListener(scrollerMouseWheelListener);
+        }
+    }
+
+    private void uninstallScrollerListeners() {
+        if (scrollerMouseWheelListener != null) {
+            scroller.removeMouseWheelListener(scrollerMouseWheelListener);
+            scrollerMouseWheelListener = null;
+        }
     }
 
     /**
@@ -797,8 +814,8 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
 
 
     private class Handler implements ItemListener, MouseListener,
-                          MouseMotionListener, PropertyChangeListener,
-                          Serializable {
+                          MouseMotionListener, MouseWheelListener,
+                          PropertyChangeListener, Serializable {
         //
         // MouseListener
         // NOTE: this is added to both the JList and JComboBox
@@ -981,6 +998,13 @@ public class BasicComboPopup extends JPopupMenu implements ComboPopup {
                 JComboBox comboBox = (JComboBox)e.getSource();
                 setListSelection(comboBox.getSelectedIndex());
             }
+        }
+
+        //
+        // MouseWheelListener
+        //
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            e.consume();
         }
     }
 

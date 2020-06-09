@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -199,7 +199,7 @@ public class ThreadService implements TaskServer {
 
                 // re-init
                 this.setPriority(priority);
-                this.interrupted();
+                Thread.interrupted();
                 this.setContextClassLoader(cloader);
             }
         }

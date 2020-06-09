@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,7 +42,7 @@ import sun.swing.SwingUtilities2;
  * a user to manipulate and select a color.
  * For information about using color choosers, see
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/colorchooser.html">How to Use Color Choosers</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/colorchooser.html">How to Use Color Choosers</a>,
  * a section in <em>The Java Tutorial</em>.
  *
  * <p>
@@ -69,7 +69,7 @@ import sun.swing.SwingUtilities2;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -182,6 +182,7 @@ public class JColorChooser extends JComponent implements Accessible {
             dialog = new ColorChooserDialog((Dialog)window, title, modal, c, chooserPane,
                                             okListener, cancelListener);
         }
+        dialog.getAccessibleContext().setAccessibleDescription(title);
         return dialog;
     }
 
@@ -215,7 +216,7 @@ public class JColorChooser extends JComponent implements Accessible {
     }
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      *
      * @return the <code>ColorChooserUI</code> object that renders
      *          this component
@@ -225,9 +226,9 @@ public class JColorChooser extends JComponent implements Accessible {
     }
 
     /**
-     * Sets the L&F object that renders this component.
+     * Sets the L&amp;F object that renders this component.
      *
-     * @param ui  the <code>ColorChooserUI</code> L&F object
+     * @param ui  the <code>ColorChooserUI</code> L&amp;F object
      * @see UIDefaults#getUI
      *
      * @beaninfo
@@ -240,7 +241,7 @@ public class JColorChooser extends JComponent implements Accessible {
     }
 
     /**
-     * Notification from the <code>UIManager</code> that the L&F has changed.
+     * Notification from the <code>UIManager</code> that the L&amp;F has changed.
      * Replaces the current UI object with the latest version from the
      * <code>UIManager</code>.
      *
@@ -251,7 +252,7 @@ public class JColorChooser extends JComponent implements Accessible {
     }
 
     /**
-     * Returns the name of the L&F class that renders this component.
+     * Returns the name of the L&amp;F class that renders this component.
      *
      * @return the string "ColorChooserUI"
      * @see JComponent#getUIClassID
@@ -647,6 +648,7 @@ class ColorChooserDialog extends JDialog {
         buttonPane.setLayout(new FlowLayout(FlowLayout.CENTER));
         JButton okButton = new JButton(okString);
         getRootPane().setDefaultButton(okButton);
+        okButton.getAccessibleContext().setAccessibleDescription(okString);
         okButton.setActionCommand("OK");
         okButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -659,6 +661,7 @@ class ColorChooserDialog extends JDialog {
         buttonPane.add(okButton);
 
         cancelButton = new JButton(cancelString);
+        cancelButton.getAccessibleContext().setAccessibleDescription(cancelString);
 
         // The following few lines are used to register esc to close the dialog
         Action cancelKeyAction = new AbstractAction() {
@@ -688,6 +691,7 @@ class ColorChooserDialog extends JDialog {
         buttonPane.add(cancelButton);
 
         JButton resetButton = new JButton(resetString);
+        resetButton.getAccessibleContext().setAccessibleDescription(resetString);
         resetButton.addActionListener(new ActionListener() {
            public void actionPerformed(ActionEvent e) {
                reset();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,7 +29,7 @@ package java.awt.image;
  *  This class represents image data which is stored in a pixel interleaved
  *  fashion and for
  *  which each sample of a pixel occupies one data element of the DataBuffer.
- *  It subclasses ComponentSampleModel but provides a more efficent
+ *  It subclasses ComponentSampleModel but provides a more efficient
  *  implementation for accessing pixel interleaved image data than is provided
  *  by ComponentSampleModel.  This class
  *  stores sample data for all bands in a single bank of the
@@ -85,11 +85,11 @@ public class PixelInterleavedSampleModel extends ComponentSampleModel
                                        int scanlineStride,
                                        int bandOffsets[]) {
         super(dataType, w, h, pixelStride, scanlineStride, bandOffsets);
-        int minBandOff=bandOffsets[0];
-        int maxBandOff=bandOffsets[0];
-        for (int i=1; i<bandOffsets.length; i++) {
-            minBandOff = Math.min(minBandOff,bandOffsets[i]);
-            maxBandOff = Math.max(maxBandOff,bandOffsets[i]);
+        int minBandOff=this.bandOffsets[0];
+        int maxBandOff=this.bandOffsets[0];
+        for (int i=1; i<this.bandOffsets.length; i++) {
+            minBandOff = Math.min(minBandOff,this.bandOffsets[i]);
+            maxBandOff = Math.max(maxBandOff,this.bandOffsets[i]);
         }
         maxBandOff -= minBandOff;
         if (maxBandOff > scanlineStride) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ package java.nio.file;
  * @see FileSystem#getPathMatcher
  * @see Files#newDirectoryStream(Path,String)
  */
-
+@FunctionalInterface
 public interface PathMatcher {
     /**
      * Tells if given path matches this matcher's pattern.

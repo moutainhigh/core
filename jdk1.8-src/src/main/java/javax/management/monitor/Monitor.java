@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -1609,7 +1609,7 @@ public abstract class Monitor
      * the thread instantiating this DaemonThreadFactory. Each new
      * thread is created as a daemon thread with priority
      * Thread.NORM_PRIORITY. New threads have names accessible via
-     * Thread.getName() of "JMX Monitor <pool-name> Pool [Thread-M]",
+     * Thread.getName() of "{@literal JMX Monitor <pool-name> Pool [Thread-M]}",
      * where M is the sequence number of the thread created by this
      * factory.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,15 +34,15 @@ import javax.swing.event.*;
  *
  *  The <code>JTable</code> can be set up to display any data
  *  model which implements the
- *  <code>TableModel</code> interface with a couple of lines of code:  <p>
+ *  <code>TableModel</code> interface with a couple of lines of code:
  *  <pre>
  *      TableModel myData = new MyTableModel();
  *      JTable table = new JTable(myData);
  *  </pre><p>
  *
- * For further documentation, see <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/table.html#data">Creating a Table Model</a>
+ * For further documentation, see <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/table.html#data">Creating a Table Model</a>
  * in <em>The Java Tutorial</em>.
- * <p>
+ *
  * @author Philip Milne
  * @see JTable
  */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -116,7 +116,7 @@ public class SynthLookAndFeel extends BasicLookAndFeel {
     /**
      * Used by the renderers. For the most part the renderers are implemented
      * as Labels, which is problematic in so far as they are never selected.
-     * To accomodate this SynthLabelUI checks if the current
+     * To accommodate this SynthLabelUI checks if the current
      * UI matches that of <code>selectedUI</code> (which this methods sets), if
      * it does, then a state as set by this method is returned. This provides
      * a way for labels to have a state other than selected.

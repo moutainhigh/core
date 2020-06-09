@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2000, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -513,7 +513,7 @@ class CSSParser {
      * hit.
      */
     // NOTE: this could be combined with readTill, as they contain somewhat
-    // similiar functionality.
+    // similar functionality.
     private boolean getIdentifier(char stopChar) throws IOException {
         boolean lastWasEscape = false;
         boolean done = false;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -89,9 +89,9 @@ public class BinaryRefAddr extends RefAddr {
       * @param src      The non-null contents of the address as a byte array.
       *                 The contents of src is copied into the new BinaryRefAddr.
       * @param offset   The starting index in src to get the bytes.
-      *                 0 <= offset <= src.length.
+      *                 {@code 0 <= offset <= src.length}.
       * @param count    The number of bytes to extract from src.
-      *                 0 <= count <= src.length-offset.
+      *                 {@code 0 <= count <= src.length-offset}.
       */
     public BinaryRefAddr(String addrType, byte[] src, int offset, int count) {
         super(addrType);

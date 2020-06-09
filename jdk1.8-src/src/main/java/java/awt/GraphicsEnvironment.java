@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -28,6 +28,7 @@ package java.awt;
 
 import java.awt.image.BufferedImage;
 import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Locale;
 
 import sun.font.FontManager;
@@ -95,18 +96,18 @@ public abstract class GraphicsEnvironment {
         String nm = AccessController.doPrivileged(new GetPropertyAction("java.awt.graphicsenv", null));
         try {
 //          long t0 = System.currentTimeMillis();
-            Class geCls;
+            Class<GraphicsEnvironment> geCls;
             try {
                 // First we try if the bootclassloader finds the requested
                 // class. This way we can avoid to run in a privileged block.
-                geCls = Class.forName(nm);
+                geCls = (Class<GraphicsEnvironment>)Class.forName(nm);
             } catch (ClassNotFoundException ex) {
                 // If the bootclassloader fails, we try again with the
                 // application classloader.
                 ClassLoader cl = ClassLoader.getSystemClassLoader();
-                geCls = Class.forName(nm, true, cl);
+                geCls = (Class<GraphicsEnvironment>)Class.forName(nm, true, cl);
             }
-            ge = (GraphicsEnvironment) geCls.newInstance();
+            ge = geCls.newInstance();
 //          long t1 = System.currentTimeMillis();
 //          System.out.println("GE creation took " + (t1-t0)+ "ms.");
             if (isHeadless()) {
@@ -160,42 +161,38 @@ public abstract class GraphicsEnvironment {
      */
     private static boolean getHeadlessProperty() {
         if (headless == null) {
-            java.security.AccessController.doPrivileged(
-            new java.security.PrivilegedAction() {
-                public Object run() {
-                    String nm = System.getProperty("java.awt.headless");
+            AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+                String nm = System.getProperty("java.awt.headless");
 
-                    if (nm == null) {
-                        /* No need to ask for DISPLAY when run in a browser */
-                        if (System.getProperty("javaplugin.version") != null) {
-                            headless = defaultHeadless = Boolean.FALSE;
-                        } else {
-                            String osName = System.getProperty("os.name");
-                            if (osName.contains("OS X") && "sun.awt.HToolkit".equals(
-                                    System.getProperty("awt.toolkit")))
-                            {
-                                headless = defaultHeadless = Boolean.TRUE;
-                            } else {
-                                headless = defaultHeadless =
-                                    Boolean.valueOf(("Linux".equals(osName) ||
-                                                     "SunOS".equals(osName) ||
-                                                     "FreeBSD".equals(osName) ||
-                                                     "NetBSD".equals(osName) ||
-                                                     "OpenBSD".equals(osName)) &&
-                                                     (System.getenv("DISPLAY") == null));
-                            }
-                        }
-                    } else if (nm.equals("true")) {
-                        headless = Boolean.TRUE;
+                if (nm == null) {
+                    /* No need to ask for DISPLAY when run in a browser */
+                    if (System.getProperty("javaplugin.version") != null) {
+                        headless = defaultHeadless = Boolean.FALSE;
                     } else {
-                        headless = Boolean.FALSE;
+                        String osName = System.getProperty("os.name");
+                        if (osName.contains("OS X") && "sun.awt.HToolkit".equals(
+                                System.getProperty("awt.toolkit")))
+                        {
+                            headless = defaultHeadless = Boolean.TRUE;
+                        } else {
+                            final String display = System.getenv("DISPLAY");
+                            headless = defaultHeadless =
+                                ("Linux".equals(osName) ||
+                                 "SunOS".equals(osName) ||
+                                 "FreeBSD".equals(osName) ||
+                                 "NetBSD".equals(osName) ||
+                                 "OpenBSD".equals(osName) ||
+                                 "AIX".equals(osName)) &&
+                                 (display == null || display.trim().isEmpty());
+                        }
                     }
-                    return null;
+                } else {
+                    headless = Boolean.valueOf(nm);
                 }
-                }
-            );
+                return null;
+            });
         }
-        return headless.booleanValue();
+        return headless;
     }
 
     /**
@@ -263,7 +260,7 @@ public abstract class GraphicsEnvironment {
      * available in this <code>GraphicsEnvironment</code>.  Typical usage
      * would be to allow a user to select a particular font.  Then, the
      * application can size the font and set various font attributes by
-     * calling the <code>deriveFont</code> method on the choosen instance.
+     * calling the <code>deriveFont</code> method on the chosen instance.
      * <p>
      * This method provides for the application the most precise control
      * over which <code>Font</code> instance is used to render text.

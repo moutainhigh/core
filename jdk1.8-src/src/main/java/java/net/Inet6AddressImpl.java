@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,10 +54,10 @@ class Inet6AddressImpl implements InetAddressImpl {
              * be either an IPv6 address or an IPv4 address (case of a dual
              * stack system).
              */
-            java.util.Enumeration it = netif.getInetAddresses();
+            java.util.Enumeration<InetAddress> it = netif.getInetAddresses();
             InetAddress inetaddr = null;
             while (it.hasMoreElements()) {
-                inetaddr = (InetAddress) it.nextElement();
+                inetaddr = it.nextElement();
                 if (inetaddr.getClass().isInstance(addr)) {
                     ifaddr = inetaddr.getAddress();
                     if (inetaddr instanceof Inet6Address) {
@@ -81,7 +81,7 @@ class Inet6AddressImpl implements InetAddressImpl {
         if (anyLocalAddress == null) {
             if (InetAddress.preferIPv6Address) {
                 anyLocalAddress = new Inet6Address();
-                anyLocalAddress.hostName = "::";
+                anyLocalAddress.holder().hostName = "::";
             } else {
                 anyLocalAddress = (new Inet4AddressImpl()).anyLocalAddress();
             }

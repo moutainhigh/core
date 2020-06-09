@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -232,10 +232,12 @@ public class InitialContext implements Context {
      * @see #InitialContext(boolean)
      * @since 1.3
      */
+    @SuppressWarnings("unchecked")
     protected void init(Hashtable<?,?> environment)
         throws NamingException
     {
-        myProps = ResourceManager.getInitialEnvironment(environment);
+        myProps = (Hashtable<Object,Object>)
+                ResourceManager.getInitialEnvironment(environment);
 
         if (myProps.get(Context.INITIAL_CONTEXT_FACTORY) != null) {
             // user has specified initial context factory; try to get it
@@ -256,6 +258,7 @@ public class InitialContext implements Context {
      * environment may be modified independently and it may be accessed
      * concurrently).
      *
+     * @param <T> the type of the returned object
      * @param name
      *          the name of the object to look up
      * @return  the object bound to <tt>name</tt>
@@ -265,6 +268,7 @@ public class InitialContext implements Context {
      * @see #lookup(Name)
      * @since 1.6
      */
+    @SuppressWarnings("unchecked")
     public static <T> T doLookup(Name name)
         throws NamingException {
         return (T) (new InitialContext()).lookup(name);
@@ -273,12 +277,14 @@ public class InitialContext implements Context {
    /**
      * A static method to retrieve the named object.
      * See {@link #doLookup(Name)} for details.
+     * @param <T> the type of the returned object
      * @param name
      *          the name of the object to look up
      * @return  the object bound to <tt>name</tt>
      * @throws  NamingException if a naming exception is encountered
-      * @since 1.6
+     * @since 1.6
      */
+    @SuppressWarnings("unchecked")
     public static <T> T doLookup(String name)
         throws NamingException {
         return (T) (new InitialContext()).lookup(name);
@@ -355,7 +361,7 @@ public class InitialContext implements Context {
      * follows.
      * Define a new method that uses this method to get an initial
      * context of the desired subclass.
-     * <p><blockquote><pre>
+     * <blockquote><pre>
      * protected XXXContext getURLOrDefaultInitXXXCtx(Name name)
      * throws NamingException {
      *  Context answer = getURLOrDefaultInitCtx(name);
@@ -371,7 +377,7 @@ public class InitialContext implements Context {
      * </pre></blockquote>
      * When providing implementations for the new methods in the subclass,
      * use this newly defined method to get the initial context.
-     * <p><blockquote><pre>
+     * <blockquote><pre>
      * public Object XXXMethod1(Name name, ...) {
      *  throws NamingException {
      *    return getURLOrDefaultInitXXXCtx(name).XXXMethod1(name, ...);

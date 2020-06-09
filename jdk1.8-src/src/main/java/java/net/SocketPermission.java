@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,6 +34,9 @@ import java.util.StringTokenizer;
 import java.net.InetAddress;
 import java.security.Permission;
 import java.security.PermissionCollection;
+import java.security.PrivilegedAction;
+import java.security.AccessController;
+import java.security.Security;
 import java.io.Serializable;
 import java.io.ObjectStreamField;
 import java.io.ObjectOutputStream;
@@ -41,6 +44,7 @@ import java.io.ObjectInputStream;
 import java.io.IOException;
 import sun.net.util.IPAddressUtil;
 import sun.net.RegisteredDomain;
+import sun.net.PortConfig;
 import sun.security.util.SecurityConstants;
 import sun.security.util.Debug;
 
@@ -89,6 +93,9 @@ import sun.security.util.Debug;
  * form "N-", where <i>N</i> is a port number, signifies all ports
  * numbered <i>N</i> and above, while a specification of the
  * form "-N" indicates all ports numbered <i>N</i> and below.
+ * The special port value {@code 0} refers to the entire <i>ephemeral</i>
+ * port range. This is a fixed range of ports a system may use to
+ * allocate dynamic ports from. The actual range may be system dependent.
  * <p>
  * The possible ways to connect to the host are
  * <pre>
@@ -97,7 +104,8 @@ import sun.security.util.Debug;
  * listen
  * resolve
  * </pre>
- * The "listen" action is only meaningful when used with "localhost".
+ * The "listen" action is only meaningful when used with "localhost" and
+ * means the ability to bind to a specified port.
  * The "resolve" action is implied when any of the other actions are present.
  * The action "resolve" refers to host/ip name service lookups.
  * <P>
@@ -110,7 +118,7 @@ import sun.security.util.Debug;
  * </pre>
  *
  * is granted to some code, it allows that code to connect to port 7777 on
- * <code>puffin.eng.sun.com</code>, and to accept connections on that port.
+ * {@code puffin.eng.sun.com}, and to accept connections on that port.
  *
  * <p>Similarly, if the following permission:
  *
@@ -138,7 +146,7 @@ import sun.security.util.Debug;
  */
 
 public final class SocketPermission extends Permission
-implements java.io.Serializable
+    implements java.io.Serializable
 {
     private static final long serialVersionUID = -7204263841984476862L;
 
@@ -176,6 +184,7 @@ implements java.io.Serializable
     private static final int PORT_MIN = 0;
     private static final int PORT_MAX = 65535;
     private static final int PRIV_PORT_MAX = 1023;
+    private static final int DEF_EPH_LOW = 49152;
 
     // the actions mask
     private transient int mask;
@@ -226,14 +235,19 @@ implements java.io.Serializable
     private static Debug debug = null;
     private static boolean debugInit = false;
 
+    // lazy initializer
+    private static class EphemeralRange {
+        static final int low = initEphemeralPorts("low", DEF_EPH_LOW);
+        static final int high = initEphemeralPorts("high", PORT_MAX);
+    };
+
     static {
         Boolean tmp = java.security.AccessController.doPrivileged(
                 new sun.security.action.GetBooleanAction("sun.net.trustNameService"));
         trustNameService = tmp.booleanValue();
     }
 
-    private static synchronized Debug getDebug()
-    {
+    private static synchronized Debug getDebug() {
         if (!debugInit) {
             debug = Debug.getInstance("access");
             debugInit = true;
@@ -288,8 +302,7 @@ implements java.io.Serializable
         defaultDeny = true;
     }
 
-    private static String getHost(String host)
-    {
+    private static String getHost(String host) {
         if (host.equals("")) {
             return "localhost";
         } else {
@@ -359,6 +372,14 @@ implements java.io.Serializable
 
             return new int[] {l, h};
         }
+    }
+
+    /**
+     * Returns true if the permission has specified zero
+     * as its value (or lower bound) signifying the ephemeral range
+     */
+    private boolean includesEphemerals() {
+        return portrange[0] == 0;
     }
 
     /**
@@ -479,7 +500,8 @@ implements java.io.Serializable
 
         int mask = NONE;
 
-        // Check against use of constants (used heavily within the JDK)
+        // Use object identity comparison against known-interned strings for
+        // performance benefit (these values are used heavily within the JDK).
         if (action == SecurityConstants.SOCKET_RESOLVE_ACTION) {
             return RESOLVE;
         } else if (action == SecurityConstants.SOCKET_CONNECT_ACTION) {
@@ -567,7 +589,7 @@ implements java.io.Serializable
                 switch(a[i-matchlen]) {
                 case ',':
                     seencomma = true;
-                    /*FALLTHROUGH*/
+                    break;
                 case ' ': case '\r': case '\n':
                 case '\f': case '\t':
                     break;
@@ -678,8 +700,8 @@ implements java.io.Serializable
     }
 
     private boolean authorizedIPv4(String cname, byte[] addr) {
-            String authHost = "";
-            InetAddress auth;
+        String authHost = "";
+        InetAddress auth;
 
         try {
             authHost = "auth." +
@@ -707,8 +729,8 @@ implements java.io.Serializable
     }
 
     private boolean authorizedIPv6(String cname, byte[] addr) {
-            String authHost = "";
-            InetAddress auth;
+        String authHost = "";
+        InetAddress auth;
 
         try {
             StringBuffer sb = new StringBuffer(39);
@@ -780,36 +802,35 @@ implements java.io.Serializable
      * specified permission.
      * <P>
      * More specifically, this method first ensures that all of the following
-     * are true (and returns false if any of them are not):<p>
+     * are true (and returns false if any of them are not):
      * <ul>
-     * <li> <i>p</i> is an instanceof SocketPermission,<p>
+     * <li> <i>p</i> is an instanceof SocketPermission,
      * <li> <i>p</i>'s actions are a proper subset of this
-     * object's actions, and<p>
+     * object's actions, and
      * <li> <i>p</i>'s port range is included in this port range. Note:
-     * port range is ignored when p only contains the action, 'resolve'.<p>
+     * port range is ignored when p only contains the action, 'resolve'.
      * </ul>
      *
-     * Then <code>implies</code> checks each of the following, in order,
-     * and for each returns true if the stated condition is true:<p>
+     * Then {@code implies} checks each of the following, in order,
+     * and for each returns true if the stated condition is true:
      * <ul>
      * <li> If this object was initialized with a single IP address and one of <i>p</i>'s
-     * IP addresses is equal to this object's IP address.<p>
+     * IP addresses is equal to this object's IP address.
      * <li>If this object is a wildcard domain (such as *.sun.com), and
      * <i>p</i>'s canonical name (the name without any preceding *)
      * ends with this object's canonical host name. For example, *.sun.com
-     * implies *.eng.sun.com..<p>
+     * implies *.eng.sun.com.
      * <li>If this object was not initialized with a single IP address, and one of this
-     * object's IP addresses equals one of <i>p</i>'s IP addresses.<p>
-     * <li>If this canonical name equals <i>p</i>'s canonical name.<p>
+     * object's IP addresses equals one of <i>p</i>'s IP addresses.
+     * <li>If this canonical name equals <i>p</i>'s canonical name.
      * </ul>
      *
-     * If none of the above are true, <code>implies</code> returns false.
+     * If none of the above are true, {@code implies} returns false.
      * @param p the permission to check against.
      *
      * @return true if the specified permission is implied by this object,
      * false if not.
      */
-
     public boolean implies(Permission p) {
         int i,j;
 
@@ -843,20 +864,30 @@ implements java.io.Serializable
      *      to find a match based on the IP addresses in both objects.
      * <li> Attempt to match on the canonical hostnames of both objects.
      * </ul>
-     * @param p the incoming permission request
+     * @param that the incoming permission request
      *
      * @return true if "permission" is a proper subset of the current object,
      * false if not.
      */
-
     boolean impliesIgnoreMask(SocketPermission that) {
         int i,j;
 
         if ((that.mask & RESOLVE) != that.mask) {
-            // check port range
+
+            // check simple port range
             if ((that.portrange[0] < this.portrange[0]) ||
                     (that.portrange[1] > this.portrange[1])) {
+
+                // if either includes the ephemeral range, do full check
+                if (this.includesEphemerals() || that.includesEphemerals()) {
+                    if (!inRange(this.portrange[0], this.portrange[1],
+                                     that.portrange[0], that.portrange[1]))
+                    {
+                                return false;
+                    }
+                } else {
                     return false;
+                }
             }
         }
 
@@ -956,10 +987,16 @@ implements java.io.Serializable
         String thisHost = hostname;
         String thatHost = that.hostname;
 
-        if (thisHost == null)
+        if (thisHost == null) {
             return false;
-        else
+        } else if (this.wildcard) {
+            final int cnameLength = this.cname.length();
+            return thatHost.regionMatches(true,
+                                          (thatHost.length() - cnameLength),
+                                          this.cname, 0, cnameLength);
+        } else {
             return thisHost.equalsIgnoreCase(thatHost);
+        }
     }
 
     /**
@@ -1128,7 +1165,7 @@ implements java.io.Serializable
      * <p>
      * SocketPermission objects must be stored in a manner that allows them
      * to be inserted into the collection in any order, but that also enables the
-     * PermissionCollection <code>implies</code>
+     * PermissionCollection {@code implies}
      * method to be implemented in an efficient (and consistent) manner.
      *
      * @return a new PermissionCollection object suitable for storing SocketPermissions.
@@ -1165,6 +1202,78 @@ implements java.io.Serializable
         init(getName(),getMask(actions));
     }
 
+    /**
+     * Check the system/security property for the ephemeral port range
+     * for this system. The suffix is either "high" or "low"
+     */
+    private static int initEphemeralPorts(String suffix, int defval) {
+        return AccessController.doPrivileged(
+            new PrivilegedAction<Integer>(){
+                public Integer run() {
+                    int val = Integer.getInteger(
+                            "jdk.net.ephemeralPortRange."+suffix, -1
+                    );
+                    if (val != -1) {
+                        return val;
+                    } else {
+                        return suffix.equals("low") ?
+                            PortConfig.getLower() : PortConfig.getUpper();
+                    }
+                }
+            }
+        );
+    }
+
+    /**
+     * Check if the target range is within the policy range
+     * together with the ephemeral range for this platform
+     * (if policy includes ephemeral range)
+     */
+    private static boolean inRange(
+        int policyLow, int policyHigh, int targetLow, int targetHigh
+    )
+    {
+        final int ephemeralLow = EphemeralRange.low;
+        final int ephemeralHigh = EphemeralRange.high;
+
+        if (targetLow == 0) {
+            // check policy includes ephemeral range
+            if (!inRange(policyLow, policyHigh, ephemeralLow, ephemeralHigh)) {
+                return false;
+            }
+            if (targetHigh == 0) {
+                // nothing left to do
+                return true;
+            }
+            // continue check with first real port number
+            targetLow = 1;
+        }
+
+        if (policyLow == 0 && policyHigh == 0) {
+            // ephemeral range only
+            return targetLow >= ephemeralLow && targetHigh <= ephemeralHigh;
+        }
+
+        if (policyLow != 0) {
+            // simple check of policy only
+            return targetLow >= policyLow && targetHigh <= policyHigh;
+        }
+
+        // policyLow == 0 which means possibly two ranges to check
+
+        // first check if policy and ephem range overlap/contiguous
+
+        if (policyHigh >= ephemeralLow - 1) {
+            return targetHigh <= ephemeralHigh;
+        }
+
+        // policy and ephem range do not overlap
+
+        // target range must lie entirely inside policy range or eph range
+
+        return  (targetLow <= policyHigh && targetHigh <= policyHigh) ||
+                (targetLow >= ephemeralLow && targetHigh <= ephemeralHigh);
+    }
     /*
     public String toString()
     {
@@ -1222,10 +1331,10 @@ else its the cname?
  */
 
 final class SocketPermissionCollection extends PermissionCollection
-implements Serializable
+    implements Serializable
 {
     // Not serialized; see serialization section at end of class
-    private transient List perms;
+    private transient List<SocketPermission> perms;
 
     /**
      * Create an empty SocketPermissions object.
@@ -1233,7 +1342,7 @@ implements Serializable
      */
 
     public SocketPermissionCollection() {
-        perms = new ArrayList();
+        perms = new ArrayList<SocketPermission>();
     }
 
     /**
@@ -1248,9 +1357,7 @@ implements Serializable
      * @exception SecurityException - if this SocketPermissionCollection object
      *                                has been marked readonly
      */
-
-    public void add(Permission permission)
-    {
+    public void add(Permission permission) {
         if (! (permission instanceof SocketPermission))
             throw new IllegalArgumentException("invalid permission: "+
                                                permission);
@@ -1261,7 +1368,7 @@ implements Serializable
         // optimization to ensure perms most likely to be tested
         // show up early (4301064)
         synchronized (this) {
-            perms.add(0, permission);
+            perms.add(0, (SocketPermission)permission);
         }
     }
 
@@ -1269,7 +1376,7 @@ implements Serializable
      * Check and see if this collection of permissions implies the permissions
      * expressed in "permission".
      *
-     * @param p the Permission object to compare
+     * @param permission the Permission object to compare
      *
      * @return true if "permission" is a proper subset of a permission in
      * the collection, false if not.
@@ -1290,7 +1397,7 @@ implements Serializable
             int len = perms.size();
             //System.out.println("implies "+np);
             for (int i = 0; i < len; i++) {
-                SocketPermission x = (SocketPermission) perms.get(i);
+                SocketPermission x = perms.get(i);
                 //System.out.println("  trying "+x);
                 if (((needed & x.getMask()) != 0) && x.impliesIgnoreMask(np)) {
                     effective |=  x.getMask();
@@ -1310,10 +1417,11 @@ implements Serializable
      * @return an enumeration of all the SocketPermission objects.
      */
 
-    public Enumeration elements() {
+    @SuppressWarnings("unchecked")
+    public Enumeration<Permission> elements() {
         // Convert Iterator into Enumeration
         synchronized (this) {
-            return Collections.enumeration(perms);
+            return Collections.enumeration((List<Permission>)(List)perms);
         }
     }
 
@@ -1347,7 +1455,7 @@ implements Serializable
         // Don't call out.defaultWriteObject()
 
         // Write out Vector
-        Vector permissions = new Vector(perms.size());
+        Vector<SocketPermission> permissions = new Vector<>(perms.size());
 
         synchronized (this) {
             permissions.addAll(perms);
@@ -1361,16 +1469,18 @@ implements Serializable
     /*
      * Reads in a Vector of SocketPermissions and saves them in the perms field.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException
+    {
         // Don't call in.defaultReadObject()
 
         // Read in serialized fields
         ObjectInputStream.GetField gfields = in.readFields();
 
         // Get the one we want
-        Vector permissions = (Vector)gfields.get("permissions", null);
-        perms = new ArrayList(permissions.size());
+        @SuppressWarnings("unchecked")
+        Vector<SocketPermission> permissions = (Vector<SocketPermission>)gfields.get("permissions", null);
+        perms = new ArrayList<SocketPermission>(permissions.size());
         perms.addAll(permissions);
     }
 }

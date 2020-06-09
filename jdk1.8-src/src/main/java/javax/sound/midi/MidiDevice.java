@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -60,7 +60,7 @@ import java.util.List;
  * <code>Receiver</code> or <code>Transmitter</code> that resulted in
  * opening it. If more than one implicitly opening
  * <code>Receiver</code> or <code>Transmitter</code> were obtained by
- * the application, the decive is closed after the last
+ * the application, the device is closed after the last
  * <code>Receiver</code> or <code>Transmitter</code> has been
  * closed. On the other hand, calling <code>getReceiver</code> or
  * <code>getTransmitter</code> on the device instance directly does
@@ -86,13 +86,13 @@ import java.util.List;
  * To detect if a MidiDevice represents a hardware MIDI port, the
  * following programming technique can be used:
  *
- * <pre>
+ * <pre>{@code
  * MidiDevice device = ...;
  * if ( ! (device instanceof Sequencer) && ! (device instanceof Synthesizer)) {
  *   // we're now sure that device represents a MIDI port
  *   // ...
  * }
- * </pre>
+ * }</pre>
  *
  * <p>
  * A <code>MidiDevice</code> includes a <code>{@link MidiDevice.Info}</code> object

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -41,10 +41,11 @@ import com.sun.org.apache.xerces.internal.util.DOMInputSource;
 import com.sun.org.apache.xerces.internal.util.ErrorHandlerWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXInputSource;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
-import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.StAXInputSource;
 import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.XMLGrammarPoolImpl;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.grammars.Grammar;
 import com.sun.org.apache.xerces.internal.xni.grammars.XMLGrammarDescription;
@@ -78,9 +79,14 @@ public final class XMLSchemaFactory extends SchemaFactory {
     private static final String XMLGRAMMAR_POOL =
         Constants.XERCES_PROPERTY_PREFIX + Constants.XMLGRAMMAR_POOL_PROPERTY;
 
-    /** Property identifier: SecurityManager. */
+    /** Property identifier: XMLSecurityManager. */
     private static final String SECURITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
+
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
+
 
     //
     // Data
@@ -102,7 +108,10 @@ public final class XMLSchemaFactory extends SchemaFactory {
     private ErrorHandlerWrapper fErrorHandlerWrapper;
 
     /** The SecurityManager. */
-    private SecurityManager fSecurityManager;
+    private XMLSecurityManager fSecurityManager;
+
+    /** The Security property manager. */
+    private XMLSecurityPropertyManager fSecurityPropertyMgr;
 
     /** The container for the real grammar pool. */
     private XMLGrammarPoolWrapper fXMLGrammarPoolWrapper;
@@ -113,6 +122,8 @@ public final class XMLSchemaFactory extends SchemaFactory {
      * Note the default value (false) is the safe option..
      */
     private final boolean fUseServicesMechanism;
+
+
     public XMLSchemaFactory() {
         this(true);
     }
@@ -130,8 +141,12 @@ public final class XMLSchemaFactory extends SchemaFactory {
         fXMLSchemaLoader.setErrorHandler(fErrorHandlerWrapper);
 
         // Enable secure processing feature by default
-        fSecurityManager = new SecurityManager();
+        fSecurityManager = new XMLSecurityManager(true);
         fXMLSchemaLoader.setProperty(SECURITY_MANAGER, fSecurityManager);
+
+        fSecurityPropertyMgr = new XMLSecurityPropertyManager();
+        fXMLSchemaLoader.setProperty(XML_SECURITY_PROPERTY_MANAGER,
+                fSecurityPropertyMgr);
     }
 
     /**
@@ -267,6 +282,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
             schema = new EmptyXMLSchema();
         }
         propagateFeatures(schema);
+        propagateProperties(schema);
         return schema;
     }
 
@@ -274,6 +290,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
         // Use a Schema that uses the system id as the equality source.
         AbstractXMLSchema schema = new WeakReferenceXMLSchema();
         propagateFeatures(schema);
+        propagateProperties(schema);
         return schema;
     }
 
@@ -284,7 +301,7 @@ public final class XMLSchemaFactory extends SchemaFactory {
                     "FeatureNameNull", null));
         }
         if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
-            return (fSecurityManager != null);
+            return (fSecurityManager != null && fSecurityManager.isSecureProcessing());
         }
         try {
             return fXMLSchemaLoader.getFeature(name);
@@ -348,7 +365,17 @@ public final class XMLSchemaFactory extends SchemaFactory {
                         SAXMessageFormatter.formatMessage(null,
                         "jaxp-secureprocessing-feature", null));
             }
-            fSecurityManager = value ? new SecurityManager() : null;
+
+            fSecurityManager.setSecureProcessing(value);
+            if (value) {
+                if (Constants.IS_JDK8_OR_ABOVE) {
+                    fSecurityPropertyMgr.setValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD,
+                            XMLSecurityPropertyManager.State.FSP, Constants.EXTERNAL_ACCESS_DEFAULT_FSP);
+                    fSecurityPropertyMgr.setValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_SCHEMA,
+                            XMLSecurityPropertyManager.State.FSP, Constants.EXTERNAL_ACCESS_DEFAULT_FSP);
+                }
+            }
+
             fXMLSchemaLoader.setProperty(SECURITY_MANAGER, fSecurityManager);
             return;
         } else if (name.equals(Constants.ORACLE_FEATURE_SERVICE_MECHANISM)) {
@@ -381,8 +408,16 @@ public final class XMLSchemaFactory extends SchemaFactory {
                     "ProperyNameNull", null));
         }
         if (name.equals(SECURITY_MANAGER)) {
-            fSecurityManager = (SecurityManager) object;
+            fSecurityManager = XMLSecurityManager.convert(object, fSecurityManager);
             fXMLSchemaLoader.setProperty(SECURITY_MANAGER, fSecurityManager);
+            return;
+        } else if (name.equals(Constants.XML_SECURITY_PROPERTY_MANAGER)) {
+            if (object == null) {
+                fSecurityPropertyMgr = new XMLSecurityPropertyManager();
+            } else {
+                fSecurityPropertyMgr = (XMLSecurityPropertyManager)object;
+            }
+            fXMLSchemaLoader.setProperty(Constants.XML_SECURITY_PROPERTY_MANAGER, fSecurityPropertyMgr);
             return;
         }
         else if (name.equals(XMLGRAMMAR_POOL)) {
@@ -391,7 +426,16 @@ public final class XMLSchemaFactory extends SchemaFactory {
                     "property-not-supported", new Object [] {name}));
         }
         try {
-            fXMLSchemaLoader.setProperty(name, object);
+            //check if the property is managed by security manager
+            if (fSecurityManager == null ||
+                    !fSecurityManager.setLimit(name, XMLSecurityManager.State.APIPROPERTY, object)) {
+                //check if the property is managed by security property manager
+                if (fSecurityPropertyMgr == null ||
+                        !fSecurityPropertyMgr.setValue(name, XMLSecurityPropertyManager.State.APIPROPERTY, object)) {
+                    //fall back to the existing property manager
+                    fXMLSchemaLoader.setProperty(name, object);
+                }
+            }
         }
         catch (XMLConfigurationException e) {
             String identifier = e.getIdentifier();
@@ -409,7 +453,8 @@ public final class XMLSchemaFactory extends SchemaFactory {
     }
 
     private void propagateFeatures(AbstractXMLSchema schema) {
-        schema.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, fSecurityManager != null);
+        schema.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+                (fSecurityManager != null && fSecurityManager.isSecureProcessing()));
         schema.setFeature(Constants.ORACLE_FEATURE_SERVICE_MECHANISM, fUseServicesMechanism);
         String[] features = fXMLSchemaLoader.getRecognizedFeatures();
         for (int i = 0; i < features.length; ++i) {
@@ -417,6 +462,15 @@ public final class XMLSchemaFactory extends SchemaFactory {
             schema.setFeature(features[i], state);
         }
     }
+
+    private void propagateProperties(AbstractXMLSchema schema) {
+        String[] properties = fXMLSchemaLoader.getRecognizedProperties();
+        for (int i = 0; i < properties.length; ++i) {
+            Object state = fXMLSchemaLoader.getProperty(properties[i]);
+            schema.setProperty(properties[i], state);
+        }
+    }
+
 
     /**
      * Extension of XMLGrammarPoolImpl which exposes the number of

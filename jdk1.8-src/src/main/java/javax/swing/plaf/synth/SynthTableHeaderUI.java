@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -35,7 +35,7 @@ import javax.swing.table.*;
 import sun.swing.table.*;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.table.JTableHeader}.
  *
  * @author Alan Chung
@@ -64,7 +64,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -89,7 +89,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -98,7 +98,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -114,7 +114,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -174,7 +174,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -185,7 +185,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
 // SynthUI
 //
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -193,12 +193,11 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void rolloverColumnUpdated(int oldColumn, int newColumn) {
@@ -207,7 +206,7 @@ public class SynthTableHeaderUI extends BasicTableHeaderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

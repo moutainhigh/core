@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,7 +38,7 @@ import javax.sql.rowset.*;
  * <P>
  * <code>SyncProvider</code>  implementations that supply XML data reader
  * capabilities such as output XML stream capabilities can implement this
- * interface to provider standard <code>XmlReader</code> objects to
+ * interface to provide standard <code>XmlReader</code> objects to
  * <code>WebRowSet</code> implementations.
  * <p>
  * An <code>XmlReader</code> object is registered as the

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -88,7 +88,7 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
 
         if (!(o instanceof Set))
             return false;
-        Collection c = (Collection) o;
+        Collection<?> c = (Collection<?>) o;
         if (c.size() != size())
             return false;
         try {
@@ -166,6 +166,7 @@ public abstract class AbstractSet<E> extends AbstractCollection<E> implements Se
      * @see #contains(Object)
      */
     public boolean removeAll(Collection<?> c) {
+        Objects.requireNonNull(c);
         boolean modified = false;
 
         if (size() > c.size()) {

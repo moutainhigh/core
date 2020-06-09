@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -24,6 +24,9 @@
  */
 
 package javax.accessibility;
+
+import sun.awt.AWTAccessor;
+import sun.awt.AppContext;
 
 import java.util.Locale;
 import java.beans.PropertyChangeListener;
@@ -78,6 +81,26 @@ import java.awt.IllegalComponentStateException;
  * @author      Lynn Monsanto
  */
 public abstract class AccessibleContext {
+
+    /**
+     * The AppContext that should be used to dispatch events for this
+     * AccessibleContext
+     */
+    private volatile AppContext targetAppContext;
+
+    static {
+        AWTAccessor.setAccessibleContextAccessor(new AWTAccessor.AccessibleContextAccessor() {
+            @Override
+            public void setAppContext(AccessibleContext accessibleContext, AppContext appContext) {
+                accessibleContext.targetAppContext = appContext;
+            }
+
+            @Override
+            public AppContext getAppContext(AccessibleContext accessibleContext) {
+                return accessibleContext.targetAppContext;
+            }
+        });
+    }
 
    /**
     * Constant used to determine when the accessibleName property has
@@ -480,7 +503,7 @@ public abstract class AccessibleContext {
      * a set of predefined roles.  This enables assistive technologies to
      * provide a consistent interface to various tweaked subclasses of
      * components (e.g., use AccessibleRole.PUSH_BUTTON for all components
-     * that act like a push button) as well as distinguish between sublasses
+     * that act like a push button) as well as distinguish between subclasses
      * that behave differently (e.g., AccessibleRole.CHECK_BOX for check boxes
      * and AccessibleRole.RADIO_BUTTON for radio buttons).
      * <p>Note that the AccessibleRole class is also extensible, so

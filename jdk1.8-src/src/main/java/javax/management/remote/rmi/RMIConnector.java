@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
-import java.io.WriteAbortedException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -61,6 +60,7 @@ import java.rmi.server.RemoteRef;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
+import java.security.PrivilegedActionException;
 import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,6 +69,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 import javax.management.Attribute;
 import javax.management.AttributeList;
 import javax.management.AttributeNotFoundException;
@@ -103,6 +104,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.rmi.ssl.SslRMIClientSocketFactory;
 import javax.security.auth.Subject;
+import sun.reflect.misc.ReflectUtil;
 import sun.rmi.server.UnicastRef2;
 import sun.rmi.transport.LiveRef;
 
@@ -127,7 +129,6 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
             Map<String, ?> environment) {
         if (rmiServer == null && address == null) throw new
                 IllegalArgumentException("rmiServer and jmxServiceURL both null");
-
         initTransients();
 
         this.rmiServer = rmiServer;
@@ -238,10 +239,21 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
     //--------------------------------------------------------------------
     // implements JMXConnector interface
     //--------------------------------------------------------------------
+
+    /**
+     * @throws IOException if the connection could not be made because of a
+     *   communication problem, or in the case of the {@code iiop} protocol,
+     *   that RMI/IIOP is not supported
+     */
     public void connect() throws IOException {
         connect(null);
     }
 
+    /**
+     * @throws IOException if the connection could not be made because of a
+     *   communication problem, or in the case of the {@code iiop} protocol,
+     *   that RMI/IIOP is not supported
+     */
     public synchronized void connect(Map<String,?> environment)
     throws IOException {
         final boolean tracing = logger.traceOn();
@@ -393,14 +405,7 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
             throw new IOException("Not connected");
         }
 
-        MBeanServerConnection rmbsc = rmbscMap.get(delegationSubject);
-        if (rmbsc != null) {
-            return rmbsc;
-        }
-
-        rmbsc = new RemoteMBeanServerConnection(delegationSubject);
-        rmbscMap.put(delegationSubject, rmbsc);
-        return rmbsc;
+        return getConnectionWithSubject(delegationSubject);
     }
 
     public void
@@ -707,9 +712,7 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
             if (logger.debugOn())
                 logger.debug("createMBean(String,ObjectName,Object[],String[])",
                         "className=" + className + ", name="
-                        + name + ", params="
-                        + objects(params) + ", signature="
-                        + strings(signature));
+                        + name + ", signature=" + strings(signature));
 
             final MarshalledObject<Object[]> sParams =
                     new MarshalledObject<Object[]>(params);
@@ -748,8 +751,7 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
             if (logger.debugOn()) logger.debug(
                     "createMBean(String,ObjectName,ObjectName,Object[],String[])",
                     "className=" + className + ", name=" + name + ", loaderName="
-                    + loaderName + ", params=" + objects(params)
-                    + ", signature=" + strings(signature));
+                    + loaderName + ", signature=" + strings(signature));
 
             final MarshalledObject<Object[]> sParams =
                     new MarshalledObject<Object[]>(params);
@@ -949,8 +951,8 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
                 IOException {
 
             if (logger.debugOn()) logger.debug("setAttribute",
-                    "name=" + name + ", attribute="
-                    + attribute);
+                    "name=" + name + ", attribute name="
+                    + attribute.getName());
 
             final MarshalledObject<Attribute> sAttribute =
                     new MarshalledObject<Attribute>(attribute);
@@ -972,9 +974,11 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
                 ReflectionException,
                 IOException {
 
-            if (logger.debugOn()) logger.debug("setAttributes",
-                    "name=" + name + ", attributes="
-                    + attributes);
+            if (logger.debugOn()) {
+                logger.debug("setAttributes",
+                    "name=" + name + ", attribute names="
+                    + getAttributesNames(attributes));
+            }
 
             final MarshalledObject<AttributeList> sAttributes =
                     new MarshalledObject<AttributeList>(attributes);
@@ -1007,7 +1011,6 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
             if (logger.debugOn()) logger.debug("invoke",
                     "name=" + name
                     + ", operationName=" + operationName
-                    + ", params=" + objects(params)
                     + ", signature=" + strings(signature));
 
             final MarshalledObject<Object[]> sParams =
@@ -1330,66 +1333,94 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
                 int maxNotifications,
                 long timeout)
                 throws IOException, ClassNotFoundException {
-            IOException org;
 
+            boolean retried = false;
             while (true) { // used for a successful re-connection
+                           // or a transient network problem
                 try {
                     return connection.fetchNotifications(clientSequenceNumber,
                             maxNotifications,
-                            timeout);
+                            timeout); // return normally
                 } catch (IOException ioe) {
-                    org = ioe;
+                    // Examine the chain of exceptions to determine whether this
+                    // is a deserialization issue. If so - we propagate the
+                    // appropriate exception to the caller, who will then
+                    // proceed with fetching notifications one by one
+                    rethrowDeserializationException(ioe);
 
-                    // inform of IOException
                     try {
                         communicatorAdmin.gotIOException(ioe);
-
-                        // The connection should be re-established.
-                        continue;
+                        // reconnection OK, back to "while" to do again
                     } catch (IOException ee) {
-                        // No more fetch, the Exception will be re-thrown.
-                        break;
-                    } // never reached
-                } // never reached
-            }
+                        boolean toClose = false;
 
-            // specially treating for an UnmarshalException
-            if (org instanceof UnmarshalException) {
-                UnmarshalException ume = (UnmarshalException)org;
+                        synchronized (this) {
+                            if (terminated) {
+                                // the connection is closed.
+                                throw ioe;
+                            } else if (retried) {
+                                toClose = true;
+                            }
+                        }
 
-                if (ume.detail instanceof ClassNotFoundException)
-                    throw (ClassNotFoundException) ume.detail;
+                        if (toClose) {
+                            // JDK-8049303
+                            // We received an IOException - but the communicatorAdmin
+                            // did not close the connection - possibly because
+                            // the original exception was raised by a transient network
+                            // problem?
+                            // We already know that this exception is not due to a deserialization
+                            // issue as we already took care of that before involving the
+                            // communicatorAdmin. Moreover - we already made one retry attempt
+                            // at fetching the same batch of notifications - and the
+                            // problem persisted.
+                            // Since trying again doesn't seem to solve the issue, we will now
+                            // close the connection. Doing otherwise might cause the
+                            // NotifFetcher thread to die silently.
+                            final Notification failedNotif =
+                                    new JMXConnectionNotification(
+                                    JMXConnectionNotification.FAILED,
+                                    this,
+                                    connectionId,
+                                    clientNotifSeqNo++,
+                                    "Failed to communicate with the server: " + ioe.toString(),
+                                    ioe);
 
-                /* In Sun's RMI implementation, if a method return
-                   contains an unserializable object, then we get
-                   UnmarshalException wrapping WriteAbortedException
-                   wrapping NotSerializableException.  In that case we
-                   extract the NotSerializableException so that our
-                   caller can realize it should try to skip past the
-                   notification that presumably caused it.  It's not
-                   certain that every other RMI implementation will
-                   generate this exact exception sequence.  If not, we
-                   will not detect that the problem is due to an
-                   unserializable object, and we will stop trying to
-                   receive notifications from the server.  It's not
-                   clear we can do much better.  */
-                if (ume.detail instanceof WriteAbortedException) {
-                    WriteAbortedException wae =
-                            (WriteAbortedException) ume.detail;
-                    if (wae.detail instanceof IOException)
-                        throw (IOException) wae.detail;
+                            sendNotification(failedNotif);
+
+                            try {
+                                close(true);
+                            } catch (Exception e) {
+                                // OK.
+                                // We are closing
+                            }
+                            throw ioe; // the connection is closed here.
+                        } else {
+                            // JDK-8049303 possible transient network problem,
+                            // let's try one more time
+                            retried = true;
+                        }
+                    }
                 }
-            } else if (org instanceof MarshalException) {
+            }
+        }
+
+        private void rethrowDeserializationException(IOException ioe)
+                throws ClassNotFoundException, IOException {
+            // specially treating for an UnmarshalException
+            if (ioe instanceof UnmarshalException) {
+                throw ioe; // the fix of 6937053 made ClientNotifForwarder.fetchNotifs
+                           // fetch one by one with UnmarshalException
+            } else if (ioe instanceof MarshalException) {
                 // IIOP will throw MarshalException wrapping a NotSerializableException
                 // when a server fails to serialize a response.
-                MarshalException me = (MarshalException)org;
+                MarshalException me = (MarshalException)ioe;
                 if (me.detail instanceof NotSerializableException) {
                     throw (NotSerializableException)me.detail;
                 }
             }
 
-            // Not serialization problem, simply re-throw the orginal exception
-            throw org;
+            // Not serialization problem, return.
         }
 
         protected Integer addListenerForMBeanRemovedNotif()
@@ -1683,17 +1714,17 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
      * this method will attempt to connect the stub to an ORB as
      * follows:
      * <ul>
-     * <p>This method looks in the provided <var>environment</var> for
+     * <li>This method looks in the provided <var>environment</var> for
      * the "java.naming.corba.orb" property. If it is found, the
      * referenced object (an {@link org.omg.CORBA.ORB ORB}) is used to
      * connect the stub. Otherwise, a new org.omg.CORBA.ORB is created
      * by calling {@link
      * org.omg.CORBA.ORB#init(String[], Properties)
-     * org.omg.CORBA.ORB.init((String[])null,(Properties)null)}
-     * <p>The new created ORB is kept in a static
+     * org.omg.CORBA.ORB.init((String[])null,(Properties)null)}</li>
+     * <li>The new created ORB is kept in a static
      * {@link WeakReference} and can be reused for connecting other
      * stubs. However, no reference is ever kept on the ORB provided
-     * in the <var>environment</var> map, if any.
+     * in the <var>environment</var> map, if any.</li>
      * </ul>
      * @param rmiServer A RMI Server Stub.
      * @param environment An environment map, possibly containing an ORB.
@@ -1819,7 +1850,7 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
 
     // Initialization of transient variables.
     private void initTransients() {
-        rmbscMap = new WeakHashMap<Subject, MBeanServerConnection>();
+        rmbscMap = new WeakHashMap<Subject, WeakReference<MBeanServerConnection>>();
         connected = false;
         terminated = false;
 
@@ -1991,10 +2022,31 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
         @Override
         protected Class<?> resolveClass(ObjectStreamClass classDesc)
                 throws IOException, ClassNotFoundException {
-            return Class.forName(classDesc.getName(), false, loader);
+            String name = classDesc.getName();
+            ReflectUtil.checkPackageAccess(name);
+            return Class.forName(name, false, loader);
         }
 
         private final ClassLoader loader;
+    }
+
+    private MBeanServerConnection getConnectionWithSubject(Subject delegationSubject) {
+        MBeanServerConnection conn = null;
+
+        if (delegationSubject == null) {
+            if (nullSubjectConnRef == null
+                    || (conn = nullSubjectConnRef.get()) == null) {
+                conn = new RemoteMBeanServerConnection(null);
+                nullSubjectConnRef = new WeakReference(conn);
+            }
+        } else {
+            WeakReference<MBeanServerConnection> wr = rmbscMap.get(delegationSubject);
+            if (wr == null || (conn = wr.get()) == null) {
+                conn = new RemoteMBeanServerConnection(delegationSubject);
+                rmbscMap.put(delegationSubject, new WeakReference(conn));
+            }
+        }
+        return conn;
     }
 
     /*
@@ -2356,13 +2408,21 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
         }
     }
 
-    private static RMIConnection shadowIiopStub(Object stub)
+  private static RMIConnection shadowIiopStub(Object stub)
     throws InstantiationException, IllegalAccessException {
-        Object proxyStub = proxyStubClass.newInstance();
+        Object proxyStub = null;
+        try {
+            proxyStub = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+                public Object run() throws Exception {
+                    return proxyStubClass.newInstance();
+                }
+            });
+        } catch (PrivilegedActionException e) {
+            throw new InternalError();
+        }
         IIOPHelper.setDelegate(proxyStub, IIOPHelper.getDelegate(stub));
         return (RMIConnection) proxyStub;
     }
-
     private static RMIConnection getConnection(RMIServer server,
             Object credentials,
             boolean checkStub)
@@ -2537,7 +2597,8 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
 
     private transient long clientNotifSeqNo = 0;
 
-    private transient WeakHashMap<Subject, MBeanServerConnection> rmbscMap;
+    private transient WeakHashMap<Subject, WeakReference<MBeanServerConnection>> rmbscMap;
+    private transient WeakReference<MBeanServerConnection> nullSubjectConnRef = null;
 
     private transient RMINotifClient rmiNotifClient;
     // = new RMINotifClient(new Integer(0));
@@ -2572,5 +2633,13 @@ public class RMIConnector implements JMXConnector, Serializable, JMXAddressable 
 
     private static String strings(final String[] strs) {
         return objects(strs);
+    }
+
+    static String getAttributesNames(AttributeList attributes) {
+        return attributes != null ?
+                attributes.asList().stream()
+                        .map(Attribute::getName)
+                        .collect(Collectors.joining("[", ", ", "]"))
+                : "[]";
     }
 }

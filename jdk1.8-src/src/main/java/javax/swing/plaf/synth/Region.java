@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -62,10 +62,10 @@ import javax.swing.UIDefaults;
  * The following <a href="doc-files/synthFileFormat.html">xml</a>
  * accomplishes the same thing:
  * <pre>
- * &lt;style id="splitPaneStyle">
+ * &lt;style id="splitPaneStyle"&gt;
  *   ...
- * &lt;/style>
- * &lt;bind style="splitPaneStyle" type="region" key="SplitPane"/>
+ * &lt;/style&gt;
+ * &lt;bind style="splitPaneStyle" type="region" key="SplitPane"/&gt;
  * </pre>
  *
  * @since 1.5

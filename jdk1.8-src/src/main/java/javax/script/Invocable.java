@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -51,7 +51,7 @@ public interface Invocable  {
      * @return The value returned by the procedure.  The rules for converting the scripting
      * variable returned by the script method to a Java Object are implementation-specific.
      *
-     * @throws ScriptException if an error occurrs during invocation of the method.
+     * @throws ScriptException if an error occurs during invocation of the method.
      * @throws NoSuchMethodException if method with given name or matching argument types cannot be found.
      * @throws NullPointerException if the method name is null.
      * @throws IllegalArgumentException if the specified thiz is null or the specified Object is
@@ -63,10 +63,11 @@ public interface Invocable  {
     /**
      * Used to call top-level procedures and functions defined in scripts.
      *
+     * @param name of the procedure or function to call
      * @param args Arguments to pass to the procedure or function
      * @return The value returned by the procedure or function
      *
-     * @throws ScriptException if an error occurrs during invocation of the method.
+     * @throws ScriptException if an error occurs during invocation of the method.
      * @throws NoSuchMethodException if method with given name or matching argument types cannot be found.
      * @throws NullPointerException if method name is null.
      */
@@ -79,6 +80,7 @@ public interface Invocable  {
      * the interpreter. The methods of the interface
      * may be implemented using the <code>invokeFunction</code> method.
      *
+     * @param <T> the type of the interface to return
      * @param clasz The <code>Class</code> object of the interface to return.
      *
      * @return An instance of requested interface - null if the requested interface is unavailable,
@@ -95,6 +97,7 @@ public interface Invocable  {
      * a scripting object compiled in the interpreter. The methods of the
      * interface may be implemented using the <code>invokeMethod</code> method.
      *
+     * @param <T> the type of the interface to return
      * @param thiz The scripting object whose member functions are used to implement the methods of the interface.
      * @param clasz The <code>Class</code> object of the interface to return.
      *

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -144,7 +144,14 @@ public enum TypeKind {
       *
       * @since 1.7
       */
-    UNION;
+    UNION,
+
+    /**
+      * An intersection type.
+      *
+      * @since 1.8
+      */
+    INTERSECTION;
 
     /**
      * Returns {@code true} if this kind corresponds to a primitive

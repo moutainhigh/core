@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -28,7 +28,7 @@ package java.sql;
 import java.io.Reader;
 
 /**
- * The mapping in the Java<sup><font size=-2>TM</font></sup> programming language
+ * The mapping in the Java&trade; programming language
  * for the SQL <code>CLOB</code> type.
  * An SQL <code>CLOB</code> is a built-in type
  * that stores a Character Large Object as a column value in a row of
@@ -172,7 +172,7 @@ public interface Clob {
      * in the <code>Clob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Clob</code> value is reached
      * while writing the given string, then the length of the <code>Clob</code>
-     * value will be increased to accomodate the extra characters.
+     * value will be increased to accommodate the extra characters.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>CLOB</code> value then the
@@ -202,7 +202,7 @@ public interface Clob {
      * in the <code>Clob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Clob</code> value is reached
      * while writing the given string, then the length of the <code>Clob</code>
-     * value will be increased to accomodate the extra characters.
+     * value will be increased to accommodate the extra characters.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>CLOB</code> value then the
@@ -235,7 +235,7 @@ public interface Clob {
      * in the <code>Clob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Clob</code> value is reached
      * while writing characters to the stream, then the length of the <code>Clob</code>
-     * value will be increased to accomodate the extra characters.
+     * value will be increased to accommodate the extra characters.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>CLOB</code> value then the
@@ -264,7 +264,7 @@ public interface Clob {
      * in the <code>Clob</code> object starting at the position
      * <code>pos</code>.  If the end of the <code>Clob</code> value is reached
      * while writing characters to the stream, then the length of the <code>Clob</code>
-     * value will be increased to accomodate the extra characters.
+     * value will be increased to accommodate the extra characters.
      * <p>
      * <b>Note:</b> If the value specified for <code>pos</code>
      * is greater then the length+1 of the <code>CLOB</code> value then the

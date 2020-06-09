@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,6 +29,8 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.LongBuffer;
+import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 /**
  * This class implements a vector of bits that grows as needed. Each
@@ -187,6 +189,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
      * @param longs a long array containing a little-endian representation
      *        of a sequence of bits to be used as the initial bits of the
      *        new bit set
+     * @return a {@code BitSet} containing all the bits in the long array
      * @since 1.7
      */
     public static BitSet valueOf(long[] longs) {
@@ -210,6 +213,8 @@ public class BitSet implements Cloneable, java.io.Serializable {
      * @param lb a long buffer containing a little-endian representation
      *        of a sequence of bits between its position and limit, to be
      *        used as the initial bits of the new bit set
+     * @return a {@code BitSet} containing all the bits in the buffer in the
+     *         specified range
      * @since 1.7
      */
     public static BitSet valueOf(LongBuffer lb) {
@@ -235,6 +240,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
      * @param bytes a byte array containing a little-endian
      *        representation of a sequence of bits to be used as the
      *        initial bits of the new bit set
+     * @return a {@code BitSet} containing all the bits in the byte array
      * @since 1.7
      */
     public static BitSet valueOf(byte[] bytes) {
@@ -255,6 +261,8 @@ public class BitSet implements Cloneable, java.io.Serializable {
      * @param bb a byte buffer containing a little-endian representation
      *        of a sequence of bits between its position and limit, to be
      *        used as the initial bits of the new bit set
+     * @return a {@code BitSet} containing all the bits in the buffer in the
+     *         specified range
      * @since 1.7
      */
     public static BitSet valueOf(ByteBuffer bb) {
@@ -688,6 +696,9 @@ public class BitSet implements Cloneable, java.io.Serializable {
      *  <pre> {@code
      * for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i+1)) {
      *     // operate on index i here
+     *     if (i == Integer.MAX_VALUE) {
+     *         break; // or (i+1) would overflow
+     *     }
      * }}</pre>
      *
      * @param  fromIndex the index to start checking from (inclusive)
@@ -1092,7 +1103,7 @@ public class BitSet implements Cloneable, java.io.Serializable {
             result.checkInvariants();
             return result;
         } catch (CloneNotSupportedException e) {
-            throw new InternalError();
+            throw new InternalError(e);
         }
     }
 
@@ -1156,10 +1167,10 @@ public class BitSet implements Cloneable, java.io.Serializable {
      * <p>Example:
      * <pre>
      * BitSet drPepper = new BitSet();</pre>
-     * Now {@code drPepper.toString()} returns "{@code {}}".<p>
+     * Now {@code drPepper.toString()} returns "{@code {}}".
      * <pre>
      * drPepper.set(2);</pre>
-     * Now {@code drPepper.toString()} returns "{@code {2}}".<p>
+     * Now {@code drPepper.toString()} returns "{@code {2}}".
      * <pre>
      * drPepper.set(4);
      * drPepper.set(10);</pre>
@@ -1178,14 +1189,60 @@ public class BitSet implements Cloneable, java.io.Serializable {
         int i = nextSetBit(0);
         if (i != -1) {
             b.append(i);
-            for (i = nextSetBit(i+1); i >= 0; i = nextSetBit(i+1)) {
+            while (true) {
+                if (++i < 0) break;
+                if ((i = nextSetBit(i)) < 0) break;
                 int endOfRun = nextClearBit(i);
                 do { b.append(", ").append(i); }
-                while (++i < endOfRun);
+                while (++i != endOfRun);
             }
         }
 
         b.append('}');
         return b.toString();
+    }
+
+    /**
+     * Returns a stream of indices for which this {@code BitSet}
+     * contains a bit in the set state. The indices are returned
+     * in order, from lowest to highest. The size of the stream
+     * is the number of bits in the set state, equal to the value
+     * returned by the {@link #cardinality()} method.
+     *
+     * <p>The bit set must remain constant during the execution of the
+     * terminal stream operation.  Otherwise, the result of the terminal
+     * stream operation is undefined.
+     *
+     * @return a stream of integers representing set indices
+     * @since 1.8
+     */
+    public IntStream stream() {
+        class BitSetIterator implements PrimitiveIterator.OfInt {
+            int next = nextSetBit(0);
+
+            @Override
+            public boolean hasNext() {
+                return next != -1;
+            }
+
+            @Override
+            public int nextInt() {
+                if (next != -1) {
+                    int ret = next;
+                    next = nextSetBit(next+1);
+                    return ret;
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
+        }
+
+        return StreamSupport.intStream(
+                () -> Spliterators.spliterator(
+                        new BitSetIterator(), cardinality(),
+                        Spliterator.ORDERED | Spliterator.DISTINCT | Spliterator.SORTED),
+                Spliterator.SIZED | Spliterator.SUBSIZED |
+                        Spliterator.ORDERED | Spliterator.DISTINCT | Spliterator.SORTED,
+                false);
     }
 }

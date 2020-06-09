@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -24,6 +24,7 @@ package com.sun.org.apache.xpath.internal;
 
 import com.sun.org.apache.xml.internal.utils.QName;
 import com.sun.org.apache.xpath.internal.objects.XObject;
+import java.util.Objects;
 
 /**
  * This class holds an instance of an argument on
@@ -182,7 +183,7 @@ public class Arg
   {
 
     m_qname = new QName("");
-    ;  // so that string compares can be done.
+       // so that string compares can be done.
     m_val = null;
     m_expression = null;
     m_isVisible = true;
@@ -223,6 +224,11 @@ public class Arg
     m_expression = null;
   }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.m_qname);
+    }
+
   /**
    * Equality function specialized for the variable name.  If the argument
    * is not a qname, it will deligate to the super class.
@@ -231,6 +237,7 @@ public class Arg
    * @return  <code>true</code> if this object is the same as the obj
    *          argument; <code>false</code> otherwise.
    */
+  @Override
   public boolean equals(Object obj)
   {
     if(obj instanceof QName)

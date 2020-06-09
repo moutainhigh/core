@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-/*
- * $Id: XSLTErrorResources_zh_CN.java,v 1.2.4.1 2005/09/13 11:14:39 pvedula Exp $
  */
 package com.sun.org.apache.xalan.internal.res;
 
@@ -471,7 +468,13 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
 
   // Error messages...
 
-  private static final Object[][] _contents = new Object[][] {
+  /** Get the lookup table for error messages.
+    *
+    * @return The message lookup table.
+    */
+  public Object[][] getContents()
+  {
+      return new Object[][] {
 
   /** Error message ID that has a null message, but takes in a single object.    */
   {"ER0000" , "{0}" },
@@ -624,7 +627,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
       "\u65E0\u6CD5\u5904\u7406\u6837\u5F0F\u8868!"},
 
     { ER_COULDNT_PARSE_DOC,
-     "\u65E0\u6CD5\u5BF9{0}\u6587\u6863\u8FDB\u884C\u8BED\u6CD5\u5206\u6790!"},
+     "\u65E0\u6CD5\u89E3\u6790{0}\u6587\u6863!"},
 
     { ER_COULDNT_FIND_FRAGMENT,
      "\u627E\u4E0D\u5230\u7247\u6BB5: {0}"},
@@ -962,7 +965,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
   //in locale specific files like XSLTErrorResources_de.java, XSLTErrorResources_fr.java etc.
   //NOTE: Not only the key name but message has also been changed.
     { ER_VALUE_SHOULD_BE_NUMBER,
-        "{0}\u7684\u503C\u5E94\u5305\u542B\u53EF\u8BED\u6CD5\u5206\u6790\u7684\u6570\u5B57"},
+        "{0}\u7684\u503C\u5E94\u5305\u542B\u53EF\u89E3\u6790\u7684\u6570\u5B57"},
 
     { ER_VALUE_SHOULD_EQUAL,
         "{0}\u7684\u503C\u5E94\u7B49\u4E8E\u201C\u662F\u201D\u6216\u201C\u5426\u201D"},
@@ -1010,7 +1013,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
      "\u672A\u6307\u5B9A\u7CFB\u7EDF\u5C5E\u6027 org.xml.sax.parser"},
 
     { ER_PARSER_ARG_CANNOT_BE_NULL,
-     "\u8BED\u6CD5\u5206\u6790\u5668\u53C2\u6570\u4E0D\u80FD\u4E3A\u7A7A\u503C"},
+     "\u89E3\u6790\u5668\u53C2\u6570\u4E0D\u80FD\u4E3A\u7A7A\u503C"},
 
     { ER_FEATURE,
      "\u529F\u80FD: {0}"},
@@ -1247,7 +1250,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
       "\u53D1\u73B0\u7279\u5F81\u51B2\u7A81: \u5C06\u4F7F\u7528\u4E0A\u6B21\u5728\u6837\u5F0F\u8868\u4E2D\u627E\u5230\u7684{0}\u3002"},
 
     { WG_PARSING_AND_PREPARING,
-      "========= \u8BED\u6CD5\u5206\u6790\u548C\u51C6\u5907{0} =========="},
+      "========= \u89E3\u6790\u548C\u51C6\u5907{0} =========="},
 
     { WG_ATTR_TEMPLATE,
      "\u5C5E\u6027\u6A21\u677F{0}"},
@@ -1359,7 +1362,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
   {  "optionQ", "   [-Q (\u65E0\u63D0\u793A\u6A21\u5F0F)]"},
   {  "optionLF", "   [-LF (\u4EC5\u5728\u8F93\u51FA\u65F6\u4F7F\u7528\u6362\u884C\u7B26 {\u9ED8\u8BA4\u503C\u4E3A CR/LF})]"},
   {  "optionCR", "   [-CR (\u4EC5\u5728\u8F93\u51FA\u65F6\u4F7F\u7528\u56DE\u8F66 {\u9ED8\u8BA4\u503C\u4E3A CR/LF})]"},
-  { "optionESCAPE", "   [-ESCAPE (\u8981\u8F6C\u79FB\u7684\u5B57\u7B26 {\u9ED8\u8BA4\u503C\u4E3A <>&\"\'\\r\\n}]"},
+  { "optionESCAPE", "   [-ESCAPE (\u8981\u8F6C\u79FB\u7684\u5B57\u7B26 {\u9ED8\u8BA4\u503C\u4E3A <>&\"'\\r\\n}]"},
   { "optionINDENT", "   [-INDENT (\u63A7\u5236\u8981\u7F29\u8FDB\u7684\u7A7A\u683C\u6570 {\u9ED8\u8BA4\u503C\u4E3A 0})]"},
   { "optionTT", "   [-TT (\u5728\u8C03\u7528\u6A21\u677F\u65F6\u8DDF\u8E2A\u6A21\u677F\u3002)]"},
   { "optionTG", "   [-TG (\u8DDF\u8E2A\u6BCF\u4E2A\u751F\u6210\u4E8B\u4EF6\u3002)]"},
@@ -1373,7 +1376,7 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
   {  "optionHTML", "   [-HTML (\u4F7F\u7528 HTML \u683C\u5F0F\u8BBE\u7F6E\u5DE5\u5177\u3002)]"},
   {  "optionPARAM", "   [-PARAM \u540D\u79F0\u8868\u8FBE\u5F0F (\u8BBE\u7F6E\u6837\u5F0F\u8868\u53C2\u6570)]"},
   {  "noParsermsg1", "XSL \u8FDB\u7A0B\u672A\u6210\u529F\u3002"},
-  {  "noParsermsg2", "** \u627E\u4E0D\u5230\u8BED\u6CD5\u5206\u6790\u5668 **"},
+  {  "noParsermsg2", "** \u627E\u4E0D\u5230\u89E3\u6790\u5668 **"},
   { "noParsermsg3",  "\u8BF7\u68C0\u67E5\u60A8\u7684\u7C7B\u8DEF\u5F84\u3002"},
   { "noParsermsg4", "\u5982\u679C\u6CA1\u6709 IBM \u63D0\u4F9B\u7684 XML Parser for Java, \u5219\u53EF\u4EE5\u4ECE"},
   { "noParsermsg5", "IBM AlphaWorks \u8FDB\u884C\u4E0B\u8F7D, \u7F51\u5740\u4E3A: http://www.alphaworks.ibm.com/formula/xml"},
@@ -1412,13 +1415,6 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
 
   };
 
-  /** Get the lookup table for error messages.
-   *
-   * @return The int to message lookup table.
-   */
-  public Object[][] getContents()
-  {
-      return _contents;
   }
   // ================= INFRASTRUCTURE ======================
 
@@ -1448,68 +1444,4 @@ public class XSLTErrorResources_zh_CN extends ListResourceBundle
   public static final String QUERY_HEADER = "PATTERN ";
 
 
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XSLTErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XSLTErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
     }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XSLTErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
-
-
-}

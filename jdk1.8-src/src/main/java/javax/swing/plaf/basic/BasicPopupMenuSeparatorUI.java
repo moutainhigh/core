@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import java.awt.Rectangle;
 import javax.swing.plaf.ComponentUI;
 
 /**
- * A Basic L&F implementation of PopupMenuSeparatorUI.  This implementation
+ * A Basic L&amp;F implementation of PopupMenuSeparatorUI.  This implementation
  * is a "combined" view/controller.
  *
  * @author Jeff Shapiro

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,6 +44,7 @@ package java.lang.annotation;
  *
  * @author  Joshua Bloch
  * @since 1.5
+ * @jls 9.6.3.3 @Inherited
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

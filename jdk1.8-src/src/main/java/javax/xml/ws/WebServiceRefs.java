@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ import static java.lang.annotation.RetentionPolicy.*;
  * It can be used to inject both service and proxy
  * instances. These injected references are not thread safe.
  * If the references are accessed by multiple threads,
- * usual synchronization techinques can be used to
+ * usual synchronization techniques can be used to
  * support multiple threads.
  *
  * <p>

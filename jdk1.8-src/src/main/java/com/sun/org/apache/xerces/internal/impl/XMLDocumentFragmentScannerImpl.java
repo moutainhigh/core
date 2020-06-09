@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -50,9 +50,15 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import com.sun.org.apache.xerces.internal.xni.Augmentations;
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.XMLEntityHandler;
-import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.NamespaceSupport;
+import com.sun.org.apache.xerces.internal.utils.SecuritySupport;
+import com.sun.org.apache.xerces.internal.utils.XMLLimitAnalyzer;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.Limit;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.State;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.events.XMLEvent;
 
@@ -83,7 +89,7 @@ public class XMLDocumentFragmentScannerImpl
     // Constants
     //
 
-    protected int fElementAttributeLimit;
+    protected int fElementAttributeLimit, fXMLNameLimit;
 
     /** External subset resolver. **/
     protected ExternalSubsetResolver fExternalSubsetResolver;
@@ -159,6 +165,19 @@ public class XMLDocumentFragmentScannerImpl
     protected static final String ENTITY_RESOLVER =
             Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_RESOLVER_PROPERTY;
 
+    /** Feature identifier: standard uri conformant */
+    protected static final String STANDARD_URI_CONFORMANT =
+            Constants.XERCES_FEATURE_PREFIX +Constants.STANDARD_URI_CONFORMANT_FEATURE;
+
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
+
+    /** access external dtd: file protocol
+     *  For DOM/SAX, the secure feature is set to true by default
+     */
+    final static String EXTERNAL_ACCESS_DEFAULT = Constants.EXTERNAL_ACCESS_DEFAULT;
+
     // recognized features and properties
 
     /** Recognized features. */
@@ -184,6 +203,7 @@ public class XMLDocumentFragmentScannerImpl
         SYMBOL_TABLE,
                 ERROR_REPORTER,
                 ENTITY_MANAGER,
+                XML_SECURITY_PROPERTY_MANAGER
     };
 
     /** Property defaults. */
@@ -191,11 +211,12 @@ public class XMLDocumentFragmentScannerImpl
                 null,
                 null,
                 null,
+                EXTERNAL_ACCESS_DEFAULT
     };
 
-    protected static final char [] cdata = {'[','C','D','A','T','A','['};
-    protected static final char [] xmlDecl = {'<','?','x','m','l'};
-    protected static final char [] endTag = {'<','/'};
+    private static final char [] cdata = {'[','C','D','A','T','A','['};
+    static final char [] xmlDecl = {'<','?','x','m','l'};
+    private static final char [] endTag = {'<','/'};
     // debugging
 
     /** Debug scanner state. */
@@ -295,6 +316,18 @@ public class XMLDocumentFragmentScannerImpl
     /** Xerces Feature: Disallow doctype declaration. */
     protected boolean fDisallowDoctype = false;
 
+    /**
+     * comma-delimited list of protocols that are allowed for the purpose
+     * of accessing external dtd or entity references
+     */
+    protected String fAccessExternalDTD = EXTERNAL_ACCESS_DEFAULT;
+
+    /**
+     * standard uri conformant (strict uri).
+     * http://apache.org/xml/features/standard-uri-conformant
+     */
+    protected boolean fStrictURI;
+
     // drivers
 
     /** Active driver. */
@@ -351,7 +384,6 @@ public class XMLDocumentFragmentScannerImpl
 
     protected boolean foundBuiltInRefs = false;
 
-    protected SecurityManager fSecurityManager = null;
 
     //skip element algorithm
     static final short MAX_DEPTH_LIMIT = 5 ;
@@ -393,7 +425,7 @@ public class XMLDocumentFragmentScannerImpl
      */
     public void setInputSource(XMLInputSource inputSource) throws IOException {
         fEntityManager.setEntityHandler(this);
-        fEntityManager.startEntity("$fragment$", inputSource, false, true);
+        fEntityManager.startEntity(false, "$fragment$", inputSource, false, true);
         // fDocumentSystemId = fEntityManager.expandSystemId(inputSource.getSystemId());
     } // setInputSource(XMLInputSource)
 
@@ -410,17 +442,6 @@ public class XMLDocumentFragmentScannerImpl
      *
      * @return True if there is more to scan, false otherwise.
      */
-   /* public boolean scanDocument(boolean complete)
-    throws IOException, XNIException {
-
-        // keep dispatching "events"
-        fEntityManager.setEntityHandler(this);
-
-        return true;
-
-    } // scanDocument(boolean):boolean
-    */
-
     public boolean scanDocument(boolean complete)
     throws IOException, XNIException {
 
@@ -548,28 +569,12 @@ public class XMLDocumentFragmentScannerImpl
 
         // xerces features
         fReportCdataEvent = componentManager.getFeature(Constants.STAX_REPORT_CDATA_EVENT, true);
-
-        fSecurityManager = (SecurityManager)componentManager.getProperty(Constants.SECURITY_MANAGER, null);
-        fElementAttributeLimit = (fSecurityManager != null)?fSecurityManager.getElementAttrLimit():0;
-
+        fSecurityManager = (XMLSecurityManager)componentManager.getProperty(Constants.SECURITY_MANAGER, null);
         fNotifyBuiltInRefs = componentManager.getFeature(NOTIFY_BUILTIN_REFS, false);
 
         Object resolver = componentManager.getProperty(ENTITY_RESOLVER, null);
         fExternalSubsetResolver = (resolver instanceof ExternalSubsetResolver) ?
                 (ExternalSubsetResolver) resolver : null;
-
-        // initialize vars
-        fMarkupDepth = 0;
-        fCurrentElement = null;
-        fElementStack.clear();
-        fHasExternalDTD = false;
-        fStandaloneSet = false;
-        fStandalone = false;
-        fInScanContent = false;
-        //skipping algorithm
-        fShouldSkip = false;
-        fAdd = false;
-        fSkip = false;
 
         //attribute
         fReadingAttributes = false;
@@ -582,11 +587,15 @@ public class XMLDocumentFragmentScannerImpl
         // setup Driver
         setScannerState(SCANNER_STATE_CONTENT);
         setDriver(fContentDriver);
-        fEntityStore = fEntityManager.getEntityStore();
 
-        dtdGrammarUtil = null;
+        // JAXP 1.5 features and properties
+        XMLSecurityPropertyManager spm = (XMLSecurityPropertyManager)
+                componentManager.getProperty(XML_SECURITY_PROPERTY_MANAGER, null);
+        fAccessExternalDTD = spm.getValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD);
 
+        fStrictURI = componentManager.getFeature(STANDARD_URI_CONFORMANT, false);
 
+        resetCommon();
         //fEntityManager.test();
     } // reset(XMLComponentManager)
 
@@ -600,22 +609,12 @@ public class XMLDocumentFragmentScannerImpl
         fNamespaces = ((Boolean)propertyManager.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE)).booleanValue();
         fNotifyBuiltInRefs = false ;
 
-        // initialize vars
-        fMarkupDepth = 0;
-        fCurrentElement = null;
-        fShouldSkip = false;
-        fAdd = false;
-        fSkip = false;
-        fElementStack.clear();
         //fElementStack2.clear();
-        fHasExternalDTD = false;
-        fStandaloneSet = false;
-        fStandalone = false;
         //fReplaceEntityReferences = true;
         //fSupportExternalEntities = true;
-        Boolean bo = (Boolean)propertyManager.getProperty(XMLInputFactoryImpl.IS_REPLACING_ENTITY_REFERENCES);
+        Boolean bo = (Boolean)propertyManager.getProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES);
         fReplaceEntityReferences = bo.booleanValue();
-        bo = (Boolean)propertyManager.getProperty(XMLInputFactoryImpl.IS_SUPPORTING_EXTERNAL_ENTITIES);
+        bo = (Boolean)propertyManager.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES);
         fSupportExternalEntities = bo.booleanValue();
         Boolean cdata = (Boolean)propertyManager.getProperty(Constants.ZEPHYR_PROPERTY_PREFIX + Constants.STAX_REPORT_CDATA_EVENT) ;
         if(cdata != null)
@@ -631,12 +630,43 @@ public class XMLDocumentFragmentScannerImpl
         //we dont need to do this -- nb.
         //setScannerState(SCANNER_STATE_CONTENT);
         //setDriver(fContentDriver);
-        fEntityStore = fEntityManager.getEntityStore();
         //fEntityManager.test();
 
+         // JAXP 1.5 features and properties
+        XMLSecurityPropertyManager spm = (XMLSecurityPropertyManager)
+                propertyManager.getProperty(XML_SECURITY_PROPERTY_MANAGER);
+        fAccessExternalDTD = spm.getValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD);
+
+        fSecurityManager = (XMLSecurityManager)propertyManager.getProperty(Constants.SECURITY_MANAGER);
+        resetCommon();
+    } // reset(XMLComponentManager)
+
+    void resetCommon() {
+        // initialize vars
+        fMarkupDepth = 0;
+        fCurrentElement = null;
+        fElementStack.clear();
+        fHasExternalDTD = false;
+        fStandaloneSet = false;
+        fStandalone = false;
+        fInScanContent = false;
+        //skipping algorithm
+        fShouldSkip = false;
+        fAdd = false;
+        fSkip = false;
+
+        fEntityStore = fEntityManager.getEntityStore();
         dtdGrammarUtil = null;
 
-    } // reset(XMLComponentManager)
+        if (fSecurityManager != null) {
+            fElementAttributeLimit = fSecurityManager.getLimit(XMLSecurityManager.Limit.ELEMENT_ATTRIBUTE_LIMIT);
+            fXMLNameLimit = fSecurityManager.getLimit(XMLSecurityManager.Limit.MAX_NAME_LIMIT);
+        } else {
+            fElementAttributeLimit = 0;
+            fXMLNameLimit = XMLSecurityManager.Limit.MAX_NAME_LIMIT.defaultValue();
+        }
+        fLimitAnalyzer = fEntityManager.fLimitAnalyzer;
+    }
 
     /**
      * Returns a list of feature identifiers that are recognized by
@@ -732,6 +762,13 @@ public class XMLDocumentFragmentScannerImpl
             return;
         }
 
+        //JAXP 1.5 properties
+        if (propertyId.equals(XML_SECURITY_PROPERTY_MANAGER))
+        {
+            XMLSecurityPropertyManager spm = (XMLSecurityPropertyManager)value;
+            fAccessExternalDTD = spm.getValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD);
+        }
+
     } // setProperty(String,Object)
 
     /**
@@ -806,6 +843,7 @@ public class XMLDocumentFragmentScannerImpl
      *                 where the entity encoding is not auto-detected (e.g.
      *                 internal entities or a document entity that is
      *                 parsed from a java.io.Reader).
+     * @param augs     Additional information that may include infoset augmentations
      *
      * @throws XNIException Thrown by handler to signal an error.
      */
@@ -833,7 +871,7 @@ public class XMLDocumentFragmentScannerImpl
         // call handler
         if (fDocumentHandler != null && !fScanningAttribute) {
             if (!name.equals("[xml]")) {
-                fDocumentHandler.startGeneralEntity(name, identifier, encoding, null);
+                fDocumentHandler.startGeneralEntity(name, identifier, encoding, augs);
             }
         }
 
@@ -845,6 +883,7 @@ public class XMLDocumentFragmentScannerImpl
      * are just specified by their name.
      *
      * @param name The name of the entity.
+     * @param augs Additional information that may include infoset augmentations
      *
      * @throws XNIException Thrown by handler to signal an error.
      */
@@ -869,7 +908,7 @@ public class XMLDocumentFragmentScannerImpl
         // call handler
         if (fDocumentHandler != null && !fScanningAttribute) {
             if (!name.equals("[xml]")) {
-                fDocumentHandler.endGeneralEntity(name, null);
+                fDocumentHandler.endGeneralEntity(name, augs);
             }
         }
 
@@ -1271,6 +1310,7 @@ public class XMLDocumentFragmentScannerImpl
 
         fAttributes.removeAllAttributes();
 
+        checkDepth(rawname);
         if(!seekCloseOfStartTag()){
             fReadingAttributes = true;
             fAttributeCacheUsedCount =0;
@@ -1278,10 +1318,11 @@ public class XMLDocumentFragmentScannerImpl
             fAddDefaultAttr = true;
             do {
                 scanAttribute(fAttributes);
-                if (fSecurityManager != null && fAttributes.getLength() > fElementAttributeLimit){
+                if (fSecurityManager != null && !fSecurityManager.isNoLimit(fElementAttributeLimit) &&
+                        fAttributes.getLength() > fElementAttributeLimit){
                     fErrorReporter.reportError(XMLMessageFormatter.XML_DOMAIN,
                                                  "ElementAttributeLimit",
-                                                 new Object[]{rawname, new Integer(fAttributes.getLength()) },
+                                                 new Object[]{rawname, fElementAttributeLimit },
                                                  XMLErrorReporter.SEVERITY_FATAL_ERROR );
                 }
 
@@ -1506,7 +1547,7 @@ public class XMLDocumentFragmentScannerImpl
 
         scanAttributeValue(tmpStr, fTempString2,
                 fAttributeQName.rawname, attributes,
-                attIndex, isVC);
+                attIndex, isVC, fCurrentElement.rawname);
 
         // content
         int oldLen = attributes.getLength();
@@ -1841,7 +1882,8 @@ public class XMLDocumentFragmentScannerImpl
         //1. if the entity is external and support to external entities is not required
         // 2. or entities should not be replaced
         //3. or if it is built in entity reference.
-        if((fEntityStore.isExternalEntity(name) && !fSupportExternalEntities) || (!fEntityStore.isExternalEntity(name) && !fReplaceEntityReferences) || foundBuiltInRefs){
+        boolean isEE = fEntityStore.isExternalEntity(name);
+        if((isEE && !fSupportExternalEntities) || (!isEE && !fReplaceEntityReferences) || foundBuiltInRefs){
             fScannerState = SCANNER_STATE_REFERENCE;
             return ;
         }
@@ -1864,13 +1906,28 @@ public class XMLDocumentFragmentScannerImpl
         //if that was the case it its taken care in XMLEntityManager.startEntity()
         //we immediately call the endEntity. Application gets to know if there was
         //any entity that was not declared.
-        fEntityManager.startEntity(name, false);
+        fEntityManager.startEntity(true, name, false);
         //set the scaner state to content.. parser will automatically revive itself at any point of time.
         //setScannerState(SCANNER_STATE_CONTENT);
         //return true ;
     } // scanEntityReference()
 
     // utility methods
+
+    /**
+     * Check if the depth exceeds the maxElementDepth limit
+     * @param elementName name of the current element
+     */
+    void checkDepth(String elementName) {
+        fLimitAnalyzer.addValue(Limit.MAX_ELEMENT_DEPTH_LIMIT, elementName, fElementStack.fDepth);
+        if (fSecurityManager.isOverLimit(Limit.MAX_ELEMENT_DEPTH_LIMIT,fLimitAnalyzer)) {
+            fSecurityManager.debugPrint(fLimitAnalyzer);
+            reportFatalError("MaxElementDepthLimit", new Object[]{elementName,
+                fLimitAnalyzer.getTotalValue(Limit.MAX_ELEMENT_DEPTH_LIMIT),
+                fSecurityManager.getLimit(Limit.MAX_ELEMENT_DEPTH_LIMIT),
+                "maxElementDepth"});
+        }
+    }
 
     /**
      * Calls document handler with a single character resulting from
@@ -1990,6 +2047,19 @@ public class XMLDocumentFragmentScannerImpl
         return "null";
 
     } // getDriverName():String
+
+    /**
+     * Check the protocol used in the systemId against allowed protocols
+     *
+     * @param systemId the Id of the URI
+     * @param allowedProtocols a list of allowed protocols separated by comma
+     * @return the name of the protocol if rejected, null otherwise
+     */
+    String checkAccess(String systemId, String allowedProtocols) throws IOException {
+        String baseSystemId = fEntityScanner.getBaseSystemId();
+        String expandedSystemId = fEntityManager.expandSystemId(systemId, baseSystemId,fStrictURI);
+        return SecuritySupport.checkAccess(expandedSystemId, allowedProtocols, Constants.ACCESS_EXTERNAL_ALL);
+    }
 
     //
     // Classes
@@ -3089,7 +3159,6 @@ public class XMLDocumentFragmentScannerImpl
             }
             } //while loop
         }//next
-
 
         //
         // Protected methods

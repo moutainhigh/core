@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -43,7 +43,7 @@ import java.lang.annotation.*;
  *
  * @author  Peter von der Ah&eacute;
  * @author  Joshua Bloch
- * @jls 9.6.1.4 Override
+ * @jls 9.6.1.4 @Override
  * @since 1.5
  */
 @Target(ElementType.METHOD)

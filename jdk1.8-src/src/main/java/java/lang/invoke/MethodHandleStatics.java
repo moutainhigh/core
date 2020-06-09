@@ -27,6 +27,7 @@ package java.lang.invoke;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import sun.misc.Unsafe;
 
 /**
  * This class consists exclusively of static names internal to the
@@ -38,16 +39,57 @@ import java.security.PrivilegedAction;
 
     private MethodHandleStatics() { }  // do not instantiate
 
+    static final Unsafe UNSAFE = Unsafe.getUnsafe();
+
     static final boolean DEBUG_METHOD_HANDLE_NAMES;
+    static final boolean DUMP_CLASS_FILES;
+    static final boolean TRACE_INTERPRETER;
+    static final boolean TRACE_METHOD_LINKAGE;
+    static final int COMPILE_THRESHOLD;
+    static final int DONT_INLINE_THRESHOLD;
+    static final int PROFILE_LEVEL;
+    static final boolean PROFILE_GWT;
+    static final int CUSTOMIZE_THRESHOLD;
+
     static {
-        final Object[] values = { false };
+        final Object[] values = new Object[9];
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
                 public Void run() {
                     values[0] = Boolean.getBoolean("java.lang.invoke.MethodHandle.DEBUG_NAMES");
+                    values[1] = Boolean.getBoolean("java.lang.invoke.MethodHandle.DUMP_CLASS_FILES");
+                    values[2] = Boolean.getBoolean("java.lang.invoke.MethodHandle.TRACE_INTERPRETER");
+                    values[3] = Boolean.getBoolean("java.lang.invoke.MethodHandle.TRACE_METHOD_LINKAGE");
+                    values[4] = Integer.getInteger("java.lang.invoke.MethodHandle.COMPILE_THRESHOLD", 0);
+                    values[5] = Integer.getInteger("java.lang.invoke.MethodHandle.DONT_INLINE_THRESHOLD", 30);
+                    values[6] = Integer.getInteger("java.lang.invoke.MethodHandle.PROFILE_LEVEL", 0);
+                    values[7] = Boolean.parseBoolean(System.getProperty("java.lang.invoke.MethodHandle.PROFILE_GWT", "true"));
+                    values[8] = Integer.getInteger("java.lang.invoke.MethodHandle.CUSTOMIZE_THRESHOLD", 127);
                     return null;
                 }
             });
         DEBUG_METHOD_HANDLE_NAMES = (Boolean) values[0];
+        DUMP_CLASS_FILES          = (Boolean) values[1];
+        TRACE_INTERPRETER         = (Boolean) values[2];
+        TRACE_METHOD_LINKAGE      = (Boolean) values[3];
+        COMPILE_THRESHOLD         = (Integer) values[4];
+        DONT_INLINE_THRESHOLD     = (Integer) values[5];
+        PROFILE_LEVEL             = (Integer) values[6];
+        PROFILE_GWT               = (Boolean) values[7];
+        CUSTOMIZE_THRESHOLD       = (Integer) values[8];
+
+        if (CUSTOMIZE_THRESHOLD < -1 || CUSTOMIZE_THRESHOLD > 127) {
+            throw newInternalError("CUSTOMIZE_THRESHOLD should be in [-1...127] range");
+        }
+    }
+
+    /** Tell if any of the debugging switches are turned on.
+     *  If this is the case, it is reasonable to perform extra checks or save extra information.
+     */
+    /*non-public*/ static boolean debugEnabled() {
+        return (DEBUG_METHOD_HANDLE_NAMES |
+                DUMP_CLASS_FILES |
+                TRACE_INTERPRETER |
+                TRACE_METHOD_LINKAGE);
     }
 
     /*non-public*/ static String getNameString(MethodHandle target, MethodType type) {
@@ -55,7 +97,7 @@ import java.security.PrivilegedAction;
             type = target.type();
         MemberName name = null;
         if (target != null)
-            name = MethodHandleNatives.getMethodName(target);
+            name = target.internalMemberName();
         if (name == null)
             return "invoke" + type;
         return name.getName() + type;
@@ -77,21 +119,16 @@ import java.security.PrivilegedAction;
         return str + target.type();
     }
 
-    static void checkSpreadArgument(Object av, int n) {
-        if (av == null) {
-            if (n == 0)  return;
-        } else if (av instanceof Object[]) {
-            int len = ((Object[])av).length;
-            if (len == n)  return;
-        } else {
-            int len = java.lang.reflect.Array.getLength(av);
-            if (len == n)  return;
-        }
-        // fall through to error:
-        throw newIllegalArgumentException("Array is not of length "+n);
-    }
-
     // handy shared exception makers (they simplify the common case code)
+    /*non-public*/ static InternalError newInternalError(String message) {
+        return new InternalError(message);
+    }
+    /*non-public*/ static InternalError newInternalError(String message, Throwable cause) {
+        return new InternalError(message, cause);
+    }
+    /*non-public*/ static InternalError newInternalError(Throwable cause) {
+        return new InternalError(cause);
+    }
     /*non-public*/ static RuntimeException newIllegalStateException(String message) {
         return new IllegalStateException(message);
     }
@@ -107,10 +144,14 @@ import java.security.PrivilegedAction;
     /*non-public*/ static RuntimeException newIllegalArgumentException(String message, Object obj, Object obj2) {
         return new IllegalArgumentException(message(message, obj, obj2));
     }
+    /** Propagate unchecked exceptions and errors, but wrap anything checked and throw that instead. */
     /*non-public*/ static Error uncaughtException(Throwable ex) {
-        Error err = new InternalError("uncaught exception");
-        err.initCause(ex);
-        return err;
+        if (ex instanceof Error)  throw (Error) ex;
+        if (ex instanceof RuntimeException)  throw (RuntimeException) ex;
+        throw newInternalError("uncaught exception", ex);
+    }
+    static Error NYI() {
+        throw new AssertionError("NYI");
     }
     private static String message(String message, Object obj) {
         if (obj != null)  message = message + ": " + obj;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -52,7 +52,7 @@ package javax.swing;
  * <p>
  * The following figure shows the relationship between size and position data
  * for a multi-column component.
- * <p>
+ *
  * <center>
  * <img src="doc-files/SizeSequence-1.gif" width=384 height = 100
  * alt="The first item begins at position 0, the second at the position equal
@@ -76,9 +76,8 @@ package javax.swing;
  * However, any other unit of measure (for example, time in days)
  * could be just as valid.
  *
- * <p>
  *
- * <h4>Implementation Notes</h4>
+ * <h3>Implementation Notes</h3>
  *
  * Normally when storing the size and position of entries,
  * one would choose between
@@ -145,7 +144,7 @@ public class SizeSequence {
      *
      * @param numEntries  the number of sizes to track
      * @exception NegativeArraySizeException if
-     *    <code>numEntries < 0</code>
+     *    <code>numEntries &lt; 0</code>
      */
     public SizeSequence(int numEntries) {
         this(numEntries, 0);
@@ -306,7 +305,7 @@ public class SizeSequence {
     /**
      * Returns the size of the specified entry.
      * If <code>index</code> is out of the range
-     * <code>(0 <= index < getSizes().length)</code>
+     * <code>(0 &lt;= index &lt; getSizes().length)</code>
      * the behavior is unspecified.
      *
      * @param index  the index corresponding to the entry
@@ -320,7 +319,7 @@ public class SizeSequence {
      * Sets the size of the specified entry.
      * Note that if the value of <code>index</code>
      * does not fall in the range:
-     * <code>(0 <= index < getSizes().length)</code>
+     * <code>(0 &lt;= index &lt; getSizes().length)</code>
      * the behavior is unspecified.
      *
      * @param index  the index corresponding to the entry
@@ -348,8 +347,8 @@ public class SizeSequence {
      * Adds a contiguous group of entries to this <code>SizeSequence</code>.
      * Note that the values of <code>start</code> and
      * <code>length</code> must satisfy the following
-     * conditions:  <code>(0 <= start < getSizes().length)
-     * AND (length >= 0)</code>.  If these conditions are
+     * conditions:  <code>(0 &lt;= start &lt; getSizes().length)
+     * AND (length &gt;= 0)</code>.  If these conditions are
      * not met, the behavior is unspecified and an exception
      * may be thrown.
      *
@@ -359,7 +358,7 @@ public class SizeSequence {
      * @param value   the size to be assigned to each new entry
      * @exception ArrayIndexOutOfBoundsException if the parameters
      *   are outside of the range:
-     *   (<code>0 <= start < (getSizes().length)) AND (length >= 0)</code>
+     *   (<code>0 &lt;= start &lt; (getSizes().length)) AND (length &gt;= 0)</code>
      */
     public void insertEntries(int start, int length, int value) {
         int sizes[] = getSizes();
@@ -383,8 +382,8 @@ public class SizeSequence {
      * from this <code>SizeSequence</code>.
      * Note that the values of <code>start</code> and
      * <code>length</code> must satisfy the following
-     * conditions:  <code>(0 <= start < getSizes().length)
-     * AND (length >= 0)</code>.  If these conditions are
+     * conditions:  <code>(0 &lt;= start &lt; getSizes().length)
+     * AND (length &gt;= 0)</code>.  If these conditions are
      * not met, the behavior is unspecified and an exception
      * may be thrown.
      *

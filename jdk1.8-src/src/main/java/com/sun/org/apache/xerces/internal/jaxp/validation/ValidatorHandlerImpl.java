@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -49,10 +49,11 @@ import com.sun.org.apache.xerces.internal.util.SAXLocatorWrapper;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
-import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.URI;
 import com.sun.org.apache.xerces.internal.util.XMLAttributesImpl;
 import com.sun.org.apache.xerces.internal.util.XMLSymbols;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
 import com.sun.org.apache.xerces.internal.xni.Augmentations;
 import com.sun.org.apache.xerces.internal.xni.NamespaceContext;
 import com.sun.org.apache.xerces.internal.xni.QName;
@@ -133,6 +134,10 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
     /** Property identifier: validation manager. */
     private static final String VALIDATION_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.VALIDATION_MANAGER_PROPERTY;
+
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
 
     //
     // Data
@@ -674,16 +679,27 @@ final class ValidatorHandlerImpl extends ValidatorHandler implements
                                     SAXParserFactory.newInstance() : new SAXParserFactoryImpl();
                     spf.setNamespaceAware(true);
                     try {
+                        spf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+                                fComponentManager.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
                         reader = spf.newSAXParser().getXMLReader();
                         // If this is a Xerces SAX parser, set the security manager if there is one
                         if (reader instanceof com.sun.org.apache.xerces.internal.parsers.SAXParser) {
-                           SecurityManager securityManager = (SecurityManager) fComponentManager.getProperty(SECURITY_MANAGER);
+                           XMLSecurityManager securityManager = (XMLSecurityManager) fComponentManager.getProperty(SECURITY_MANAGER);
                            if (securityManager != null) {
                                try {
                                    reader.setProperty(SECURITY_MANAGER, securityManager);
                                }
                                // Ignore the exception if the security manager cannot be set.
                                catch (SAXException exc) {}
+                           }
+                           try {
+                               XMLSecurityPropertyManager spm = (XMLSecurityPropertyManager)
+                                       fComponentManager.getProperty(XML_SECURITY_PROPERTY_MANAGER);
+                               reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,
+                                       spm.getValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD));
+                           } catch (SAXException exc) {
+                               System.err.println("Warning: " + reader.getClass().getName() + ": " +
+                                      exc.getMessage());
                            }
                         }
                     } catch( Exception e ) {

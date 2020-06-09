@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -234,7 +234,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
      * name will be equal to <code>this.getClass().getName() +
      * "Resources"</code>.
      *
-     * @param resourceBaseName a <code>String</code> containg the new
+     * @param resourceBaseName a <code>String</code> containing the new
      * base name.
      *
      * @exception IllegalArgumentException if
@@ -381,7 +381,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
      *
      * @param parentName the name of the element that will be the
      * new parent of the element.
-     * @param elementName the name of the element to be addded as a
+     * @param elementName the name of the element to be added as a
      * child.
      *
      * @exception IllegalArgumentException if <code>elementName</code>
@@ -729,6 +729,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
      * @param required <code>true</code> if an object value must be present.
      * @param defaultValue the default value for the
      * <code>Object</code> reference, or <code>null</code>.
+     * @param <T> the type of the object.
      *
      * @exception IllegalArgumentException if <code>elementName</code>
      * is <code>null</code>, or is not a legal element name for this format.
@@ -765,6 +766,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
      * @param enumeratedValues a <code>List</code> of
      * <code>Object</code>s containing the legal values for the
      * object reference.
+     * @param <T> the type of the object.
      *
      * @exception IllegalArgumentException if <code>elementName</code>
      * is <code>null</code>, or is not a legal element name for this format.
@@ -836,6 +838,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
      * is inclusive.
      * @param maxInclusive <code>true</code> if <code>maxValue</code>
      * is inclusive.
+     * @param <T> the type of the object.
      *
      * @exception IllegalArgumentException if <code>elementName</code>
      * is <code>null</code>, or is not a legal element name for this
@@ -988,7 +991,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
 
     /**
      * Returns a <code>String</code> containing a description of the
-     * named element, or <code>null</code>.  The desciption will be
+     * named element, or <code>null</code>.  The description will be
      * localized for the supplied <code>Locale</code> if possible.
      *
      * <p> The default implementation will first locate a
@@ -1126,7 +1129,7 @@ public abstract class IIOMetadataFormatImpl implements IIOMetadataFormat {
 
     /**
      * Returns a <code>String</code> containing a description of the
-     * named attribute, or <code>null</code>.  The desciption will be
+     * named attribute, or <code>null</code>.  The description will be
      * localized for the supplied <code>Locale</code> if possible.
      *
      * <p> The default implementation will first locate a

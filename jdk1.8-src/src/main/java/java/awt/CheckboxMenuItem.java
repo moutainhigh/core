@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,7 +44,7 @@ import sun.awt.AWTAccessor;
  * <p>
  * <img src="doc-files/MenuBar-1.gif"
  * alt="Menu labeled Examples, containing items Basic, Simple, Check, and More Examples. The Check item is a CheckBoxMenuItem instance, in the off state."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * The item labeled <code>Check</code> shows a check box menu item
  * in its "off" state.
@@ -180,7 +180,7 @@ public class CheckboxMenuItem extends MenuItem implements ItemSelectable, Access
     }
 
     /**
-     * Sets this check box menu item to the specifed state.
+     * Sets this check box menu item to the specified state.
      * The boolean value <code>true</code> indicates "on" while
      * <code>false</code> indicates "off."
      *
@@ -277,7 +277,7 @@ public class CheckboxMenuItem extends MenuItem implements ItemSelectable, Access
      * @since 1.4
      */
     public synchronized ItemListener[] getItemListeners() {
-        return (ItemListener[])(getListeners(ItemListener.class));
+        return getListeners(ItemListener.class);
     }
 
     /**
@@ -367,7 +367,7 @@ public class CheckboxMenuItem extends MenuItem implements ItemSelectable, Access
      * This method is not called unless item events are
      * enabled for this menu item. Item events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>ItemListener</code> object is registered
      * via <code>addItemListener</code>.
      * <li>Item events are enabled via <code>enableEvents</code>.

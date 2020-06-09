@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -138,6 +138,12 @@ class HeapCharBuffer
     public char get(int i) {
         return hb[ix(checkIndex(i))];
     }
+
+
+    char getUnchecked(int i) {
+	return hb[ix(i)];
+    }
+
 
     public CharBuffer get(char[] dst, int offset, int length) {
         checkBounds(offset, length, dst.length);

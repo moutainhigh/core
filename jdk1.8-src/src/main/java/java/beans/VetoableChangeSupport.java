@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,7 +42,7 @@ import java.util.Map.Entry;
  * <p>
  * Here is an example of {@code VetoableChangeSupport} usage that follows
  * the rules and recommendations laid out in the JavaBeans&trade; specification:
- * <pre>
+ * <pre>{@code
  * public class MyBean {
  *     private final VetoableChangeSupport vcs = new VetoableChangeSupport(this);
  *
@@ -68,7 +68,7 @@ import java.util.Map.Entry;
  *
  *     [...]
  * }
- * </pre>
+ * }</pre>
  * <p>
  * A {@code VetoableChangeSupport} instance is thread-safe.
  * <p>
@@ -156,7 +156,7 @@ public class VetoableChangeSupport implements Serializable {
      * <code>VetoableChangeListenerProxy</code>, perform the cast, and examine
      * the parameter.
      *
-     * <pre>
+     * <pre>{@code
      * VetoableChangeListener[] listeners = bean.getVetoableChangeListeners();
      * for (int i = 0; i < listeners.length; i++) {
      *        if (listeners[i] instanceof VetoableChangeListenerProxy) {
@@ -168,7 +168,7 @@ public class VetoableChangeSupport implements Serializable {
      *     }
      *   }
      * }
-     *</pre>
+     * }</pre>
      *
      * @see VetoableChangeListenerProxy
      * @return all of the <code>VetoableChangeListeners</code> added or an
@@ -420,7 +420,7 @@ public class VetoableChangeSupport implements Serializable {
                     listeners = entry.getValue();
                 } else {
                     if (children == null) {
-                        children = new Hashtable<String, VetoableChangeSupport>();
+                        children = new Hashtable<>();
                     }
                     VetoableChangeSupport vcs = new VetoableChangeSupport(this.source);
                     vcs.map.set(null, entry.getValue());
@@ -449,7 +449,8 @@ public class VetoableChangeSupport implements Serializable {
 
         ObjectInputStream.GetField fields = s.readFields();
 
-        Hashtable<String, VetoableChangeSupport> children = (Hashtable<String, VetoableChangeSupport>) fields.get("children", null);
+        @SuppressWarnings("unchecked")
+        Hashtable<String, VetoableChangeSupport> children = (Hashtable<String, VetoableChangeSupport>)fields.get("children", null);
         this.source = fields.get("source", null);
         fields.get("vetoableChangeSupportSerializedDataVersion", 2);
 

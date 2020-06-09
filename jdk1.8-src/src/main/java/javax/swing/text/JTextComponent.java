@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -24,18 +24,16 @@
  */
 package javax.swing.text;
 
-import java.lang.reflect.Method;
+import com.sun.beans.util.Cache;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import java.beans.Transient;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.Map;
 
 import java.util.concurrent.*;
 
@@ -84,10 +82,9 @@ import sun.swing.SwingAccessor;
  * support).
  * You can find information on how to use the functionality
  * this class provides in
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/generaltext.html">General Rules for Using Text Components</a>,
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/generaltext.html">General Rules for Using Text Components</a>,
  * a section in <em>The Java Tutorial.</em>
  *
- * <p>
  * <dl>
  * <dt><b><font size=+1>Caret Changes</font></b>
  * <dd>
@@ -108,7 +105,6 @@ import sun.swing.SwingAccessor;
  * <b>Note</b>: Non-editable text components also have a caret though
  * it may not be painted.
  *
- * <p>
  * <dt><b><font size=+1>Commands</font></b>
  * <dd>
  * Text components provide a number of commands that can be used
@@ -120,7 +116,6 @@ import sun.swing.SwingAccessor;
  * found with the {@link #getActions} method.  These actions
  * can be bound to key events, fired from buttons, etc.
  *
- * <p>
  * <dt><b><font size=+1>Text Input</font></b>
  * <dd>
  * The text components support flexible and internationalized text input, using
@@ -160,9 +155,9 @@ import sun.swing.SwingAccessor;
  *
  * <table border=1 summary="Stages of keyboard and input method event handling">
  * <tr>
- * <th id="stage"><p align="left">Stage</p></th>
- * <th id="ke"><p align="left">KeyEvent</p></th>
- * <th id="ime"><p align="left">InputMethodEvent</p></th></tr>
+ * <th id="stage"><p style="text-align:left">Stage</p></th>
+ * <th id="ke"><p style="text-align:left">KeyEvent</p></th>
+ * <th id="ime"><p style="text-align:left">InputMethodEvent</p></th></tr>
  * <tr><td headers="stage">1.   </td>
  *     <td headers="ke">input methods </td>
  *     <td headers="ime">(generated here)</td></tr>
@@ -206,7 +201,6 @@ import sun.swing.SwingAccessor;
  * <li>caret movement forward and backward
  * </ul>
  *
- * <p>
  * <dt><b><font size=+1>Model/View Split</font></b>
  * <dd>
  * The text components have a model-view split.  A text component pulls
@@ -214,7 +208,7 @@ import sun.swing.SwingAccessor;
  * The text document model may be shared by other views which act as observers
  * of the model (e.g. a document may be shared by multiple components).
  *
- * <p align=center><img src="doc-files/editor.gif" alt="Diagram showing interaction between Controller, Document, events, and ViewFactory"
+ * <p style="text-align:center"><img src="doc-files/editor.gif" alt="Diagram showing interaction between Controller, Document, events, and ViewFactory"
  *                  HEIGHT=358 WIDTH=587></p>
  *
  * <p>
@@ -231,14 +225,12 @@ import sun.swing.SwingAccessor;
  * {@link DocumentListener}
  * interface and registered interest with the model being observed.
  *
- * <p>
  * <dt><b><font size=+1>Location Information</font></b>
  * <dd>
  * The capability of determining the location of text in
  * the view is provided.  There are two methods, {@link #modelToView}
  * and {@link #viewToModel} for determining this information.
  *
- * <p>
  * <dt><b><font size=+1>Undo/Redo support</font></b>
  * <dd>
  * Support for an edit history mechanism is provided to allow
@@ -249,7 +241,6 @@ import sun.swing.SwingAccessor;
  * The support is provided by the Document model, which allows
  * one to attach UndoableEditListener implementations.
  *
- * <p>
  * <dt><b><font size=+1>Thread Safety</font></b>
  * <dd>
  * The swing text components provide some support of thread
@@ -261,13 +252,12 @@ import sun.swing.SwingAccessor;
  * The methods that are safe to call asynchronously are marked
  * with comments.
  *
- * <p>
  * <dt><b><font size=+1>Newlines</font></b>
  * <dd>
  * For a discussion on how newlines are handled, see
  * <a href="DefaultEditorKit.html">DefaultEditorKit</a>.
  *
- * <p>
+ *
  * <dt><b><font size=+1>Printing support</font></b>
  * <dd>
  * Several {@link #print print} methods are provided for basic
@@ -281,7 +271,7 @@ import sun.swing.SwingAccessor;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -426,7 +416,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
         Document old = model;
 
         /*
-         * aquire a read lock on the old model to prevent notification of
+         * acquire a read lock on the old model to prevent notification of
          * mutations while we disconnecting the old model.
          */
         try {
@@ -1122,7 +1112,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
@@ -1197,47 +1187,6 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
                 map.addActionForKeyStroke(binding.key, a);
             }
         }
-    }
-
-    /**
-     * Returns true if <code>klass</code> is NOT a JTextComponent and it or
-     * one of its superclasses (stoping at JTextComponent) overrides
-     * <code>processInputMethodEvent</code>. It is assumed this will be
-     * invoked from within a <code>doPrivileged</code>, and it is also
-     * assumed <code>klass</code> extends <code>JTextComponent</code>.
-     */
-    private static Boolean isProcessInputMethodEventOverridden(Class<?> klass) {
-        if (klass == JTextComponent.class) {
-            return Boolean.FALSE;
-        }
-        Boolean retValue = overrideMap.get(klass.getName());
-
-        if (retValue != null) {
-            return retValue;
-        }
-        Boolean sOverriden = isProcessInputMethodEventOverridden(
-                                       klass.getSuperclass());
-
-        if (sOverriden.booleanValue()) {
-            // If our superclass has overriden it, then by definition klass
-            // overrides it.
-            overrideMap.put(klass.getName(), sOverriden);
-            return sOverriden;
-        }
-        // klass's superclass didn't override it, check for an override in
-        // klass.
-        try {
-            Class[] classes = new Class[1];
-            classes[0] = InputMethodEvent.class;
-
-            Method m = klass.getDeclaredMethod("processInputMethodEvent",
-                                               classes);
-            retValue = Boolean.TRUE;
-        } catch (NoSuchMethodException nsme) {
-            retValue = Boolean.FALSE;
-        }
-        overrideMap.put(klass.getName(), retValue);
-        return retValue;
     }
 
     /**
@@ -1399,8 +1348,8 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * Fetches a portion of the text represented by the
      * component.  Returns an empty string if length is 0.
      *
-     * @param offs the offset >= 0
-     * @param len the length >= 0
+     * @param offs the offset &ge; 0
+     * @param len the length &ge; 0
      * @return the text
      * @exception BadLocationException if the offset or length are invalid
      */
@@ -1416,7 +1365,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * be computed until the component has been sized).  The
      * component does not have to be visible or painted.
      *
-     * @param pos the position >= 0
+     * @param pos the position &ge; 0
      * @return the coordinates as a rectangle, with (r.x, r.y) as the location
      *   in the coordinate system, or null if the component does
      *   not yet have a positive size.
@@ -1437,7 +1386,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * component does not have to be visible or painted.
      *
      * @param pt the location in the view to translate
-     * @return the offset >= 0 from the start of the document,
+     * @return the offset &ge; 0 from the start of the document,
      *   or -1 if the component does not yet have a positive
      *   size.
      * @see TextUI#viewToModel
@@ -1493,10 +1442,10 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
     }
 
     /**
-     * This is a conveniance method that is only useful for
+     * This is a convenience method that is only useful for
      * <code>cut</code>, <code>copy</code> and <code>paste</code>.  If
      * an <code>Action</code> with the name <code>name</code> does not
-     * exist in the <code>ActionMap</code>, this will attemp to install a
+     * exist in the <code>ActionMap</code>, this will attempt to install a
      * <code>TransferHandler</code> and then use <code>altAction</code>.
      */
     private void invokeAction(String name, Action altAction) {
@@ -1562,8 +1511,10 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
     /**
      * Sets the key accelerator that will cause the receiving text
      * component to get the focus.  The accelerator will be the
-     * key combination of the <em>alt</em> key and the character
-     * given (converted to upper case).  By default, there is no focus
+     * key combination of the platform-specific modifier key and
+     * the character given (converted to upper case).  For example,
+     * the ALT key is used as a modifier on Windows and the CTRL+ALT
+     * combination is used on Mac.  By default, there is no focus
      * accelerator key.  Any previous key accelerator setting will be
      * superseded.  A '\0' key setting will be registered, and has the
      * effect of turning off the focus accelerator.  When the new key
@@ -1686,7 +1637,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * text component.
      *
      * @return the position of the text insertion caret for the
-     *  text component >= 0
+     *  text component &ge; 0
      */
     @Transient
     public int getCaretPosition() {
@@ -1812,7 +1763,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * Returns the selected text's start position.  Return 0 for an
      * empty document, or the value of dot if no selection.
      *
-     * @return the start position >= 0
+     * @return the start position &ge; 0
      */
     @Transient
     public int getSelectionStart() {
@@ -1830,7 +1781,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * This is implemented to forward to the <code>Caret</code>
      * implementation which is where the actual selection is maintained.
      *
-     * @param selectionStart the start position of the text >= 0
+     * @param selectionStart the start position of the text &ge; 0
      * @beaninfo
      * description: starting location of the selection.
      */
@@ -1845,7 +1796,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * Returns the selected text's end position.  Return 0 if the document
      * is empty, or the value of dot if there is no selection.
      *
-     * @return the end position >= 0
+     * @return the end position &ge; 0
      */
     @Transient
     public int getSelectionEnd() {
@@ -1863,7 +1814,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * This is implemented to forward to the <code>Caret</code>
      * implementation which is where the actual selection is maintained.
      *
-     * @param selectionEnd the end position of the text >= 0
+     * @param selectionEnd the end position of the text &ge; 0
      * @beaninfo
      * description: ending location of the selection.
      */
@@ -2213,8 +2164,8 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * <p>
      * This method is thread-safe, although most Swing methods are not. Please
      * see <A
-     * HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">
-     * How to Use Threads</A> for more information.
+     * HREF="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/index.html">
+     * Concurrency in Swing</A> for more information.
      *
      * <p>
      * <b>Sample Usage</b>. This code snippet shows a cross-platform print
@@ -2471,8 +2422,8 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * <p>
      * This method is thread-safe, although most Swing methods are not. Please
      * see <A
-     * HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">
-     * How to Use Threads</A> for more information.
+     * HREF="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/index.html">
+     * Concurrency in Swing</A> for more information.
      *
      * <p>
      * The returned {@code Printable} can be printed on any thread.
@@ -2537,7 +2488,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
@@ -2783,7 +2734,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
          * if the JTextComponent is contained in a JScrollPane in which
          * case the resulting rectangle should be composed with the parent
          * coordinates.  A good algorithm to use is:
-         * <nf>
+         * <pre>
          * Accessible a:
          * AccessibleText at = a.getAccessibleText();
          * AccessibleComponent ac = a.getAccessibleComponent();
@@ -2791,14 +2742,14 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
          * Point p = ac.getLocation();
          * r.x += p.x;
          * r.y += p.y;
-         * </nf>
+         * </pre>
          *
          * Note: the JTextComponent must have a valid size (e.g. have
          * been added to a parent container whose ancestor container
          * is a valid top-level window) for this method to be able
          * to return a meaningful (non-null) value.
          *
-         * @param i the index into the String >= 0
+         * @param i the index into the String &ge; 0
          * @return the screen coordinates of the character's bounding box
          */
         public Rectangle getCharacterBounds(int i) {
@@ -2842,7 +2793,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
         /**
          * Returns the number of characters (valid indices)
          *
-         * @return the number of characters >= 0
+         * @return the number of characters &ge; 0
          */
         public int getCharCount() {
             return model.getLength();
@@ -2893,7 +2844,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
          * Return 0 if the text is empty, or the caret position
          * if no selection.
          *
-         * @return the index into the text of the start of the selection >= 0
+         * @return the index into the text of the start of the selection &ge; 0
          */
         public int getSelectionStart() {
             return JTextComponent.this.getSelectionStart();
@@ -2906,7 +2857,7 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
          * Return 0 if the text is empty, or the caret position
          * if no selection.
          *
-         * @return the index into teh text of the end of the selection >= 0
+         * @return the index into the text of the end of the selection &ge; 0
          */
         public int getSelectionEnd() {
             return JTextComponent.this.getSelectionEnd();
@@ -3919,7 +3870,33 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      * Maps from class name to Boolean indicating if
      * <code>processInputMethodEvent</code> has been overriden.
      */
-    private static Map<String, Boolean> overrideMap;
+    private static Cache<Class<?>,Boolean> METHOD_OVERRIDDEN
+            = new Cache<Class<?>,Boolean>(Cache.Kind.WEAK, Cache.Kind.STRONG) {
+        /**
+         * Returns {@code true} if the specified {@code type} extends {@link JTextComponent}
+         * and the {@link JTextComponent#processInputMethodEvent} method is overridden.
+         */
+        @Override
+        public Boolean create(final Class<?> type) {
+            if (JTextComponent.class == type) {
+                return Boolean.FALSE;
+            }
+            if (get(type.getSuperclass())) {
+                return Boolean.TRUE;
+            }
+            return AccessController.doPrivileged(
+                    new PrivilegedAction<Boolean>() {
+                        public Boolean run() {
+                            try {
+                                type.getDeclaredMethod("processInputMethodEvent", InputMethodEvent.class);
+                                return Boolean.TRUE;
+                            } catch (NoSuchMethodException exception) {
+                                return Boolean.FALSE;
+                            }
+                        }
+                    });
+        }
+    };
 
     /**
      * Returns a string representation of this <code>JTextComponent</code>.
@@ -4944,36 +4921,13 @@ public abstract class JTextComponent extends JComponent implements Scrollable, A
      */
     private boolean shouldSynthensizeKeyEvents() {
         if (!checkedInputOverride) {
+            // Checks whether the client code overrides processInputMethodEvent.
+            // If it is overridden, need not to generate KeyTyped events for committed text.
+            // If it's not, behave as an passive input method client.
+            needToSendKeyTypedEvent = !METHOD_OVERRIDDEN.get(getClass());
             checkedInputOverride = true;
-            needToSendKeyTypedEvent =
-                             !isProcessInputMethodEventOverridden();
         }
         return needToSendKeyTypedEvent;
-    }
-
-    //
-    // Checks whether the client code overrides processInputMethodEvent.  If it is overridden,
-    // need not to generate KeyTyped events for committed text. If it's not, behave as an
-    // passive input method client.
-    //
-    private boolean isProcessInputMethodEventOverridden() {
-        if (overrideMap == null) {
-            overrideMap = Collections.synchronizedMap(new HashMap<String, Boolean>());
-        }
-        Boolean retValue = overrideMap.get(getClass().getName());
-
-        if (retValue != null) {
-            return retValue.booleanValue();
-        }
-        Boolean ret = AccessController.doPrivileged(new
-                       PrivilegedAction<Boolean>() {
-            public Boolean run() {
-                return isProcessInputMethodEventOverridden(
-                                JTextComponent.this.getClass());
-            }
-        });
-
-        return ret.booleanValue();
     }
 
     //

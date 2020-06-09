@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -23,6 +23,7 @@
 
 package com.sun.org.apache.xalan.internal.xsltc.trax;
 
+import com.sun.org.apache.xalan.internal.XalanConstants;
 import java.io.InputStream;
 import java.io.Reader;
 
@@ -43,6 +44,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import com.sun.org.apache.xalan.internal.utils.FactoryImpl;
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.XSLTC;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
 
@@ -105,6 +107,13 @@ public final class Util {
                     if (reader == null) {
                        try {
                            reader= XMLReaderFactory.createXMLReader();
+                           try {
+                                reader.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING,
+                                            xsltc.isSecureProcessing());
+                           } catch (SAXNotRecognizedException e) {
+                                System.err.println("Warning:  " + reader.getClass().getName() + ": "
+                                        + e.getMessage());
+                           }
                        } catch (Exception e ) {
                            try {
 
@@ -136,6 +145,30 @@ public final class Util {
                     reader.setFeature
                         ("http://xml.org/sax/features/namespace-prefixes",false);
 
+                    try {
+                        reader.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD,
+                                   xsltc.getProperty(XMLConstants.ACCESS_EXTERNAL_DTD));
+                    } catch (SAXNotRecognizedException e) {
+                        System.err.println("Warning:  " + reader.getClass().getName() + ": "
+                                + e.getMessage());
+                    }
+
+                    try {
+                        XMLSecurityManager securityManager =
+                                (XMLSecurityManager)xsltc.getProperty(XalanConstants.SECURITY_MANAGER);
+                        if (securityManager != null) {
+                            for (XMLSecurityManager.Limit limit : XMLSecurityManager.Limit.values()) {
+                                reader.setProperty(limit.apiProperty(),
+                                        securityManager.getLimitValueAsString(limit));
+                            }
+                            if (securityManager.printEntityCountInfo()) {
+                                reader.setProperty(XalanConstants.JDK_ENTITY_COUNT_INFO, XalanConstants.JDK_YES);
+                            }
+                        }
+                    } catch (SAXException se) {
+                        System.err.println("Warning:  " + reader.getClass().getName() + ": "
+                                    + se.getMessage());
+                    }
                     xsltc.setXMLReader(reader);
                 }catch (SAXNotRecognizedException snre ) {
                   throw new TransformerConfigurationException

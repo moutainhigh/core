@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -851,7 +851,6 @@ public class DOMSerializerImpl implements LSSerializer, DOMConfiguration {
                 ser.fDOMErrorHandler.handleError(error);
 
             }
-            e.printStackTrace();
             throw (LSException) DOMUtil.createLSException(LSException.SERIALIZE_ERR, e).fillInStackTrace();
         }
         return true;

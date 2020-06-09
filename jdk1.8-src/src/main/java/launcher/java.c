@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -98,14 +98,15 @@ static int numOptions, maxOptions;
  */
 static void SetClassPath(const char *s);
 static void SelectVersion(int argc, char **argv, char **main_class);
+static void SetJvmEnvironment(int argc, char **argv);
 static jboolean ParseArguments(int *pargc, char ***pargv,
                                int *pmode, char **pwhat,
                                int *pret, const char *jrepath);
 static jboolean InitializeJVM(JavaVM **pvm, JNIEnv **penv,
                               InvocationFunctions *ifn);
 static jstring NewPlatformString(JNIEnv *env, char *s);
-static jobjectArray NewPlatformStringArray(JNIEnv *env, char **strv, int strc);
 static jclass LoadMainClass(JNIEnv *env, int mode, char *name);
+static jclass GetApplicationClass(JNIEnv *env);
 
 static void TranslateApplicationArgs(int jargc, const char **jargv, int *pargc, char ***pargv);
 static jboolean AddApplicationOptions(int cpathc, const char **cpathv);
@@ -149,18 +150,21 @@ static int  KnownVMIndex(const char* name);
 static void FreeKnownVMs();
 static jboolean IsWildCardEnabled();
 
-#define ARG_CHECK(n, f, a) if (n < 1) { \
-    JLI_ReportErrorMessage(f, a); \
-    printUsage = JNI_TRUE; \
-    *pret = 1; \
-    return JNI_TRUE; \
-}
+#define ARG_CHECK(AC_arg_count, AC_failure_message, AC_questionable_arg) \
+    do { \
+        if (AC_arg_count < 1) { \
+            JLI_ReportErrorMessage(AC_failure_message, AC_questionable_arg); \
+            printUsage = JNI_TRUE; \
+            *pret = 1; \
+            return JNI_TRUE; \
+        } \
+    } while (JNI_FALSE)
 
 /*
  * Running Java code in primordial thread caused many problems. We will
  * create a new thread to invoke JVM. See 6316197 for more information.
  */
-static jlong threadStackSize = 0;  /* stack size of the new thread */
+static jlong threadStackSize    = 0;  /* stack size of the new thread */
 static jlong maxHeapSize        = 0;  /* max heap size */
 static jlong initialHeapSize    = 0;  /* inital heap size */
 
@@ -202,6 +206,14 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
 
     InitLauncher(javaw);
     DumpState();
+    if (JLI_IsTraceLauncher()) {
+        int i;
+        printf("Command line args:\n");
+        for (i = 0; i < argc ; i++) {
+            printf("argv[%d] = %s\n", i, argv[i]);
+        }
+        AddOption("-Dsun.java.launcher.diag=true", NULL);
+    }
 
     /*
      * Make sure the specified version of the JRE is running.
@@ -222,19 +234,14 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
      */
     SelectVersion(argc, argv, &main_class);
 
-    if (JLI_IsTraceLauncher()) {
-        int i;
-        printf("Command line args:\n");
-        for (i = 0; i < argc ; i++) {
-            printf("argv[%d] = %s\n", i, argv[i]);
-        }
-        AddOption("-Dsun.java.launcher.diag=true", NULL);
-    }
-
     CreateExecutionEnvironment(&argc, &argv,
                                jrepath, sizeof(jrepath),
                                jvmpath, sizeof(jvmpath),
                                jvmcfg,  sizeof(jvmcfg));
+
+    if (!IsJavaArgs()) {
+        SetJvmEnvironment(argc,argv);
+    }
 
     ifn.CreateJavaVM = 0;
     ifn.GetDefaultJavaVMInitArgs = 0;
@@ -311,29 +318,37 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
  * mainThread.isAlive() to work as expected.
  */
 #define LEAVE() \
-    if ((*vm)->DetachCurrentThread(vm) != 0) { \
-        JLI_ReportErrorMessage(JVM_ERROR2); \
-        ret = 1; \
-    } \
-    (*vm)->DestroyJavaVM(vm); \
-    return ret \
+    do { \
+        if ((*vm)->DetachCurrentThread(vm) != JNI_OK) { \
+            JLI_ReportErrorMessage(JVM_ERROR2); \
+            ret = 1; \
+        } \
+        if (JNI_TRUE) { \
+            (*vm)->DestroyJavaVM(vm); \
+            return ret; \
+        } \
+    } while (JNI_FALSE)
 
-#define CHECK_EXCEPTION_NULL_LEAVE(e) \
-    if ((*env)->ExceptionOccurred(env)) { \
-        JLI_ReportExceptionDescription(env); \
-        LEAVE(); \
-    } \
-    if ((e) == NULL) { \
-        JLI_ReportErrorMessage(JNI_ERROR); \
-        LEAVE(); \
-    }
+#define CHECK_EXCEPTION_NULL_LEAVE(CENL_exception) \
+    do { \
+        if ((*env)->ExceptionOccurred(env)) { \
+            JLI_ReportExceptionDescription(env); \
+            LEAVE(); \
+        } \
+        if ((CENL_exception) == NULL) { \
+            JLI_ReportErrorMessage(JNI_ERROR); \
+            LEAVE(); \
+        } \
+    } while (JNI_FALSE)
 
-#define CHECK_EXCEPTION_LEAVE(rv) \
-    if ((*env)->ExceptionOccurred(env)) { \
-        JLI_ReportExceptionDescription(env); \
-        ret = (rv); \
-        LEAVE(); \
-    }
+#define CHECK_EXCEPTION_LEAVE(CEL_return_value) \
+    do { \
+        if ((*env)->ExceptionOccurred(env)) { \
+            JLI_ReportExceptionDescription(env); \
+            ret = (CEL_return_value); \
+            LEAVE(); \
+        } \
+    } while (JNI_FALSE)
 
 int JNICALL
 JavaMain(void * _args)
@@ -348,6 +363,7 @@ JavaMain(void * _args)
     JavaVM *vm = 0;
     JNIEnv *env = 0;
     jclass mainClass = NULL;
+    jclass appClass = NULL; // actual application class being launched
     jmethodID mainID;
     jobjectArray mainArgs;
     int ret = 0;
@@ -421,10 +437,28 @@ JavaMain(void * _args)
      *          all environments,
      *     2)   Remove the vestages of maintaining main_class through
      *          the environment (and remove these comments).
+     *
+     * This method also correctly handles launching existing JavaFX
+     * applications that may or may not have a Main-Class manifest entry.
      */
     mainClass = LoadMainClass(env, mode, what);
     CHECK_EXCEPTION_NULL_LEAVE(mainClass);
-    PostJVMInit(env, mainClass, vm);
+    /*
+     * In some cases when launching an application that needs a helper, e.g., a
+     * JavaFX application with no main method, the mainClass will not be the
+     * applications own main class but rather a helper class. To keep things
+     * consistent in the UI we need to track and report the application main class.
+     */
+    appClass = GetApplicationClass(env);
+    NULL_CHECK_RETURN_VALUE(appClass, -1);
+    /*
+     * PostJVMInit uses the class name as the application name for GUI purposes,
+     * for example, on OSX this sets the application name in the menu bar for
+     * both SWT and JavaFX. So we'll pass the actual application class here
+     * instead of mainClass as that may be a launcher or helper class instead
+     * of the application class.
+     */
+    PostJVMInit(env, appClass, vm);
     /*
      * The LoadMainClass not only loads the main class, it will also ensure
      * that the main method's signature is correct, therefore further checking
@@ -435,8 +469,8 @@ JavaMain(void * _args)
                                        "([Ljava/lang/String;)V");
     CHECK_EXCEPTION_NULL_LEAVE(mainID);
 
-    /* Build argument array */
-    mainArgs = NewPlatformStringArray(env, argv, argc);
+    /* Build platform specific argument array */
+    mainArgs = CreateApplicationArgs(env, argv, argc);
     CHECK_EXCEPTION_NULL_LEAVE(mainArgs);
 
     /* Invoke main method. */
@@ -604,6 +638,67 @@ CheckJvmType(int *pargc, char ***argv, jboolean speculative) {
     return jvmtype;
 }
 
+/*
+ * static void SetJvmEnvironment(int argc, char **argv);
+ *   Is called just before the JVM is loaded.  We can set env variables
+ *   that are consumed by the JVM.  This function is non-destructive,
+ *   leaving the arg list intact.  The first use is for the JVM flag
+ *   -XX:NativeMemoryTracking=value.
+ */
+static void
+SetJvmEnvironment(int argc, char **argv) {
+
+    static const char*  NMT_Env_Name    = "NMT_LEVEL_";
+
+    int i;
+    for (i = 0; i < argc; i++) {
+        /*
+         * The following case checks for "-XX:NativeMemoryTracking=value".
+         * If value is non null, an environmental variable set to this value
+         * will be created to be used by the JVM.
+         * The argument is passed to the JVM, which will check validity.
+         * The JVM is responsible for removing the env variable.
+         */
+        char *arg = argv[i];
+        if (JLI_StrCCmp(arg, "-XX:NativeMemoryTracking=") == 0) {
+            int retval;
+            // get what follows this parameter, include "="
+            size_t pnlen = JLI_StrLen("-XX:NativeMemoryTracking=");
+            if (JLI_StrLen(arg) > pnlen) {
+                char* value = arg + pnlen;
+                size_t pbuflen = pnlen + JLI_StrLen(value) + 10; // 10 max pid digits
+
+                /*
+                 * ensures that malloc successful
+                 * DONT JLI_MemFree() pbuf.  JLI_PutEnv() uses system call
+                 *   that could store the address.
+                 */
+                char * pbuf = (char*)JLI_MemAlloc(pbuflen);
+
+                JLI_Snprintf(pbuf, pbuflen, "%s%d=%s", NMT_Env_Name, JLI_GetPid(), value);
+                retval = JLI_PutEnv(pbuf);
+                if (JLI_IsTraceLauncher()) {
+                    char* envName;
+                    char* envBuf;
+
+                    // ensures that malloc successful
+                    envName = (char*)JLI_MemAlloc(pbuflen);
+                    JLI_Snprintf(envName, pbuflen, "%s%d", NMT_Env_Name, JLI_GetPid());
+
+                    printf("TRACER_MARKER: NativeMemoryTracking: env var is %s\n",envName);
+                    printf("TRACER_MARKER: NativeMemoryTracking: putenv arg %s\n",pbuf);
+                    envBuf = getenv(envName);
+                    printf("TRACER_MARKER: NativeMemoryTracking: got value %s\n",envBuf);
+                    free(envName);
+                }
+
+            }
+
+        }
+
+    }
+}
+
 /* copied from HotSpot function "atomll()" */
 static int
 parse_size(const char *s, jlong *result) {
@@ -695,7 +790,17 @@ SetClassPath(const char *s)
     char *def;
     const char *orig = s;
     static const char format[] = "-Djava.class.path=%s";
+    /*
+     * usually we should not get a null pointer, but there are cases where
+     * we might just get one, in which case we simply ignore it, and let the
+     * caller deal with it
+     */
+    if (s == NULL)
+        return;
     s = JLI_WildcardExpandClasspath(s);
+    if (sizeof(format) - 2 + JLI_StrLen(s) < JLI_StrLen(s))
+        // s is corrupted after wildcard expansion
+        return;
     def = JLI_MemAlloc(sizeof(format)
                        - 2 /* strlen("%s") */
                        + JLI_StrLen(s));
@@ -1113,8 +1218,9 @@ InitializeJVM(JavaVM **pvm, JNIEnv **penv, InvocationFunctions *ifn)
 
 static jclass helperClass = NULL;
 
-static jclass
-GetLauncherHelperClass(JNIEnv *env) {
+jclass
+GetLauncherHelperClass(JNIEnv *env)
+{
     if (helperClass == NULL) {
         NULL_CHECK0(helperClass = FindBootStrapClass(env,
                 "sun/launcher/LauncherHelper"));
@@ -1142,11 +1248,13 @@ NewPlatformString(JNIEnv *env, char *s)
         (*env)->SetByteArrayRegion(env, ary, 0, len, (jbyte *)s);
         if (!(*env)->ExceptionOccurred(env)) {
             if (makePlatformStringMID == NULL) {
-                NULL_CHECK0(makePlatformStringMID = (*env)->GetStaticMethodID(env,
+                CHECK_JNI_RETURN_0(
+                    makePlatformStringMID = (*env)->GetStaticMethodID(env,
                         cls, "makePlatformString", "(Z[B)Ljava/lang/String;"));
             }
-            str = (*env)->CallStaticObjectMethod(env, cls,
-                    makePlatformStringMID, USE_STDERR, ary);
+            CHECK_JNI_RETURN_0(
+                str = (*env)->CallStaticObjectMethod(env, cls,
+                    makePlatformStringMID, USE_STDERR, ary));
             (*env)->DeleteLocalRef(env, ary);
             return str;
         }
@@ -1158,7 +1266,7 @@ NewPlatformString(JNIEnv *env, char *s)
  * Returns a new array of Java string objects for the specified
  * array of platform strings.
  */
-static jobjectArray
+jobjectArray
 NewPlatformStringArray(JNIEnv *env, char **strv, int strc)
 {
     jarray cls;
@@ -1197,16 +1305,32 @@ LoadMainClass(JNIEnv *env, int mode, char *name)
                 "(ZILjava/lang/String;)Ljava/lang/Class;"));
 
     str = NewPlatformString(env, name);
-    result = (*env)->CallStaticObjectMethod(env, cls, mid, USE_STDERR, mode, str);
+    CHECK_JNI_RETURN_0(
+        result = (*env)->CallStaticObjectMethod(
+            env, cls, mid, USE_STDERR, mode, str));
 
     if (JLI_IsTraceLauncher()) {
         end   = CounterGet();
         printf("%ld micro seconds to load main class\n",
                (long)(jint)Counter2Micros(end-start));
-        printf("----_JAVA_LAUNCHER_DEBUG----\n");
+        printf("----%s----\n", JLDEBUG_ENV_ENTRY);
     }
 
     return (jclass)result;
+}
+
+static jclass
+GetApplicationClass(JNIEnv *env)
+{
+    jmethodID mid;
+    jobject result;
+    jclass cls = GetLauncherHelperClass(env);
+    NULL_CHECK0(cls);
+    NULL_CHECK0(mid = (*env)->GetStaticMethodID(env, cls,
+                "getApplicationClass",
+                "()Ljava/lang/Class;"));
+
+    return (*env)->CallStaticObjectMethod(env, cls, mid);
 }
 
 /*
@@ -1300,9 +1424,11 @@ AddApplicationOptions(int cpathc, const char **cpathv)
         if (s) {
             s = (char *) JLI_WildcardExpandClasspath(s);
             /* 40 for -Denv.class.path= */
-            envcp = (char *)JLI_MemAlloc(JLI_StrLen(s) + 40);
-            sprintf(envcp, "-Denv.class.path=%s", s);
-            AddOption(envcp, NULL);
+            if (JLI_StrLen(s) + 40 > JLI_StrLen(s)) { // Safeguard from overflow
+                envcp = (char *)JLI_MemAlloc(JLI_StrLen(s) + 40);
+                sprintf(envcp, "-Denv.class.path=%s", s);
+                AddOption(envcp, NULL);
+            }
         }
     }
 
@@ -1738,7 +1864,6 @@ FreeKnownVMs()
     JLI_MemFree(knownVMs);
 }
 
-
 /*
  * Displays the splash screen according to the jar file name
  * and image file names stored in environment variables
@@ -1749,20 +1874,48 @@ ShowSplashScreen()
     const char *jar_name = getenv(SPLASH_JAR_ENV_ENTRY);
     const char *file_name = getenv(SPLASH_FILE_ENV_ENTRY);
     int data_size;
-    void *image_data;
+    void *image_data = NULL;
+    float scale_factor = 1;
+    char *scaled_splash_name = NULL;
+
+    if (file_name == NULL){
+        return;
+    }
+
+    scaled_splash_name = DoSplashGetScaledImageName(
+                        jar_name, file_name, &scale_factor);
     if (jar_name) {
-        image_data = JLI_JarUnpackFile(jar_name, file_name, &data_size);
+
+        if (scaled_splash_name) {
+            image_data = JLI_JarUnpackFile(
+                    jar_name, scaled_splash_name, &data_size);
+        }
+
+        if (!image_data) {
+            scale_factor = 1;
+            image_data = JLI_JarUnpackFile(
+                            jar_name, file_name, &data_size);
+        }
         if (image_data) {
             DoSplashInit();
+            DoSplashSetScaleFactor(scale_factor);
             DoSplashLoadMemory(image_data, data_size);
             JLI_MemFree(image_data);
         }
-    } else if (file_name) {
-        DoSplashInit();
-        DoSplashLoadFile(file_name);
     } else {
-        return;
+        DoSplashInit();
+        if (scaled_splash_name) {
+            DoSplashSetScaleFactor(scale_factor);
+            DoSplashLoadFile(scaled_splash_name);
+        } else {
+            DoSplashLoadFile(file_name);
+        }
     }
+
+    if (scaled_splash_name) {
+        JLI_MemFree(scaled_splash_name);
+    }
+
     DoSplashSetFileJarName(file_name, jar_name);
 
     /*

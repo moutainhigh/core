@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -64,7 +64,7 @@ public class MetalToolBarUI extends BasicToolBarUI
     private static List<WeakReference<JComponent>> components = new ArrayList<WeakReference<JComponent>>();
 
     /**
-     * This protected field is implemenation specific. Do not access directly
+     * This protected field is implementation specific. Do not access directly
      * or override. Use the create method instead.
      *
      * @see #createContainerListener
@@ -72,7 +72,7 @@ public class MetalToolBarUI extends BasicToolBarUI
     protected ContainerListener contListener;
 
     /**
-     * This protected field is implemenation specific. Do not access directly
+     * This protected field is implementation specific. Do not access directly
      * or override. Use the create method instead.
      *
      * @see #createRolloverListener

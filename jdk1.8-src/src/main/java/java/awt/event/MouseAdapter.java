@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -49,7 +49,7 @@ package java.awt.event;
  * methods.
  * The relevant method in the listener object is invoked  and the {@code MouseEvent}
  * or {@code MouseWheelEvent}  is passed to it in following cases:
- * <p><ul>
+ * <ul>
  * <li>when a mouse button is pressed, released, or clicked (pressed and  released)
  * <li>when the mouse cursor enters or exits the component
  * <li>when the mouse wheel rotated, or mouse moved or dragged
@@ -63,7 +63,7 @@ package java.awt.event;
  * @see MouseListener
  * @see MouseMotionListener
  * @see MouseWheelListener
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/mouselistener.html">Tutorial: Writing a Mouse Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/mouselistener.html">Tutorial: Writing a Mouse Listener</a>
  *
  * @since 1.1
  */

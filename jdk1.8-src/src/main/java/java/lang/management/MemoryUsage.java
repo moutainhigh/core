@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,8 +36,7 @@ import sun.management.MemoryUsageCompositeData;
  * the heap or non-heap memory of the Java virtual machine as a whole.
  *
  * <p> A <tt>MemoryUsage</tt> object contains four values:
- * <ul>
- * <table>
+ * <table summary="Describes the MemoryUsage object content">
  * <tr>
  * <td valign=top> <tt>init</tt> </td>
  * <td valign=top> represents the initial amount of memory (in bytes) that
@@ -72,16 +71,15 @@ import sun.management.MemoryUsageCompositeData;
  *      The amount of used and committed memory will always be less than
  *      or equal to <tt>max</tt> if <tt>max</tt> is defined.
  *      A memory allocation may fail if it attempts to increase the
- *      used memory such that <tt>used &gt committed</tt> even
- *      if <tt>used &lt= max</tt> would still be true (for example,
+ *      used memory such that <tt>used &gt; committed</tt> even
+ *      if <tt>used &lt;= max</tt> would still be true (for example,
  *      when the system is low on virtual memory).
  * </td>
  * </tr>
  * </table>
- * </ul>
  *
  * Below is a picture showing an example of a memory pool:
- * <p>
+ *
  * <pre>
  *        +----------------------------------------------+
  *        +////////////////           |                  +
@@ -98,7 +96,7 @@ import sun.management.MemoryUsageCompositeData;
  *                            max
  * </pre>
  *
- * <h4>MXBean Mapping</h4>
+ * <h3>MXBean Mapping</h3>
  * <tt>MemoryUsage</tt> is mapped to a {@link CompositeData CompositeData}
  * with attributes as specified in the {@link #from from} method.
  *
@@ -252,9 +250,9 @@ public class MemoryUsage {
      * Returns a <tt>MemoryUsage</tt> object represented by the
      * given <tt>CompositeData</tt>. The given <tt>CompositeData</tt>
      * must contain the following attributes:
-     * <p>
+     *
      * <blockquote>
-     * <table border>
+     * <table border summary="The attributes and the types the given CompositeData contains">
      * <tr>
      *   <th align=left>Attribute Name</th>
      *   <th align=left>Type</th>

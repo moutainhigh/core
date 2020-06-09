@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2015, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,12 +53,12 @@ import java.util.*;
  * configuring a button.  Refer to <a href="Action.html#buttonActions">
  * Swing Components Supporting <code>Action</code></a> for more
  * details, and you can find more information in <a
- * href="http://java.sun.com/docs/books/tutorial/uiswing/misc/action.html">How
+ * href="https://docs.oracle.com/javase/tutorial/uiswing/misc/action.html">How
  * to Use Actions</a>, a section in <em>The Java Tutorial</em>.
  * <p>
  * For further information see
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/button.html">How to Use Buttons, Check Boxes, and Radio Buttons</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/button.html">How to Use Buttons, Check Boxes, and Radio Buttons</a>,
  * a section in <em>The Java Tutorial</em>.
  * <p>
  * <strong>Warning:</strong>
@@ -66,7 +66,7 @@ import java.util.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -330,7 +330,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
     /**
      * Sets the state of the button. Note that this method does not
      * trigger an <code>actionEvent</code>.
-     * Call <code>doClick</code> to perform a programatic action change.
+     * Call <code>doClick</code> to perform a programmatic action change.
      *
      * @param b  true if the button is selected, otherwise false
      */
@@ -981,6 +981,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * @param exception the message to use in the
      *        {@code IllegalArgumentException} that is thrown for an invalid
      *        value
+     * @return the {@code key} argument
      * @exception IllegalArgumentException if key is not one of the legal
      *            values listed above
      * @see #setHorizontalTextPosition
@@ -1011,6 +1012,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * @param exception the message to use in the
      *        {@code IllegalArgumentException} that is thrown for an invalid
      *        value
+     * @return the {@code key} argument
      * @exception IllegalArgumentException if key is not one of the legal
      *            values listed above
      */
@@ -1347,6 +1349,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
         return new ButtonActionPropertyChangeListener(this, a);
     }
 
+    @SuppressWarnings("serial")
     private static class ButtonActionPropertyChangeListener
                  extends ActionPropertyChangeListener<AbstractButton> {
         ButtonActionPropertyChangeListener(AbstractButton b, Action a) {
@@ -1378,7 +1381,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * If <code>true</code> and the button has a border,
      * the border is painted. The default value for the
      * <code>borderPainted</code> property is <code>true</code>.
-     * <p/>
+     * <p>
      * Some look and feels might not support
      * the <code>borderPainted</code> property,
      * in which case they ignore this.
@@ -1473,7 +1476,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * This function may cause the component's opaque property to change.
      * <p>
      * The exact behavior of calling this function varies on a
-     * component-by-component and L&F-by-L&F basis.
+     * component-by-component and L&amp;F-by-L&amp;F basis.
      *
      * @param b if true, the content should be filled; if false
      *          the content area is not filled
@@ -1699,7 +1702,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * @see #getMultiClickThreshhold
      * @param threshhold the amount of time required between mouse
      *        press events to generate corresponding action events
-     * @exception   IllegalArgumentException if threshhold < 0
+     * @exception   IllegalArgumentException if threshhold &lt; 0
      * @since 1.4
      */
     public void setMultiClickThreshhold(long threshhold) {
@@ -1784,7 +1787,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
 
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      * @return the ButtonUI object
      * @see #setUI
      */
@@ -1794,8 +1797,8 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
 
 
     /**
-     * Sets the L&F object that renders this component.
-     * @param ui the <code>ButtonUI</code> L&F object
+     * Sets the L&amp;F object that renders this component.
+     * @param ui the <code>ButtonUI</code> L&amp;F object
      * @see #getUI
      * @beaninfo
      *        bound: true
@@ -1970,10 +1973,11 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class ButtonChangeListener implements ChangeListener, Serializable {
         // NOTE: This class is NOT used, instead the functionality has
         // been moved to Handler.
@@ -2193,10 +2197,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      */
     public boolean imageUpdate(Image img, int infoflags,
                                int x, int y, int w, int h) {
-        Icon iconDisplayed = getIcon();
-        if (iconDisplayed == null) {
-            return false;
-        }
+        Icon iconDisplayed = null;
 
         if (!model.isEnabled()) {
             if (model.isSelected()) {
@@ -2216,7 +2217,12 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
             iconDisplayed = getSelectedIcon();
         }
 
-        if (!SwingUtilities.doesIconReferenceImage(iconDisplayed, img)) {
+        if (iconDisplayed == null) {
+            iconDisplayed = getIcon();
+        }
+
+        if (iconDisplayed == null
+            || !SwingUtilities.doesIconReferenceImage(iconDisplayed, img)) {
             // We don't know about this image, disable the notification so
             // we don't keep repainting.
             return false;
@@ -2318,6 +2324,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
     //
     // Listeners that are added to model
     //
+    @SuppressWarnings("serial")
     class Handler implements ActionListener, ChangeListener, ItemListener,
                              Serializable {
         //
@@ -2374,7 +2381,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      * @since 1.4
@@ -2470,7 +2477,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
                         // the members of the button group.
                         int len = group.getButtonCount();
                         Object [] target = new Object[len];
-                        Enumeration elem = group.getElements();
+                        Enumeration<AbstractButton> elem = group.getElements();
                         for (int i = 0; i < len; i++) {
                             if (elem.hasMoreElements()) {
                                 target[i] = elem.nextElement();
@@ -2717,7 +2724,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          * or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence,
          *   null for an invalid index or part
          * @since 1.3
@@ -2764,7 +2771,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          * or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence, null for an invalid
          *  index or part
          * @since 1.3
@@ -2828,7 +2835,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          *   or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence, null for an invalid index
          *  or part
          * @since 1.3
@@ -2923,7 +2930,7 @@ public abstract class AbstractButton extends JComponent implements ItemSelectabl
          * If there is no selection, but there is
          * a caret, the start and end offsets will be the same.
          *
-         * @return the index into teh text of the end of the selection
+         * @return the index into the text of the end of the selection
          * @since 1.3
          */
         public int getSelectionEnd() {

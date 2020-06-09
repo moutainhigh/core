@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,6 +25,8 @@
 
 package javax.lang.model.type;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
 import javax.lang.model.element.*;
 import javax.lang.model.util.Types;
 
@@ -55,7 +57,7 @@ import javax.lang.model.util.Types;
  * @see Types
  * @since 1.6
  */
-public interface TypeMirror {
+public interface TypeMirror extends javax.lang.model.AnnotatedConstruct {
 
     /**
      * Returns the {@code kind} of this type.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Here is an example of a mutable call site which introduces a
  * state variable into a method handle chain.
  * <!-- JavaDocExamplesTest.testMutableCallSite -->
- * <blockquote><pre>
+ * <blockquote><pre>{@code
 MutableCallSite name = new MutableCallSite(MethodType.methodType(String.class));
 MethodHandle MH_name = name.dynamicInvoker();
 MethodType MT_str1 = MethodType.methodType(String.class);
@@ -50,10 +50,10 @@ assertEquals("ROCKY", (String) worker1.invokeExact());
 name.setTarget(MethodHandles.constant(String.class, "Fred"));
 assertEquals("FRED", (String) worker1.invokeExact());
 // (mutation can be continued indefinitely)
- * </pre></blockquote>
+ * }</pre></blockquote>
  * <p>
  * The same call site may be used in several places at once.
- * <blockquote><pre>
+ * <blockquote><pre>{@code
 MethodType MT_str2 = MethodType.methodType(String.class, String.class);
 MethodHandle MH_cat = lookup().findVirtual(String.class,
   "concat", methodType(String.class, String.class));
@@ -63,7 +63,7 @@ assertEquals("Fred, dear?", (String) worker2.invokeExact());
 name.setTarget(MethodHandles.constant(String.class, "Wilma"));
 assertEquals("WILMA", (String) worker1.invokeExact());
 assertEquals("Wilma, dear?", (String) worker2.invokeExact());
- * </pre></blockquote>
+ * }</pre></blockquote>
  * <p>
  * <em>Non-synchronization of target values:</em>
  * A write to a mutable call site's target does not force other threads
@@ -195,7 +195,7 @@ public class MutableCallSite extends CallSite {
      * processed before the method returns abnormally.
      * Which elements these are (if any) is implementation-dependent.
      *
-     * <h3>Java Memory Model details</h3>
+     * <h1>Java Memory Model details</h1>
      * In terms of the Java Memory Model, this operation performs a synchronization
      * action which is comparable in effect to the writing of a volatile variable
      * by the current thread, and an eventual volatile read by every other thread

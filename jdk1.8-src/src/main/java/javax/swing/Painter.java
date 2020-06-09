@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,7 +54,7 @@ import java.awt.Graphics2D;
  *     }
  * }
  * }
- * </pre></p>
+ * </pre>
  *
  * <p>This interface makes no guarantees of threadsafety.</p>
  *

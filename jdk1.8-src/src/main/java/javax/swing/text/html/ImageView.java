@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -554,8 +554,8 @@ public class ImageView extends View {
      * Sets the size of the view.  This should cause
      * layout of the view if it has any layout duties.
      *
-     * @param width the width >= 0
-     * @param height the height >= 0
+     * @param width the width &gt;= 0
+     * @param height the height &gt;= 0
      */
     public void setSize(float width, float height) {
         sync();

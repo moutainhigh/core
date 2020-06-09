@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ import javax.swing.plaf.basic.BasicEditorPaneUI;
 import java.beans.PropertyChangeEvent;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JEditorPane}.
  *
  * @author  Shannon Hickey
@@ -58,7 +58,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -74,7 +74,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -131,7 +131,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -139,8 +139,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -181,7 +180,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void paintBackground(Graphics g) {
@@ -194,7 +193,7 @@ public class SynthEditorPaneUI extends BasicEditorPaneUI implements SynthUI {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,

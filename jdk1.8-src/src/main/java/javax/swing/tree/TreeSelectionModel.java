@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2002, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,7 +32,7 @@ import java.beans.PropertyChangeListener;
   * This interface represents the current state of the selection for
   * the tree component.
   * For information and examples of using tree selection models,
-  * see <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/tree.html">How to Use Trees</a>
+  * see <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/tree.html">How to Use Trees</a>
   * in <em>The Java Tutorial.</em>
   *
   * <p>
@@ -47,7 +47,7 @@ import java.beans.PropertyChangeListener;
   *
   * A TreeSelectionModel can be configured to allow only one
   * path (<code>SINGLE_TREE_SELECTION</code>) a number of
-  * continguous paths (<code>CONTIGUOUS_TREE_SELECTION</code>) or a number of
+  * contiguous paths (<code>CONTIGUOUS_TREE_SELECTION</code>) or a number of
   * discontiguous paths (<code>DISCONTIGUOUS_TREE_SELECTION</code>).
   * A <code>RowMapper</code> is used to determine if TreePaths are
   * contiguous.

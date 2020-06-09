@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -23,7 +23,8 @@
  *
  */
 
-/**********************************************************************
+/*
+ **********************************************************************
  **********************************************************************
  **********************************************************************
  *** COPYRIGHT (c) Eastman Kodak Company, 1997                      ***
@@ -37,6 +38,8 @@ package java.awt.color;
 
 import sun.java2d.cmm.PCMM;
 import sun.java2d.cmm.CMSManager;
+import sun.java2d.cmm.Profile;
+import sun.java2d.cmm.ProfileDataVerifier;
 import sun.java2d.cmm.ProfileDeferralMgr;
 import sun.java2d.cmm.ProfileDeferralInfo;
 import sun.java2d.cmm.ProfileActivator;
@@ -84,7 +87,6 @@ import java.security.PrivilegedAction;
  * ICC Profile Format Specification.  Most profiles of interest
  * either have invertible transformations or explicitly specify
  * transformations going both directions.
- * <p>
  * @see ICC_ColorSpace
  */
 
@@ -93,7 +95,7 @@ public class ICC_Profile implements Serializable {
 
     private static final long serialVersionUID = -3938515861990936766L;
 
-    transient long ID;
+    private transient Profile cmmProfile;
 
     private transient ProfileDeferralInfo deferralInfo;
     private transient ProfileActivator profileActivator;
@@ -726,8 +728,8 @@ public class ICC_Profile implements Serializable {
     /**
      * Constructs an ICC_Profile object with a given ID.
      */
-    ICC_Profile(long ID) {
-        this.ID = ID;
+    ICC_Profile(Profile p) {
+        this.cmmProfile = p;
     }
 
 
@@ -750,8 +752,8 @@ public class ICC_Profile implements Serializable {
      * Frees the resources associated with an ICC_Profile object.
      */
     protected void finalize () {
-        if (ID != 0) {
-            CMSManager.getModule().freeProfile(ID);
+        if (cmmProfile != null) {
+            CMSManager.getModule().freeProfile(cmmProfile);
         } else if (profileActivator != null) {
             ProfileDeferralMgr.unregisterDeferral(profileActivator);
         }
@@ -769,39 +771,41 @@ public class ICC_Profile implements Serializable {
     public static ICC_Profile getInstance(byte[] data) {
     ICC_Profile thisProfile;
 
-        long theID;
+        Profile p = null;
 
         if (ProfileDeferralMgr.deferring) {
             ProfileDeferralMgr.activateProfiles();
         }
 
+        ProfileDataVerifier.verify(data);
+
         try {
-            theID = CMSManager.getModule().loadProfile(data);
+            p = CMSManager.getModule().loadProfile(data);
         } catch (CMMException c) {
             throw new IllegalArgumentException("Invalid ICC Profile Data");
         }
 
         try {
-            if ((getColorSpaceType (theID) == ColorSpace.TYPE_GRAY) &&
-                (getData (theID, icSigMediaWhitePointTag) != null) &&
-                (getData (theID, icSigGrayTRCTag) != null)) {
-                thisProfile = new ICC_ProfileGray (theID);
+            if ((getColorSpaceType (p) == ColorSpace.TYPE_GRAY) &&
+                (getData (p, icSigMediaWhitePointTag) != null) &&
+                (getData (p, icSigGrayTRCTag) != null)) {
+                thisProfile = new ICC_ProfileGray (p);
             }
-            else if ((getColorSpaceType (theID) == ColorSpace.TYPE_RGB) &&
-                (getData (theID, icSigMediaWhitePointTag) != null) &&
-                (getData (theID, icSigRedColorantTag) != null) &&
-                (getData (theID, icSigGreenColorantTag) != null) &&
-                (getData (theID, icSigBlueColorantTag) != null) &&
-                (getData (theID, icSigRedTRCTag) != null) &&
-                (getData (theID, icSigGreenTRCTag) != null) &&
-                (getData (theID, icSigBlueTRCTag) != null)) {
-                thisProfile = new ICC_ProfileRGB (theID);
+            else if ((getColorSpaceType (p) == ColorSpace.TYPE_RGB) &&
+                (getData (p, icSigMediaWhitePointTag) != null) &&
+                (getData (p, icSigRedColorantTag) != null) &&
+                (getData (p, icSigGreenColorantTag) != null) &&
+                (getData (p, icSigBlueColorantTag) != null) &&
+                (getData (p, icSigRedTRCTag) != null) &&
+                (getData (p, icSigGreenTRCTag) != null) &&
+                (getData (p, icSigBlueTRCTag) != null)) {
+                thisProfile = new ICC_ProfileRGB (p);
             }
             else {
-                thisProfile = new ICC_Profile (theID);
+                thisProfile = new ICC_Profile (p);
             }
         } catch (CMMException c) {
-            thisProfile = new ICC_Profile (theID);
+            thisProfile = new ICC_Profile (p);
         }
         return thisProfile;
     }
@@ -921,9 +925,9 @@ public class ICC_Profile implements Serializable {
      */
     private static ICC_Profile getStandardProfile(final String name) {
 
-        return (ICC_Profile) AccessController.doPrivileged(
-            new PrivilegedAction() {
-                 public Object run() {
+        return AccessController.doPrivileged(
+            new PrivilegedAction<ICC_Profile>() {
+                 public ICC_Profile run() {
                      ICC_Profile p = null;
                      try {
                          p = getInstance (name);
@@ -1116,7 +1120,7 @@ public class ICC_Profile implements Serializable {
                 fileName);
         }
         try {
-            ID = CMSManager.getModule().loadProfile(profileData);
+            cmmProfile = CMSManager.getModule().loadProfile(profileData);
         } catch (CMMException c) {
             ProfileDataException pde = new
                 ProfileDataException("Invalid ICC Profile Data" + fileName);
@@ -1226,14 +1230,14 @@ public class ICC_Profile implements Serializable {
                                                    causing a deferred profile
                                                    to be loaded */
         }
-        return    getColorSpaceType(ID);
+        return    getColorSpaceType(cmmProfile);
     }
 
-    static int getColorSpaceType(long profileID) {
+    static int getColorSpaceType(Profile p) {
     byte[] theHeader;
     int theColorSpaceSig, theColorSpace;
 
-        theHeader = getData(profileID, icSigHead);
+        theHeader = getData(p, icSigHead);
         theColorSpaceSig = intFromBigEndian(theHeader, icHdrColorSpace);
         theColorSpace = iccCStoJCS (theColorSpaceSig);
         return theColorSpace;
@@ -1255,15 +1259,15 @@ public class ICC_Profile implements Serializable {
         if (ProfileDeferralMgr.deferring) {
             ProfileDeferralMgr.activateProfiles();
         }
-        return getPCSType(ID);
+        return getPCSType(cmmProfile);
     }
 
 
-    static int getPCSType(long profileID) {
+    static int getPCSType(Profile p) {
     byte[] theHeader;
     int thePCSSig, thePCS;
 
-        theHeader = getData(profileID, icSigHead);
+        theHeader = getData(p, icSigHead);
         thePCSSig = intFromBigEndian(theHeader, icHdrPcs);
         thePCS = iccCStoJCS(thePCSSig);
         return thePCS;
@@ -1323,12 +1327,12 @@ public class ICC_Profile implements Serializable {
         PCMM mdl = CMSManager.getModule();
 
         /* get the number of bytes needed for this profile */
-        profileSize = mdl.getProfileSize(ID);
+        profileSize = mdl.getProfileSize(cmmProfile);
 
         profileData = new byte [profileSize];
 
         /* get the data for the profile */
-        mdl.getProfileData(ID, profileData);
+        mdl.getProfileData(cmmProfile, profileData);
 
         return profileData;
     }
@@ -1355,11 +1359,11 @@ public class ICC_Profile implements Serializable {
             ProfileDeferralMgr.activateProfiles();
         }
 
-        return getData(ID, tagSignature);
+        return getData(cmmProfile, tagSignature);
     }
 
 
-    static byte[] getData(long profileID, int tagSignature) {
+    static byte[] getData(Profile p, int tagSignature) {
     int tagSize;
     byte[] tagData;
 
@@ -1367,12 +1371,12 @@ public class ICC_Profile implements Serializable {
             PCMM mdl = CMSManager.getModule();
 
             /* get the number of bytes needed for this tag */
-            tagSize = mdl.getTagSize(profileID, tagSignature);
+            tagSize = mdl.getTagSize(p, tagSignature);
 
             tagData = new byte[tagSize]; /* get an array for the tag */
 
             /* get the tag's data */
-            mdl.getTagData(profileID, tagSignature, tagData);
+            mdl.getTagData(p, tagSignature, tagData);
         } catch(CMMException c) {
             tagData = null;
         }
@@ -1403,7 +1407,7 @@ public class ICC_Profile implements Serializable {
             ProfileDeferralMgr.activateProfiles();
         }
 
-        CMSManager.getModule().setTagData(ID, tagSignature, tagData);
+        CMSManager.getModule().setTagData(cmmProfile, tagSignature, tagData);
     }
 
     /**
@@ -1432,7 +1436,15 @@ public class ICC_Profile implements Serializable {
 
         int renderingIntent = intFromBigEndian(theHeader, icHdrRenderingIntent);
                                                  /* set the rendering intent */
-        return renderingIntent;
+
+        /* According to ICC spec, only the least-significant 16 bits shall be
+         * used to encode the rendering intent. The most significant 16 bits
+         * shall be set to zero. Thus, we are ignoring two most significant
+         * bytes here.
+         *
+         *  See http://www.color.org/ICC1v42_2006-05.pdf, section 7.2.15.
+         */
+        return (0xffff & renderingIntent);
     }
 
 

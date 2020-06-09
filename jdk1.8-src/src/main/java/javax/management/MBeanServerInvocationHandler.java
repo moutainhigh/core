@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -141,6 +141,12 @@ public class MBeanServerInvocationHandler implements InvocationHandler {
         if (connection == null) {
             throw new IllegalArgumentException("Null connection");
         }
+        if (Proxy.isProxyClass(connection.getClass())) {
+            if (MBeanServerInvocationHandler.class.isAssignableFrom(
+                    Proxy.getInvocationHandler(connection).getClass())) {
+                throw new IllegalArgumentException("Wrapping MBeanServerInvocationHandler");
+            }
+        }
         if (objectName == null) {
             throw new IllegalArgumentException("Null object name");
         }
@@ -225,26 +231,13 @@ public class MBeanServerInvocationHandler implements InvocationHandler {
      *
      * @return the new proxy instance.
      *
-     * @see JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class)
+     * @see JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class, boolean)
      */
     public static <T> T newProxyInstance(MBeanServerConnection connection,
                                          ObjectName objectName,
                                          Class<T> interfaceClass,
                                          boolean notificationBroadcaster) {
-        final InvocationHandler handler =
-            new MBeanServerInvocationHandler(connection, objectName);
-        final Class<?>[] interfaces;
-        if (notificationBroadcaster) {
-            interfaces =
-                new Class<?>[] {interfaceClass, NotificationEmitter.class};
-        } else
-            interfaces = new Class<?>[] {interfaceClass};
-
-        Object proxy =
-            Proxy.newProxyInstance(interfaceClass.getClassLoader(),
-                                   interfaces,
-                                   handler);
-        return interfaceClass.cast(proxy);
+        return JMX.newMBeanProxy(connection, objectName, interfaceClass, notificationBroadcaster);
     }
 
     public Object invoke(Object proxy, Method method, Object[] args)
@@ -431,6 +424,10 @@ public class MBeanServerInvocationHandler implements InvocationHandler {
                              new Class<?>[] {Object.class})
             && isLocal(proxy, method))
             return true;
+        if (methodName.equals("finalize")
+            && method.getParameterTypes().length == 0) {
+            return true;
+        }
         return false;
     }
 
@@ -466,6 +463,9 @@ public class MBeanServerInvocationHandler implements InvocationHandler {
                 connection + "[" + objectName + "])";
         } else if (methodName.equals("hashCode")) {
             return objectName.hashCode()+connection.hashCode();
+        } else if (methodName.equals("finalize")) {
+            // ignore the finalizer invocation via proxy
+            return null;
         }
 
         throw new RuntimeException("Unexpected method name: " + methodName);

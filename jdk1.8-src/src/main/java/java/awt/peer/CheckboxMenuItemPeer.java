@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 1998, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,12 +38,12 @@ import java.awt.CheckboxMenuItem;
 public interface CheckboxMenuItemPeer extends MenuItemPeer {
 
     /**
-     * Sets the state of the checkbox to be checked ({@code true}) or
-     * unchecked ({@code false}).
+     * Sets the state of the checkbox to be checked {@code true} or
+     * unchecked {@code false}.
      *
-     * @param t the state to set on the checkbox
+     * @param state the state to set on the checkbox
      *
-     * @see CheckboxMenuItemPeer#setState(boolean)
+     * @see CheckboxMenuItem#setState(boolean)
      */
-    void setState(boolean t);
+    void setState(boolean state);
 }

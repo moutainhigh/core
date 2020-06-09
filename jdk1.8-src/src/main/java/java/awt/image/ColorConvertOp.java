@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -23,7 +23,8 @@
  *
  */
 
-/**********************************************************************
+/*
+ **********************************************************************
  **********************************************************************
  **********************************************************************
  *** COPYRIGHT (c) Eastman Kodak Company, 1997                      ***
@@ -64,7 +65,6 @@ import java.awt.RenderingHints;
  * color conversion.
  * <p>
  * Note that Source and Destination may be the same object.
- * <p>
  * @see java.awt.RenderingHints#KEY_COLOR_RENDERING
  * @see java.awt.RenderingHints#KEY_DITHERING
  */
@@ -732,10 +732,16 @@ public class ColorConvertOp implements BufferedImageOp, RasterOp {
     private int getRenderingIntent (ICC_Profile profile) {
         byte[] header = profile.getData(ICC_Profile.icSigHead);
         int index = ICC_Profile.icHdrRenderingIntent;
-        return (((header[index]   & 0xff) << 24) |
-                ((header[index+1] & 0xff) << 16) |
-                ((header[index+2] & 0xff) <<  8) |
-                 (header[index+3] & 0xff));
+
+        /* According to ICC spec, only the least-significant 16 bits shall be
+         * used to encode the rendering intent. The most significant 16 bits
+         * shall be set to zero. Thus, we are ignoring two most significant
+         * bytes here.
+         *
+         *  See http://www.color.org/ICC1v42_2006-05.pdf, section 7.2.15.
+         */
+        return ((header[index+2] & 0xff) <<  8) |
+                (header[index+3] & 0xff);
     }
 
     /**

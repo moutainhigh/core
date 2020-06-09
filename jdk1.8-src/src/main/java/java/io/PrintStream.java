@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -303,7 +303,7 @@ public class PrintStream extends FilterOutputStream
      *          creating the file
      *
      * @throws  SecurityException
-     *          If a security manager is presentand {@link
+     *          If a security manager is present and {@link
      *          SecurityManager#checkWrite checkWrite(file.getPath())}
      *          denies write access to the file
      *
@@ -851,7 +851,7 @@ public class PrintStream extends FilterOutputStream
      *         <tt>null</tt> argument depends on the <a
      *         href="../util/Formatter.html#syntax">conversion</a>.
      *
-     * @throws  IllegalFormatException
+     * @throws  java.util.IllegalFormatException
      *          If a format string contains an illegal syntax, a format
      *          specifier that is incompatible with the given arguments,
      *          insufficient arguments given the format string, or other
@@ -901,7 +901,7 @@ public class PrintStream extends FilterOutputStream
      *         <tt>null</tt> argument depends on the <a
      *         href="../util/Formatter.html#syntax">conversion</a>.
      *
-     * @throws  IllegalFormatException
+     * @throws  java.util.IllegalFormatException
      *          If a format string contains an illegal syntax, a format
      *          specifier that is incompatible with the given arguments,
      *          insufficient arguments given the format string, or other
@@ -944,7 +944,7 @@ public class PrintStream extends FilterOutputStream
      *         <tt>null</tt> argument depends on the <a
      *         href="../util/Formatter.html#syntax">conversion</a>.
      *
-     * @throws  IllegalFormatException
+     * @throws  java.util.IllegalFormatException
      *          If a format string contains an illegal syntax, a format
      *          specifier that is incompatible with the given arguments,
      *          insufficient arguments given the format string, or other
@@ -1001,7 +1001,7 @@ public class PrintStream extends FilterOutputStream
      *         <tt>null</tt> argument depends on the <a
      *         href="../util/Formatter.html#syntax">conversion</a>.
      *
-     * @throws  IllegalFormatException
+     * @throws  java.util.IllegalFormatException
      *          If a format string contains an illegal syntax, a format
      *          specifier that is incompatible with the given arguments,
      *          insufficient arguments given the format string, or other

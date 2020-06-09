@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,12 +25,13 @@
 
 package com.sun.org.apache.xerces.internal.impl;
 
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
+import com.sun.xml.internal.stream.StaxEntityResolverWrapper;
 import java.util.HashMap;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLResolver;
-
-import com.sun.xml.internal.stream.StaxEntityResolverWrapper;
 
 /**
  *  This class manages different properties related to Stax specification and its implementation.
@@ -50,8 +51,17 @@ public class PropertyManager {
 
     private static final String STRING_INTERNING = "http://xml.org/sax/features/string-interning";
 
+    /** Property identifier: Security manager. */
+    private static final String SECURITY_MANAGER = Constants.SECURITY_MANAGER;
+
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
 
     HashMap supportedProps = new HashMap();
+
+    private XMLSecurityManager fSecurityManager;
+    private XMLSecurityPropertyManager fSecurityPropertyMgr;
 
     public static final int CONTEXT_READER = 1;
     public static final int CONTEXT_WRITER = 2;
@@ -77,6 +87,8 @@ public class PropertyManager {
 
         HashMap properties = propertyManager.getProperties();
         supportedProps.putAll(properties);
+        fSecurityManager = (XMLSecurityManager)getProperty(SECURITY_MANAGER);
+        fSecurityPropertyMgr = (XMLSecurityPropertyManager)getProperty(XML_SECURITY_PROPERTY_MANAGER);
     }
 
     private HashMap getProperties(){
@@ -117,6 +129,11 @@ public class PropertyManager {
         supportedProps.put(Constants.XERCES_FEATURE_PREFIX + Constants.WARN_ON_DUPLICATE_ATTDEF_FEATURE, new Boolean(false));
         supportedProps.put(Constants.XERCES_FEATURE_PREFIX + Constants.WARN_ON_DUPLICATE_ENTITYDEF_FEATURE, new Boolean(false));
         supportedProps.put(Constants.XERCES_FEATURE_PREFIX + Constants.WARN_ON_UNDECLARED_ELEMDEF_FEATURE, new Boolean(false));
+
+        fSecurityManager = new XMLSecurityManager(true);
+        supportedProps.put(SECURITY_MANAGER, fSecurityManager);
+        fSecurityPropertyMgr = new XMLSecurityPropertyManager();
+        supportedProps.put(XML_SECURITY_PROPERTY_MANAGER, fSecurityPropertyMgr);
     }
 
     private void initWriterProps(){
@@ -132,7 +149,9 @@ public class PropertyManager {
      * }
      */
     public boolean containsProperty(String property){
-        return supportedProps.containsKey(property) ;
+        return supportedProps.containsKey(property) ||
+                (fSecurityManager != null && fSecurityManager.getIndex(property) > -1) ||
+                (fSecurityPropertyMgr!=null && fSecurityPropertyMgr.getIndex(property) > -1) ;
     }
 
     public Object getProperty(String property){
@@ -158,7 +177,37 @@ public class PropertyManager {
             //add internal stax property
             supportedProps.put( Constants.XERCES_PROPERTY_PREFIX + Constants.STAX_ENTITY_RESOLVER_PROPERTY , new StaxEntityResolverWrapper((XMLResolver)value)) ;
         }
-        supportedProps.put(property, value ) ;
+
+        /**
+         * It's possible for users to set a security manager through the interface.
+         * If it's the old SecurityManager, convert it to the new XMLSecurityManager
+         */
+        if (property.equals(Constants.SECURITY_MANAGER)) {
+            fSecurityManager = XMLSecurityManager.convert(value, fSecurityManager);
+            supportedProps.put(Constants.SECURITY_MANAGER, fSecurityManager);
+            return;
+        }
+        if (property.equals(Constants.XML_SECURITY_PROPERTY_MANAGER)) {
+            if (value == null) {
+                fSecurityPropertyMgr = new XMLSecurityPropertyManager();
+            } else {
+                fSecurityPropertyMgr = (XMLSecurityPropertyManager)value;
+            }
+            supportedProps.put(Constants.XML_SECURITY_PROPERTY_MANAGER, fSecurityPropertyMgr);
+            return;
+        }
+
+        //check if the property is managed by security manager
+        if (fSecurityManager == null ||
+                !fSecurityManager.setLimit(property, XMLSecurityManager.State.APIPROPERTY, value)) {
+            //check if the property is managed by security property manager
+            if (fSecurityPropertyMgr == null ||
+                    !fSecurityPropertyMgr.setValue(property, XMLSecurityPropertyManager.State.APIPROPERTY, value)) {
+                //fall back to the existing property manager
+                supportedProps.put(property, value);
+            }
+        }
+
         if(equivalentProperty != null){
             supportedProps.put(equivalentProperty, value ) ;
         }

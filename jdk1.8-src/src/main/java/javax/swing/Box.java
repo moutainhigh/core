@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -60,7 +60,7 @@ import javax.accessibility.*;
  * If you are implementing a <code>BoxLayout</code> you
  * can find further information and examples in
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/layout/box.html">How to Use BoxLayout</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/layout/box.html">How to Use BoxLayout</a>,
  * a section in <em>The Java Tutorial.</em>
  * <p>
  * <strong>Warning:</strong>
@@ -68,7 +68,7 @@ import javax.accessibility.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -76,6 +76,7 @@ import javax.accessibility.*;
  *
  * @author  Timothy Prinzing
  */
+@SuppressWarnings("serial")
 public class Box extends JComponent implements Accessible {
 
     /**
@@ -154,7 +155,7 @@ public class Box extends JComponent implements Accessible {
      * in which case it takes its share of available space,
      * just like any other component that has no maximum height.
      *
-     * @param width the width of the invisible component, in pixels >= 0
+     * @param width the width of the invisible component, in pixels &gt;= 0
      * @return the component
      * @see #createVerticalStrut
      * @see #createGlue
@@ -178,7 +179,7 @@ public class Box extends JComponent implements Accessible {
      * in which case it takes its share of available space,
      * just like any other component that has no maximum width.
      *
-     * @param height the height of the invisible component, in pixels >= 0
+     * @param height the height of the invisible component, in pixels &gt;= 0
      * @return the component
      * @see #createHorizontalStrut
      * @see #createGlue
@@ -297,10 +298,11 @@ public class Box extends JComponent implements Accessible {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     public static class Filler extends JComponent implements Accessible {
 
         /**
@@ -380,6 +382,7 @@ public class Box extends JComponent implements Accessible {
          * This class implements accessibility support for the
          * <code>Box.Filler</code> class.
          */
+        @SuppressWarnings("serial")
         protected class AccessibleBoxFiller extends AccessibleAWTComponent {
             // AccessibleContext methods
             //
@@ -420,6 +423,7 @@ public class Box extends JComponent implements Accessible {
      * This class implements accessibility support for the
      * <code>Box</code> class.
      */
+    @SuppressWarnings("serial")
     protected class AccessibleBox extends AccessibleAWTContainer {
         // AccessibleContext methods
         //

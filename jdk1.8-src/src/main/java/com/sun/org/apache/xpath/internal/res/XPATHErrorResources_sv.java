@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XPATHErrorResources_sv.java,v 1.2.4.1 2005/09/15 00:39:20 jeffsuttor Exp $
- */
 package com.sun.org.apache.xpath.internal.res;
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -450,7 +444,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
      "F\u00F6rv\u00E4ntade {0}, men hittade: {1}"},
 
   { ER_INCORRECT_PROGRAMMER_ASSERTION,
-      "Programmerarens verifiering \u00E4r inte korrekt! - {0}"},
+      "Programmerarens utsaga \u00E4r inte korrekt! - {0}"},
 
   { ER_BOOLEAN_ARG_NO_LONGER_OPTIONAL,
       "Argumentet boolean(...) \u00E4r inte l\u00E4ngre valfritt med 19990709 XPath-utkast."},
@@ -483,10 +477,10 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "Fel! Hittade inte xpath select-uttryck (-select)."},
 
   { ER_COULDNOT_FIND_ENDOP_AFTER_OPLOCATIONPATH,
-      "FEL! Kunde inte hitta ENDOP efter OP_LOCATIONPATH"},
+      "FEL! Hittade inte ENDOP efter OP_LOCATIONPATH"},
 
   { ER_ERROR_OCCURED,
-     "Fel intr\u00E4ffade!"},
+     "Ett fel har intr\u00E4ffat!"},
 
   { ER_ILLEGAL_VARIABLE_REFERENCE,
       "VariableReference angiven f\u00F6r variabel som \u00E4r utanf\u00F6r kontext eller som saknar definition! Namn = {0}"},
@@ -501,7 +495,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "Funktionen count borde ta emot ett argument!"},
 
   { ER_COULDNOT_FIND_FUNCTION,
-     "Kunde inte hitta funktionen: {0}"},
+     "Hittade inte funktionen: {0}"},
 
   { ER_UNSUPPORTED_ENCODING,
      "Kodning utan st\u00F6d: {0}"},
@@ -570,7 +564,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
         "Felhanterare med v\u00E4rde null"},
 
   { ER_PROG_ASSERT_UNKNOWN_OPCODE,
-       "Programmerarens verifiering: ok\u00E4nd op-kod: {0}"},
+       "Programmerarens utsaga: ok\u00E4nd op-kod: {0}"},
 
   { ER_ZERO_OR_ONE,
        "0 eller 1"},
@@ -640,7 +634,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
        "{0} till\u00E5ter endast {1} argument"},
 
   { ER_UNKNOWN_STEP,
-       "Programmerarens verifiering i getNextStepPos: ok\u00E4nt stepType: {0}"},
+       "Programmerarens utsaga i getNextStepPos: ok\u00E4nt stepType: {0}"},
 
   //Note to translators:  A relative location path is a form of XPath expression.
   // The message indicates that such an expression was expected following the
@@ -831,7 +825,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // Warnings...
 
   { WG_LOCALE_NAME_NOT_HANDLED,
-      "spr\u00E5knamnet i funktionen format-number har \u00E4nnu inte hanterats!"},
+      "spr\u00E5kkonventionsnamnet i funktionen format-number har \u00E4nnu inte hanterats!"},
 
   { WG_PROPERTY_NOT_SUPPORTED,
       "XSL-egenskapen st\u00F6ds inte: {0}"},
@@ -852,7 +846,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "funktionstecken hittades inte."},
 
   { WG_COULDNOT_FIND_FUNCTION,
-      "Kunde inte hitta funktionen: {0}"},
+      "Hittade inte funktionen: {0}"},
 
   { WG_CANNOT_MAKE_URL_FROM,
       "Kan inte skapa URL fr\u00E5n: {0}"},
@@ -877,8 +871,8 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   { "version", ">>>>>>> Xalan version "},
   { "version2", "<<<<<<<"},
   { "yes", "ja"},
-  { "line", "Rad #"},
-  { "column", "Kolumn #"},
+  { "line", "Rad nr"},
+  { "column", "Kolumn nr"},
   { "xsldone", "XSLProcessor: utf\u00F6rd"},
   { "xpath_option", "xpath-alternativ: "},
   { "optionIN", "   [-in inputXMLURL]"},
@@ -938,69 +932,5 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
 
   /** Field QUERY_HEADER          */
   public static final String QUERY_HEADER = "PATTERN ";
-
-
-  /**
-   * Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   * of ResourceBundle.getBundle().
-   *
-   * @param className Name of local-specific subclass.
-   * @return the ResourceBundle
-   * @throws MissingResourceException
-   */
-  public static final XPATHErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XPATHErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XPATHErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -30,6 +30,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StreamCorruptedException;
+import java.util.Objects;
 
 /**
  * <p>Provides general information for an MBean descriptor object.
@@ -147,9 +148,9 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
         if (!(o instanceof MBeanFeatureInfo))
             return false;
         MBeanFeatureInfo p = (MBeanFeatureInfo) o;
-        return (p.getName().equals(getName()) &&
-                p.getDescription().equals(getDescription()) &&
-                p.getDescriptor().equals(getDescriptor()));
+        return (Objects.equals(p.getName(), getName()) &&
+                Objects.equals(p.getDescription(), getDescription()) &&
+                Objects.equals(p.getDescriptor(), getDescriptor()));
     }
 
     public int hashCode() {
@@ -161,7 +162,7 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
      * Serializes an {@link MBeanFeatureInfo} to an {@link ObjectOutputStream}.
      * @serialData
      * For compatibility reasons, an object of this class is serialized as follows.
-     * <ul>
+     * <p>
      * The method {@link ObjectOutputStream#defaultWriteObject defaultWriteObject()}
      * is called first to serialize the object except the field {@code descriptor}
      * which is declared as transient. The field {@code descriptor} is serialized
@@ -179,7 +180,7 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
      * {@link ObjectOutputStream#writeObject writeObject(Object obj)} is called
      * to serialize directly the field {@code descriptor}.
      *     </ul>
-     * </ul>
+     *
      * @since 1.6
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -205,7 +206,7 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
      * Deserializes an {@link MBeanFeatureInfo} from an {@link ObjectInputStream}.
      * @serialData
      * For compatibility reasons, an object of this class is deserialized as follows.
-     * <ul>
+     * <p>
      * The method {@link ObjectInputStream#defaultReadObject defaultReadObject()}
      * is called first to deserialize the object except the field
      * {@code descriptor}, which is not serialized in the default way. Then the method
@@ -227,7 +228,7 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
      *       to {@link ImmutableDescriptor#EMPTY_DESCRIPTOR EMPTY_DESCRIPTOR}</li>
      *    <li>Any other value. A {@link StreamCorruptedException} is thrown.</li>
      *    </ul>
-     * </ul>
+     *
      * @since 1.6
      */
     private void readObject(ObjectInputStream in)
@@ -239,12 +240,10 @@ public class MBeanFeatureInfo implements Serializable, DescriptorRead {
         case 1:
             final String[] names = (String[])in.readObject();
 
-            if (names.length == 0) {
-                descriptor = ImmutableDescriptor.EMPTY_DESCRIPTOR;
-            } else {
-                final Object[] values = (Object[])in.readObject();
-                descriptor = new ImmutableDescriptor(names, values);
-            }
+            final Object[] values = (Object[]) in.readObject();
+            descriptor = (names.length == 0) ?
+                ImmutableDescriptor.EMPTY_DESCRIPTOR :
+                new ImmutableDescriptor(names, values);
 
             break;
         case 0:

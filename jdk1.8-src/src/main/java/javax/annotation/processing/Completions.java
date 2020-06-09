@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -24,8 +24,6 @@
  */
 
 package javax.annotation.processing;
-
-import java.util.Arrays;
 
 /**
  * Utility class for assembling {@link Completion} objects.

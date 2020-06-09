@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,10 +57,10 @@ import java.util.Arrays;
  * The following code illustrates extracting the bits of the sample
  * representing band <code>b</code> for pixel <code>x,y</code>
  * from DataBuffer <code>data</code>:
- * <pre>
+ * <pre>{@code
  *      int sample = data.getElem(y * scanlineStride + x);
  *      sample = (sample & bitMasks[b]) >>> bitOffsets[b];
- * </pre>
+ * }</pre>
  */
 
 public class SinglePixelPackedSampleModel extends SampleModel

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,7 +36,7 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
 /**
- * Indicates an exceptional condition that occured during the XML
+ * Indicates an exceptional condition that occurred during the XML
  * marshalling or unmarshalling process.
  *
  * <p>A <code>MarshalException</code> can contain a cause: another

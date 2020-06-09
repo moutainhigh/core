@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -48,8 +48,8 @@ public class ECPrivateKeySpec implements KeySpec {
      * @param s the private value.
      * @param params the associated elliptic curve domain
      * parameters.
-     * @exception NullPointerException if <code>s</code>
-     * or <code>params</code> is null.
+     * @exception NullPointerException if {@code s}
+     * or {@code params} is null.
      */
     public ECPrivateKeySpec(BigInteger s, ECParameterSpec params) {
         if (s == null) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import javax.swing.plaf.*;
 import java.beans.*;
 
 /**
- * Basic L&F for a minimized window on a desktop.
+ * Basic L&amp;F for a minimized window on a desktop.
  *
  * @author David Kloba
  * @author Steve Wilson

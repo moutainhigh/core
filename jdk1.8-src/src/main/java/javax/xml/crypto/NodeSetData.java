@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -52,5 +52,6 @@ public interface NodeSetData extends Data {
      * @return an <code>Iterator</code> over the nodes in this
      *    <code>NodeSetData</code> in document order
      */
+    @SuppressWarnings("rawtypes")
     Iterator iterator();
 }

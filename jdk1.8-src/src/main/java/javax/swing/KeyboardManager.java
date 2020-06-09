@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -208,7 +208,7 @@ class KeyboardManager {
     public boolean fireKeyboardAction(KeyEvent e, boolean pressed, Container topAncestor) {
 
          if (e.isConsumed()) {
-              System.out.println("Aquired pre-used event!");
+              System.out.println("Acquired pre-used event!");
               Thread.dumpStack();
          }
 
@@ -285,10 +285,11 @@ class KeyboardManager {
                  while (iter.hasMoreElements()) {
                      JMenuBar mb = (JMenuBar)iter.nextElement();
                      if ( mb.isShowing() && mb.isEnabled() ) { // don't want to give these out
-                         if( !(ks.equals(ksE)) ) {
+                         boolean extended = (ksE != null) && !ksE.equals(ks);
+                         if (extended) {
                              fireBinding(mb, ksE, e, pressed);
                          }
-                         if(ks.equals(ksE) || !e.isConsumed()) {
+                         if (!extended || !e.isConsumed()) {
                              fireBinding(mb, ks, e, pressed);
                          }
                          if (e.isConsumed()) {

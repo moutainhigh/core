@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,9 @@ import java.rmi.*;
  *
  * @author  Ann Wollrath
  * @since   JDK1.1
+ * @deprecated No replacement. This interface is unused and is obsolete.
  */
+@Deprecated
 public interface ServerRef extends RemoteRef {
 
     /** indicate compatibility with JDK 1.1.x version of class. */

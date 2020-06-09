@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011-2012, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -23,7 +23,25 @@
 
 package com.sun.org.apache.xalan.internal.xsltc.trax;
 
+import com.sun.org.apache.xalan.internal.XalanConstants;
 import com.sun.org.apache.xalan.internal.utils.FactoryImpl;
+import com.sun.org.apache.xalan.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xalan.internal.xsltc.DOM;
+import com.sun.org.apache.xalan.internal.xsltc.DOMCache;
+import com.sun.org.apache.xalan.internal.xsltc.StripFilter;
+import com.sun.org.apache.xalan.internal.xsltc.Translet;
+import com.sun.org.apache.xalan.internal.xsltc.TransletException;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
+import com.sun.org.apache.xalan.internal.xsltc.dom.DOMWSFilter;
+import com.sun.org.apache.xalan.internal.xsltc.dom.SAXImpl;
+import com.sun.org.apache.xalan.internal.xsltc.dom.XSLTCDTMManager;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.output.TransletOutputHandlerFactory;
+import com.sun.org.apache.xml.internal.dtm.DTMWSFilter;
+import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
+import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
+import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
+import com.sun.org.apache.xml.internal.utils.XMLReaderManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,11 +54,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownServiceException;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.lang.reflect.Constructor;
-
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -61,28 +80,6 @@ import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
-
-import com.sun.org.apache.xalan.internal.xsltc.DOM;
-import com.sun.org.apache.xalan.internal.xsltc.DOMCache;
-import com.sun.org.apache.xalan.internal.xsltc.DOMEnhancedForDTM;
-import com.sun.org.apache.xalan.internal.xsltc.StripFilter;
-import com.sun.org.apache.xalan.internal.xsltc.Translet;
-import com.sun.org.apache.xalan.internal.xsltc.TransletException;
-import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
-import com.sun.org.apache.xml.internal.serializer.SerializationHandler;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
-import com.sun.org.apache.xalan.internal.xsltc.dom.DOMWSFilter;
-import com.sun.org.apache.xalan.internal.xsltc.dom.SAXImpl;
-import com.sun.org.apache.xalan.internal.xsltc.dom.XSLTCDTMManager;
-import com.sun.org.apache.xalan.internal.xsltc.runtime.AbstractTranslet;
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
-import com.sun.org.apache.xalan.internal.xsltc.runtime.output.TransletOutputHandlerFactory;
-
-import com.sun.org.apache.xml.internal.dtm.DTMWSFilter;
-import com.sun.org.apache.xml.internal.utils.XMLReaderManager;
-
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -97,10 +94,6 @@ import org.xml.sax.ext.LexicalHandler;
 public final class TransformerImpl extends Transformer
     implements DOMCache, ErrorListener
 {
-    private final static String EMPTY_STRING = "";
-    private final static String NO_STRING    = "no";
-    private final static String YES_STRING   = "yes";
-    private final static String XML_STRING   = "xml";
 
     private final static String LEXICAL_HANDLER_PROPERTY =
         "http://xml.org/sax/properties/lexical-handler";
@@ -154,7 +147,7 @@ public final class TransformerImpl extends Transformer
     private TransletOutputHandlerFactory _tohFactory = null;
 
     /**
-     * A reference to a internal DOM represenation of the input.
+     * A reference to a internal DOM representation of the input.
      */
     private DOM _dom = null;
 
@@ -207,13 +200,22 @@ public final class TransformerImpl extends Transformer
      * Note the default value (false) is the safe option..
      */
     private boolean _useServicesMechanism;
-
     /**
-     * A hashtable to store parameters for the identity transform. These
+     * protocols allowed for external references set by the stylesheet processing instruction, Import and Include element.
+     */
+    private String _accessExternalStylesheet = XalanConstants.EXTERNAL_ACCESS_DEFAULT;
+     /**
+     * protocols allowed for external DTD references in source file and/or stylesheet.
+     */
+    private String _accessExternalDTD = XalanConstants.EXTERNAL_ACCESS_DEFAULT;
+
+    private XMLSecurityManager _securityManager;
+    /**
+     * A map to store parameters for the identity transform. These
      * are not needed during the transformation, but we must keep track of
      * them to be fully complaint with the JAXP API.
      */
-    private Hashtable _parameters = null;
+    private Map<String, Object> _parameters = null;
 
     /**
      * This class wraps an ErrorListener into a MessageHandler in order to
@@ -228,6 +230,7 @@ public final class TransformerImpl extends Transformer
             _errorListener = errorListener;
         }
 
+        @Override
         public void displayMessage(String msg) {
             if(_errorListener == null) {
                 System.err.println(msg);
@@ -260,7 +263,13 @@ public final class TransformerImpl extends Transformer
         _indentNumber = indentNumber;
         _tfactory = tfactory;
         _useServicesMechanism = _tfactory.useServicesMechnism();
+        _accessExternalStylesheet = (String)_tfactory.getAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET);
+        _accessExternalDTD = (String)_tfactory.getAttribute(XMLConstants.ACCESS_EXTERNAL_DTD);
+        _securityManager = (XMLSecurityManager)_tfactory.getAttribute(XalanConstants.SECURITY_MANAGER);
         _readerManager = XMLReaderManager.getInstance(_useServicesMechanism);
+        _readerManager.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, _accessExternalDTD);
+        _readerManager.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, _isSecureProcessing);
+        _readerManager.setProperty(XalanConstants.SECURITY_MANAGER, _securityManager);
         //_isIncremental = tfactory._incremental;
     }
 
@@ -276,6 +285,7 @@ public final class TransformerImpl extends Transformer
      */
     public void setSecureProcessing(boolean flag) {
         _isSecureProcessing = flag;
+        _readerManager.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, _isSecureProcessing);
     }
     /**
      * Return the state of the services mechanism feature.
@@ -310,6 +320,7 @@ public final class TransformerImpl extends Transformer
      * @param result Will contain the output from the transformation
      * @throws TransformerException
      */
+    @Override
     public void transform(Source source, Result result)
         throws TransformerException
     {
@@ -452,7 +463,7 @@ public final class TransformerImpl extends Transformer
                 // System Id may be in one of several forms, (1) a uri
                 // that starts with 'file:', (2) uri that starts with 'http:'
                 // or (3) just a filename on the local system.
-                URL url = null;
+                URL url;
                 if (systemId.startsWith("file:")) {
                     // if StreamResult(File) or setSystemID(File) was used,
                     // the systemId will be URI encoded as a result of File.toURI(),
@@ -524,7 +535,7 @@ public final class TransformerImpl extends Transformer
      */
     private DOM getDOM(Source source) throws TransformerException {
         try {
-            DOM dom = null;
+            DOM dom;
 
             if (source != null) {
                 DTMWSFilter wsfilter;
@@ -539,8 +550,7 @@ public final class TransformerImpl extends Transformer
 
                  if (_dtmManager == null) {
                      _dtmManager =
-                         (XSLTCDTMManager)_tfactory.getDTMManagerClass()
-                                                   .newInstance();
+                         _tfactory.createNewDTMManagerInstance();
                      _dtmManager.setServicesMechnism(_useServicesMechanism);
                  }
                  dom = (DOM)_dtmManager.getDTM(source, false, wsfilter, true,
@@ -663,8 +673,8 @@ public final class TransformerImpl extends Transformer
             }
         } else if (source instanceof StAXSource) {
             final StAXSource staxSource = (StAXSource)source;
-            StAXEvent2SAX staxevent2sax = null;
-            StAXStream2SAX staxStream2SAX = null;
+            StAXEvent2SAX staxevent2sax;
+            StAXStream2SAX staxStream2SAX;
             if (staxSource.getXMLEventReader() != null) {
                 final XMLEventReader xmlEventReader = staxSource.getXMLEventReader();
                 staxevent2sax = new StAXEvent2SAX(xmlEventReader);
@@ -757,6 +767,7 @@ public final class TransformerImpl extends Transformer
      *
      * @return The error event handler currently in effect
      */
+    @Override
     public ErrorListener getErrorListener() {
         return _errorListener;
     }
@@ -770,6 +781,7 @@ public final class TransformerImpl extends Transformer
      * @param listener The error event listener to use
      * @throws IllegalArgumentException
      */
+    @Override
     public void setErrorListener(ErrorListener listener)
         throws IllegalArgumentException {
         if (listener == null) {
@@ -809,31 +821,6 @@ public final class TransformerImpl extends Transformer
     }
 
     /**
-     * The translet stores all CDATA sections set in the <xsl:output> element
-     * in a Hashtable. This method will re-construct the whitespace separated
-     * list of elements given in the <xsl:output> element.
-     */
-    private String makeCDATAString(Hashtable cdata) {
-        // Return a 'null' string if no CDATA section elements were specified
-        if (cdata == null) return null;
-
-        StringBuffer result = new StringBuffer();
-
-        // Get an enumeration of all the elements in the hashtable
-        Enumeration elements = cdata.keys();
-        if (elements.hasMoreElements()) {
-            result.append((String)elements.nextElement());
-            while (elements.hasMoreElements()) {
-                String element = (String)elements.nextElement();
-                result.append(' ');
-                result.append(element);
-            }
-        }
-
-        return(result.toString());
-    }
-
-    /**
      * Implements JAXP's Transformer.getOutputProperties().
      * Returns a copy of the output properties for the transformation. This is
      * a set of layered properties. The first layer contains properties set by
@@ -844,6 +831,7 @@ public final class TransformerImpl extends Transformer
      *
      * @return Properties in effect for this Transformer
      */
+    @Override
     public Properties getOutputProperties() {
         return (Properties) _properties.clone();
     }
@@ -857,6 +845,7 @@ public final class TransformerImpl extends Transformer
      * @param name A non-null string that contains the name of the property
      * @throws IllegalArgumentException if the property name is not known
      */
+    @Override
     public String getOutputProperty(String name)
         throws IllegalArgumentException
     {
@@ -876,6 +865,7 @@ public final class TransformerImpl extends Transformer
      * @param properties The properties to use for the Transformer
      * @throws IllegalArgumentException Never, errors are ignored
      */
+    @Override
     public void setOutputProperties(Properties properties)
         throws IllegalArgumentException
     {
@@ -912,6 +902,7 @@ public final class TransformerImpl extends Transformer
      * @param value The value to assign to the property
      * @throws IllegalArgumentException Never, errors are ignored
      */
+    @Override
     public void setOutputProperty(String name, String value)
         throws IllegalArgumentException
     {
@@ -1192,6 +1183,7 @@ public final class TransformerImpl extends Transformer
      * @param name The name of the parameter
      * @param value The value to assign to the parameter
      */
+    @Override
     public void setParameter(String name, Object value) {
 
         if (value == null) {
@@ -1201,7 +1193,7 @@ public final class TransformerImpl extends Transformer
 
         if (_isIdentity) {
             if (_parameters == null) {
-                _parameters = new Hashtable();
+                _parameters = new HashMap<>();
             }
             _parameters.put(name, value);
         }
@@ -1215,6 +1207,7 @@ public final class TransformerImpl extends Transformer
      * Clear all parameters set with setParameter. Clears the translet's
      * parameter stack.
      */
+    @Override
     public void clearParameters() {
         if (_isIdentity && _parameters != null) {
             _parameters.clear();
@@ -1232,6 +1225,7 @@ public final class TransformerImpl extends Transformer
      * @param name The name of the parameter
      * @return An object that contains the value assigned to the parameter
      */
+    @Override
     public final Object getParameter(String name) {
         if (_isIdentity) {
             return (_parameters != null) ? _parameters.get(name) : null;
@@ -1247,6 +1241,7 @@ public final class TransformerImpl extends Transformer
      *
      * @return  The URLResolver object currently in use
      */
+    @Override
     public URIResolver getURIResolver() {
         return _uriResolver;
     }
@@ -1257,6 +1252,7 @@ public final class TransformerImpl extends Transformer
      *
      * @param resolver The URIResolver to use in document()
      */
+    @Override
     public void setURIResolver(URIResolver resolver) {
         _uriResolver = resolver;
     }
@@ -1275,6 +1271,7 @@ public final class TransformerImpl extends Transformer
      * @param href The href argument passed to the document function.
      * @param translet A reference to the translet requesting the document
      */
+    @Override
     public DOM retrieveDocument(String baseURI, String href, Translet translet) {
         try {
             // Argument to document function was: document('');
@@ -1317,6 +1314,7 @@ public final class TransformerImpl extends Transformer
      * @throws TransformerException if the application chooses to discontinue
      * the transformation (always does in our case).
      */
+    @Override
     public void error(TransformerException e)
         throws TransformerException
     {
@@ -1345,6 +1343,7 @@ public final class TransformerImpl extends Transformer
      * @throws TransformerException if the application chooses to discontinue
      * the transformation (always does in our case).
      */
+    @Override
     public void fatalError(TransformerException e)
         throws TransformerException
     {
@@ -1373,6 +1372,7 @@ public final class TransformerImpl extends Transformer
      * @throws TransformerException if the application chooses to discontinue
      * the transformation (never does in our case).
      */
+    @Override
     public void warning(TransformerException e)
         throws TransformerException
     {
@@ -1393,6 +1393,7 @@ public final class TransformerImpl extends Transformer
      * created
      * @since 1.5
      */
+    @Override
     public void reset() {
 
         _method = null;

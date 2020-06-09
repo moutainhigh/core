@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -51,6 +51,7 @@ import java.awt.event.KeyEvent;
  * @see KeyboardFocusManager#removeKeyEventDispatcher
  * @since 1.4
  */
+@FunctionalInterface
 public interface KeyEventDispatcher {
 
     /**

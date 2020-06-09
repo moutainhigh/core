@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,7 +44,7 @@ import javax.swing.plaf.basic.BasicToolBarUI;
 import sun.swing.plaf.synth.SynthIcon;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JToolBar}.
  *
  * @since 1.7
@@ -69,7 +69,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -78,7 +78,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -87,7 +87,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -121,7 +121,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -149,13 +149,13 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installComponents() {}
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallComponents() {}
@@ -170,7 +170,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -178,19 +178,17 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private SynthContext getContext(JComponent c, Region region, SynthStyle style) {
-        return SynthContext.getContext(SynthContext.class, c, region,
+        return SynthContext.getContext(c, region,
                                        style, getComponentState(c, region));
     }
 
     private SynthContext getContext(JComponent c, Region region,
                                     SynthStyle style, int state) {
-        return SynthContext.getContext(SynthContext.class, c, region,
-                                       style, state);
+        return SynthContext.getContext(c, region, style, state);
     }
 
     private int getComponentState(JComponent c, Region region) {
@@ -239,7 +237,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -314,7 +312,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void paintDragWindow(Graphics g) {
@@ -337,7 +335,7 @@ public class SynthToolBarUI extends BasicToolBarUI
     //
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

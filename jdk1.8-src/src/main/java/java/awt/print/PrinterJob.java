@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -98,7 +98,7 @@ public abstract class PrinterJob {
      * Calling this method is equivalent to calling
      * {@link javax.print.PrintServiceLookup#lookupPrintServices(
      * DocFlavor, AttributeSet)
-     * <code>PrintServiceLookup.lookupPrintServices()</code>}
+     * PrintServiceLookup.lookupPrintServices()}
      * and specifying a Pageable DocFlavor.
      * @return a possibly empty array of 2D print services.
      * @since     1.4
@@ -113,7 +113,7 @@ public abstract class PrinterJob {
      * A convenience method which locates factories for stream print
      * services which can image 2D graphics.
      * Sample usage :
-     * <pre>
+     * <pre>{@code
      * FileOutputStream outstream;
      * StreamPrintService psPrinter;
      * String psMimeType = "application/postscript";
@@ -131,13 +131,13 @@ public abstract class PrinterJob {
      *         e.printStackTrace();
      *     }
      * }
-     * </pre>
+     * }</pre>
      * Services returned from this method may be installed on
      * <code>PrinterJob</code> instances which support print services.
      * Calling this method is equivalent to calling
      * {@link javax.print.StreamPrintServiceFactory#lookupStreamPrintServiceFactories(DocFlavor, String)
-     * <code>StreamPrintServiceFactory.lookupStreamPrintServiceFactories()
-     * </code>} and specifying a Pageable DocFlavor.
+     * StreamPrintServiceFactory.lookupStreamPrintServiceFactories()
+     * } and specifying a Pageable DocFlavor.
      *
      * @param mimeType the required output format, or null to mean any format.
      * @return a possibly empty array of 2D stream print service factories.
@@ -155,7 +155,7 @@ public abstract class PrinterJob {
 
     /**
      * A <code>PrinterJob</code> object should be created using the
-     * static {@link #getPrinterJob() <code>getPrinterJob</code>} method.
+     * static {@link #getPrinterJob() getPrinterJob} method.
      */
     public PrinterJob() {
     }

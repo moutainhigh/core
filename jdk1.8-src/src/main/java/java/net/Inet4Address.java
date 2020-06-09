@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,9 +25,7 @@
 
 package java.net;
 
-import java.security.AccessController;
 import java.io.ObjectStreamException;
-import sun.security.action.*;
 
 /**
  * This class represents an Internet Protocol version 4 (IPv4) address.
@@ -38,16 +36,16 @@ import sun.security.action.*;
  * and <a href="http://www.ietf.org/rfc/rfc2365.txt"><i>RFC&nbsp;2365:
  * Administratively Scoped IP Multicast</i></a>
  *
- * <h4> <A NAME="format">Textual representation of IP addresses</a> </h4>
+ * <h3> <A NAME="format">Textual representation of IP addresses</a> </h3>
  *
  * Textual representation of IPv4 address used as input to methods
  * takes one of the following forms:
  *
  * <blockquote><table cellpadding=0 cellspacing=0 summary="layout">
- * <tr><td><tt>d.d.d.d</tt></td></tr>
- * <tr><td><tt>d.d.d</tt></td></tr>
- * <tr><td><tt>d.d</tt></td></tr>
- * <tr><td><tt>d</tt></td></tr>
+ * <tr><td>{@code d.d.d.d}</td></tr>
+ * <tr><td>{@code d.d.d}</td></tr>
+ * <tr><td>{@code d.d}</td></tr>
+ * <tr><td>{@code d}</td></tr>
  * </table></blockquote>
  *
  * <p> When four parts are specified, each is interpreted as a byte of
@@ -102,27 +100,30 @@ class Inet4Address extends InetAddress {
 
     Inet4Address() {
         super();
-        hostName = null;
-        address = 0;
-        family = IPv4;
+        holder().hostName = null;
+        holder().address = 0;
+        holder().family = IPv4;
     }
 
     Inet4Address(String hostName, byte addr[]) {
-        this.hostName = hostName;
-        this.family = IPv4;
+        holder().hostName = hostName;
+        holder().family = IPv4;
         if (addr != null) {
             if (addr.length == INADDRSZ) {
-                address  = addr[3] & 0xFF;
+                int address  = addr[3] & 0xFF;
                 address |= ((addr[2] << 8) & 0xFF00);
                 address |= ((addr[1] << 16) & 0xFF0000);
                 address |= ((addr[0] << 24) & 0xFF000000);
+                holder().address = address;
             }
         }
+        holder().originalHostName = hostName;
     }
     Inet4Address(String hostName, int address) {
-        this.hostName = hostName;
-        this.family = IPv4;
-        this.address = address;
+        holder().hostName = hostName;
+        holder().family = IPv4;
+        holder().address = address;
+        holder().originalHostName = hostName;
     }
 
     /**
@@ -136,8 +137,8 @@ class Inet4Address extends InetAddress {
     private Object writeReplace() throws ObjectStreamException {
         // will replace the to be serialized 'this' object
         InetAddress inet = new InetAddress();
-        inet.hostName = this.hostName;
-        inet.address = this.address;
+        inet.holder().hostName = holder().getHostName();
+        inet.holder().address = holder().getAddress();
 
         /**
          * Prior to 1.4 an InetAddress was created with a family
@@ -145,7 +146,7 @@ class Inet4Address extends InetAddress {
          * For compatibility reasons we must therefore write the
          * the InetAddress with this family.
          */
-        inet.family = 2;
+        inet.holder().family = 2;
 
         return inet;
     }
@@ -154,32 +155,31 @@ class Inet4Address extends InetAddress {
      * Utility routine to check if the InetAddress is an
      * IP multicast address. IP multicast address is a Class D
      * address i.e first four bits of the address are 1110.
-     * @return a <code>boolean</code> indicating if the InetAddress is
+     * @return a {@code boolean} indicating if the InetAddress is
      * an IP multicast address
      * @since   JDK1.1
      */
     public boolean isMulticastAddress() {
-        return ((address & 0xf0000000) == 0xe0000000);
+        return ((holder().getAddress() & 0xf0000000) == 0xe0000000);
     }
 
     /**
      * Utility routine to check if the InetAddress in a wildcard address.
-     * @return a <code>boolean</code> indicating if the Inetaddress is
+     * @return a {@code boolean} indicating if the Inetaddress is
      *         a wildcard address.
      * @since 1.4
      */
     public boolean isAnyLocalAddress() {
-        return address == 0;
+        return holder().getAddress() == 0;
     }
 
     /**
      * Utility routine to check if the InetAddress is a loopback address.
      *
-     * @return a <code>boolean</code> indicating if the InetAddress is
+     * @return a {@code boolean} indicating if the InetAddress is
      * a loopback address; or false otherwise.
      * @since 1.4
      */
-    private static final int loopback = 2130706433; /* 127.0.0.1 */
     public boolean isLoopbackAddress() {
         /* 127.x.x.x */
         byte[] byteAddr = getAddress();
@@ -189,7 +189,7 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the InetAddress is an link local address.
      *
-     * @return a <code>boolean</code> indicating if the InetAddress is
+     * @return a {@code boolean} indicating if the InetAddress is
      * a link local address; or false if address is not a link local unicast address.
      * @since 1.4
      */
@@ -198,6 +198,7 @@ class Inet4Address extends InetAddress {
         // defined in "Documenting Special Use IPv4 Address Blocks
         // that have been Registered with IANA" by Bill Manning
         // draft-manning-dsua-06.txt
+        int address = holder().getAddress();
         return (((address >>> 24) & 0xFF) == 169)
             && (((address >>> 16) & 0xFF) == 254);
     }
@@ -205,7 +206,7 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the InetAddress is a site local address.
      *
-     * @return a <code>boolean</code> indicating if the InetAddress is
+     * @return a {@code boolean} indicating if the InetAddress is
      * a site local address; or false if address is not a site local unicast address.
      * @since 1.4
      */
@@ -214,6 +215,7 @@ class Inet4Address extends InetAddress {
         // 10/8 prefix
         // 172.16/12 prefix
         // 192.168/16 prefix
+        int address = holder().getAddress();
         return (((address >>> 24) & 0xFF) == 10)
             || ((((address >>> 24) & 0xFF) == 172)
                 && (((address >>> 16) & 0xF0) == 16))
@@ -224,7 +226,7 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the multicast address has global scope.
      *
-     * @return a <code>boolean</code> indicating if the address has
+     * @return a {@code boolean} indicating if the address has
      *         is a multicast address of global scope, false if it is not
      *         of global scope or it is not a multicast address
      * @since 1.4
@@ -240,7 +242,7 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the multicast address has node scope.
      *
-     * @return a <code>boolean</code> indicating if the address has
+     * @return a {@code boolean} indicating if the address has
      *         is a multicast address of node-local scope, false if it is not
      *         of node-local scope or it is not a multicast address
      * @since 1.4
@@ -253,13 +255,14 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the multicast address has link scope.
      *
-     * @return a <code>boolean</code> indicating if the address has
+     * @return a {@code boolean} indicating if the address has
      *         is a multicast address of link-local scope, false if it is not
      *         of link-local scope or it is not a multicast address
      * @since 1.4
      */
     public boolean isMCLinkLocal() {
         // 224.0.0/24 prefix and ttl == 1
+        int address = holder().getAddress();
         return (((address >>> 24) & 0xFF) == 224)
             && (((address >>> 16) & 0xFF) == 0)
             && (((address >>> 8) & 0xFF) == 0);
@@ -268,13 +271,14 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the multicast address has site scope.
      *
-     * @return a <code>boolean</code> indicating if the address has
+     * @return a {@code boolean} indicating if the address has
      *         is a multicast address of site-local scope, false if it is not
      *         of site-local scope or it is not a multicast address
      * @since 1.4
      */
     public boolean isMCSiteLocal() {
         // 239.255/16 prefix or ttl < 32
+        int address = holder().getAddress();
         return (((address >>> 24) & 0xFF) == 239)
             && (((address >>> 16) & 0xFF) == 255);
     }
@@ -282,7 +286,7 @@ class Inet4Address extends InetAddress {
     /**
      * Utility routine to check if the multicast address has organization scope.
      *
-     * @return a <code>boolean</code> indicating if the address has
+     * @return a {@code boolean} indicating if the address has
      *         is a multicast address of organization-local scope,
      *         false if it is not of organization-local scope
      *         or it is not a multicast address
@@ -290,19 +294,21 @@ class Inet4Address extends InetAddress {
      */
     public boolean isMCOrgLocal() {
         // 239.192 - 239.195
+        int address = holder().getAddress();
         return (((address >>> 24) & 0xFF) == 239)
             && (((address >>> 16) & 0xFF) >= 192)
             && (((address >>> 16) & 0xFF) <= 195);
     }
 
     /**
-     * Returns the raw IP address of this <code>InetAddress</code>
+     * Returns the raw IP address of this {@code InetAddress}
      * object. The result is in network byte order: the highest order
-     * byte of the address is in <code>getAddress()[0]</code>.
+     * byte of the address is in {@code getAddress()[0]}.
      *
      * @return  the raw IP address of this object.
      */
     public byte[] getAddress() {
+        int address = holder().getAddress();
         byte[] addr = new byte[INADDRSZ];
 
         addr[0] = (byte) ((address >>> 24) & 0xFF);
@@ -328,28 +334,28 @@ class Inet4Address extends InetAddress {
      * @return  a hash code value for this IP address.
      */
     public int hashCode() {
-        return address;
+        return holder().getAddress();
     }
 
     /**
      * Compares this object against the specified object.
-     * The result is <code>true</code> if and only if the argument is
-     * not <code>null</code> and it represents the same IP address as
+     * The result is {@code true} if and only if the argument is
+     * not {@code null} and it represents the same IP address as
      * this object.
      * <p>
-     * Two instances of <code>InetAddress</code> represent the same IP
+     * Two instances of {@code InetAddress} represent the same IP
      * address if the length of the byte arrays returned by
-     * <code>getAddress</code> is the same for both, and each of the
+     * {@code getAddress} is the same for both, and each of the
      * array components is the same for the byte arrays.
      *
      * @param   obj   the object to compare against.
-     * @return  <code>true</code> if the objects are the same;
-     *          <code>false</code> otherwise.
+     * @return  {@code true} if the objects are the same;
+     *          {@code false} otherwise.
      * @see     java.net.InetAddress#getAddress()
      */
     public boolean equals(Object obj) {
         return (obj != null) && (obj instanceof Inet4Address) &&
-            (((InetAddress)obj).address == address);
+            (((InetAddress)obj).holder().getAddress() == holder().getAddress());
     }
 
     // Utilities

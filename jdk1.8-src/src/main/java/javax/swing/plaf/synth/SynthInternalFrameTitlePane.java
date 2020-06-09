@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -67,8 +67,7 @@ class SynthInternalFrameTitlePane extends BasicInternalFrameTitlePane
     }
 
     public SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private Region getRegion(JComponent c) {
@@ -191,20 +190,28 @@ class SynthInternalFrameTitlePane extends BasicInternalFrameTitlePane
     }
 
     protected void addSystemMenuItems(JPopupMenu menu) {
-        // PENDING: this should all be localizable!
         JMenuItem mi = menu.add(restoreAction);
-        mi.setMnemonic('R');
+        mi.setMnemonic(getButtonMnemonic("restore"));
         mi = menu.add(moveAction);
-        mi.setMnemonic('M');
+        mi.setMnemonic(getButtonMnemonic("move"));
         mi = menu.add(sizeAction);
-        mi.setMnemonic('S');
+        mi.setMnemonic(getButtonMnemonic("size"));
         mi = menu.add(iconifyAction);
-        mi.setMnemonic('n');
+        mi.setMnemonic(getButtonMnemonic("minimize"));
         mi = menu.add(maximizeAction);
-        mi.setMnemonic('x');
+        mi.setMnemonic(getButtonMnemonic("maximize"));
         menu.add(new JSeparator());
         mi = menu.add(closeAction);
-        mi.setMnemonic('C');
+        mi.setMnemonic(getButtonMnemonic("close"));
+    }
+
+    private static int getButtonMnemonic(String button) {
+        try {
+            return Integer.parseInt(UIManager.getString(
+                    "InternalFrameTitlePane." + button + "Button.mnemonic"));
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     protected void showSystemMenu() {

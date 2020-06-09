@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -74,13 +74,14 @@ import org.xml.sax.SAXNotSupportedException;
  *
  * @since SAX 2.0
  * @author David Megginson
+ * @version 2.0.1 (sax2r2)
  * @see org.xml.sax.helpers.XMLReaderAdapter
  * @see org.xml.sax.XMLReader
  * @see org.xml.sax.Parser
  */
 public class ParserAdapter implements XMLReader, DocumentHandler
 {
-
+    private static SecuritySupport ss = new SecuritySupport();
 
     ////////////////////////////////////////////////////////////////////
     // Constructors.
@@ -102,7 +103,7 @@ public class ParserAdapter implements XMLReader, DocumentHandler
     {
         super();
 
-        String driver = System.getProperty("org.xml.sax.parser");
+        String driver = ss.getSystemProperty("org.xml.sax.parser");
 
         try {
             setup(ParserFactory.makeParser());

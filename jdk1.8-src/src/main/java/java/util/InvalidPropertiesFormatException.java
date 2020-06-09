@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,6 +44,9 @@ import java.io.IOException;
  */
 
 public class InvalidPropertiesFormatException extends IOException {
+
+    private static final long serialVersionUID = 7763056076009360219L;
+
     /**
      * Constructs an InvalidPropertiesFormatException with the specified
      * cause.

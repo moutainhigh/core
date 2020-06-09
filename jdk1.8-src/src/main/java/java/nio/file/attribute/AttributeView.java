@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,6 +38,8 @@ package java.nio.file.attribute;
 public interface AttributeView {
     /**
      * Returns the name of the attribute view.
+     *
+     * @return the name of the attribute view
      */
     String name();
 }

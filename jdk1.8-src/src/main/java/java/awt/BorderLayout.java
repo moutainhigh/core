@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -69,7 +69,7 @@ import java.util.Hashtable;
  * components, the latter constants are preferred.
  * <p>
  * Mixing both absolute and relative positioning constants can lead to
- * unpredicable results.  If
+ * unpredictable results.  If
  * you use both types, the relative constants will take precedence.
  * For example, if you add components using both the <code>NORTH</code>
  * and <code>PAGE_START</code> constants in a container whose
@@ -96,10 +96,10 @@ import java.util.Hashtable;
  * alt="Diagram of an applet demonstrating BorderLayout.
  *      Each section of the BorderLayout contains a Button corresponding to its position in the layout, one of:
  *      North, West, Center, East, or South."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * The code for this applet is as follows:
- * <p>
+ *
  * <hr><blockquote><pre>
  * import java.awt.*;
  * import java.applet.Applet;
@@ -206,7 +206,7 @@ public class BorderLayout implements LayoutManager2,
      *
      * A relative positioning constant, that can be used instead of
      * north, south, east, west or center.
-     * mixing the two types of constants can lead to unpredicable results.  If
+     * mixing the two types of constants can lead to unpredictable results.  If
      * you use both types, the relative constants will take precedence.
      * For example, if you add components using both the <code>NORTH</code>
      * and <code>BEFORE_FIRST_LINE</code> constants in a container whose

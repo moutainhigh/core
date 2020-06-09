@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2015, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,8 +37,10 @@ import java.awt.Rectangle;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import sun.swing.SwingUtilities2;
+
 /**
- * Factory object that can vend Borders appropriate for the basic L & F.
+ * Factory object that can vend Borders appropriate for the basic L &amp; F.
  * @author Georges Saab
  * @author Amy Fowler
  */
@@ -337,10 +339,10 @@ public class BasicBorders {
             Color oldColor = g.getColor();
             g.translate(x, y);
             g.setColor(shadow);
-            g.drawLine(0, height-2, width, height-2);
+            SwingUtilities2.drawHLine(g, 0, width - 1, height - 2);
             g.setColor(highlight);
-            g.drawLine(0, height-1, width, height-1);
-            g.translate(-x,-y);
+            SwingUtilities2.drawHLine(g, 0, width - 1, height - 1);
+            g.translate(-x, -y);
             g.setColor(oldColor);
         }
 
@@ -497,7 +499,7 @@ public class BasicBorders {
 
 
     /**
-     * Draws the border around the splitpane. To work correctly you shoudl
+     * Draws the border around the splitpane. To work correctly you should
      * also install a border on the divider (property SplitPaneDivider.border).
      */
     public static class SplitPaneBorder implements Border, UIResource {

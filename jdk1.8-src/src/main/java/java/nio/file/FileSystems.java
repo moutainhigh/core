@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -199,6 +199,10 @@ public final class FileSystems {
      * may require to check a permission before returning a reference to an
      * existing file system. In the case of the {@link FileSystems#getDefault
      * default} file system, no permission check is required.
+     *
+     * @param   uri  the URI to locate the file system
+     *
+     * @return  the reference to the file system
      *
      * @throws  IllegalArgumentException
      *          if the pre-conditions for the {@code uri} parameter are not met

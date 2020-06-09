@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -419,7 +419,7 @@ public class BasicTableUI extends TableUI
                     }
                 }
                 else {
-                    if (!(table.getParent().getParent() instanceof
+                    if (!(SwingUtilities.getUnwrappedParent(table).getParent() instanceof
                             JScrollPane)) {
                         return;
                     }
@@ -738,7 +738,7 @@ public class BasicTableUI extends TableUI
      * the current <code>TableCellEditor</code>.
      */
      public class KeyHandler implements KeyListener {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -764,7 +764,7 @@ public class BasicTableUI extends TableUI
      * Instantiate it only within subclasses of {@code BasicTableUI}.
      */
     public class FocusHandler implements FocusListener {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -786,7 +786,7 @@ public class BasicTableUI extends TableUI
      * Instantiate it only within subclasses of BasicTableUI.
      */
     public class MouseInputHandler implements MouseInputListener {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -1431,7 +1431,7 @@ public class BasicTableUI extends TableUI
         }
 
         // install the scrollpane border
-        Container parent = table.getParent();  // should be viewport
+        Container parent = SwingUtilities.getUnwrappedParent(table);  // should be viewport
         if (parent != null) {
             parent = parent.getParent();  // should be the scrollpane
             if (parent != null && parent instanceof JScrollPane) {

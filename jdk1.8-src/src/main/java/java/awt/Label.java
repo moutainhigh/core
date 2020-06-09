@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,7 +36,7 @@ import javax.accessibility.*;
  * directly.
  * <p>
  * For example, the code&nbsp;.&nbsp;.&nbsp;.
- * <p>
+ *
  * <hr><blockquote><pre>
  * setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
  * add(new Label("Hi There!"));
@@ -46,7 +46,7 @@ import javax.accessibility.*;
  * produces the following labels:
  * <p>
  * <img src="doc-files/Label-1.gif" alt="Two labels: 'Hi There!' and 'Another label'"
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  *
  * @author      Sami Shaio
  * @since       JDK1.0
@@ -272,13 +272,13 @@ public class Label extends Component implements Accessible {
      * @return     the parameter string of this label
      */
     protected String paramString() {
-        String str = ",align=";
+        String align = "";
         switch (alignment) {
-          case LEFT:   str += "left"; break;
-          case CENTER: str += "center"; break;
-          case RIGHT:  str += "right"; break;
+            case LEFT:   align = "left"; break;
+            case CENTER: align = "center"; break;
+            case RIGHT:  align = "right"; break;
         }
-        return super.paramString() + str + ",text=" + text;
+        return super.paramString() + ",align=" + align + ",text=" + text;
     }
 
     /**

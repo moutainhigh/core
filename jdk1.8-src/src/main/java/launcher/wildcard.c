@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -129,15 +129,17 @@ struct WildcardIterator_
     HANDLE handle;
     char *firstFile; /* Stupid FindFirstFile...FindNextFile */
 };
-
+// since this is used repeatedly we keep it here.
+static WIN32_FIND_DATA find_data;
 static WildcardIterator
 WildcardIterator_for(const char *wildcard)
 {
-    WIN32_FIND_DATA find_data;
     WildcardIterator it = NEW_(WildcardIterator);
     HANDLE handle = FindFirstFile(wildcard, &find_data);
-    if (handle == INVALID_HANDLE_VALUE)
+    if (handle == INVALID_HANDLE_VALUE) {
+        JLI_MemFree(it);
         return NULL;
+    }
     it->handle = handle;
     it->firstFile = find_data.cFileName;
     return it;
@@ -146,7 +148,6 @@ WildcardIterator_for(const char *wildcard)
 static char *
 WildcardIterator_next(WildcardIterator it)
 {
-    WIN32_FIND_DATA find_data;
     if (it->firstFile != NULL) {
         char *firstFile = it->firstFile;
         it->firstFile = NULL;
@@ -357,8 +358,13 @@ wildcardFileList(const char *wildcard)
     const char *basename;
     FileList fl = FileList_new(16);
     WildcardIterator it = WildcardIterator_for(wildcard);
+
     if (it == NULL)
+    {
+        FileList_free(fl);
         return NULL;
+    }
+
     while ((basename = WildcardIterator_next(it)) != NULL)
         if (isJarFileName(basename))
             FileList_add(fl, wildcardConcat(wildcard, basename));
@@ -412,7 +418,7 @@ JLI_WildcardExpandClasspath(const char *classpath)
     FileList_expandWildcards(fl);
     expanded = FileList_join(fl, PATH_SEPARATOR);
     FileList_free(fl);
-    if (getenv("_JAVA_LAUNCHER_DEBUG") != 0)
+    if (getenv(JLDEBUG_ENV_ENTRY) != 0)
         printf("Expanded wildcards:\n"
                "    before: \"%s\"\n"
                "    after : \"%s\"\n",

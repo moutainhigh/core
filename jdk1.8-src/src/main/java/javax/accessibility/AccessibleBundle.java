@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2002, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,6 +53,9 @@ public abstract class AccessibleBundle {
     private final String defaultResourceBundleName
         = "com.sun.accessibility.internal.resources.accessibility";
 
+    /**
+     * Construct an {@code AccessibleBundle}.
+     */
     public AccessibleBundle() {
     }
 

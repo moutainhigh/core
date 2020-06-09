@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,7 +55,7 @@ public class MediaTray extends Media implements Attribute {
     public static final MediaTray TOP = new MediaTray(0);
 
     /**
-     * The middle input tray in the printe.
+     * The middle input tray in the printer.
      */
     public static final MediaTray MIDDLE = new MediaTray(1);
 

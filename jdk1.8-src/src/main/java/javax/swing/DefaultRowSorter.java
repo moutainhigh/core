@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,7 +53,7 @@ import javax.swing.SortOrder;
  * <code>Collator.getInstance()</code> is used on the results of
  * calling <code>toString</code> on the underlying objects.  The
  * <code>Comparator</code> is never passed <code>null</code>.  A
- * <code>null</code> value is treated as occuring before a
+ * <code>null</code> value is treated as occurring before a
  * non-<code>null</code> value, and two <code>null</code> values are
  * considered equal.
  * <p>

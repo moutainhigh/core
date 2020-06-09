@@ -1,6 +1,6 @@
-// This file was generated AUTOMATICALLY from a template file Mon Sep 24 21:49:36 PDT 2012
+// This file was generated AUTOMATICALLY from a template file Fri Jan 29 17:43:04 PST 2016
 /*
- * Copyright (c) 2002, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -252,7 +252,7 @@ class CharacterDataLatin1 extends CharacterData {
     private CharacterDataLatin1() {};
 
     // The following tables and code generated using:
-  // java GenerateCharacter -template ../../tools/GenerateCharacter/CharacterDataLatin1.java.template -spec ../../tools/UnicodeData/UnicodeData.txt -specialcasing ../../tools/UnicodeData/SpecialCasing.txt -proplist ../../tools/UnicodeData/PropList.txt -o C:/JDK7U1~3/jdk7u9/build/windows-amd64/gensrc/java/lang/CharacterDataLatin1.java -string -usecharforbyte -latin1 8
+  // java GenerateCharacter -template d:/re/puppet/workspace/8-2-build-windows-amd64-cygwin/jdk8u73/6086/jdk/make/data/characterdata/CharacterDataLatin1.java.template -spec d:/re/puppet/workspace/8-2-build-windows-amd64-cygwin/jdk8u73/6086/jdk/make/data/unicodedata/UnicodeData.txt -specialcasing d:/re/puppet/workspace/8-2-build-windows-amd64-cygwin/jdk8u73/6086/jdk/make/data/unicodedata/SpecialCasing.txt -proplist d:/re/puppet/workspace/8-2-build-windows-amd64-cygwin/jdk8u73/6086/jdk/make/data/unicodedata/PropList.txt -o d:/re/puppet/workspace/8-2-build-windows-amd64-cygwin/jdk8u73/6086/build/windows-amd64/jdk/gensrc/java/lang/CharacterDataLatin1.java -string -usecharforbyte -latin1 8
   // The A table has 256 entries for a total of 1024 bytes.
 
   static final int A[] = new int[256];
@@ -281,9 +281,9 @@ class CharacterDataLatin1 extends CharacterData {
     "\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800"+
     "\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F\u4800\u100F"+
     "\u3800\014\u6800\030\u2800\u601A\u2800\u601A\u2800\u601A\u2800\u601A\u6800"+
-    "\034\u6800\034\u6800\033\u6800\034\000\u7002\uE800\035\u6800\031\u4800\u1010"+
+    "\034\u6800\030\u6800\033\u6800\034\000\u7005\uE800\035\u6800\031\u4800\u1010"+
     "\u6800\034\u6800\033\u2800\034\u2800\031\u1800\u060B\u1800\u060B\u6800\033"+
-    "\u07FD\u7002\u6800\034\u6800\030\u6800\033\u1800\u050B\000\u7002\uE800\036"+
+    "\u07FD\u7002\u6800\030\u6800\030\u6800\033\u1800\u050B\000\u7005\uE800\036"+
     "\u6800\u080B\u6800\u080B\u6800\u080B\u6800\030\202\u7001\202\u7001\202\u7001"+
     "\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202"+
     "\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001\202\u7001"+
@@ -306,8 +306,8 @@ class CharacterDataLatin1 extends CharacterData {
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
-    "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
-    "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
+    "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\001"+
+    "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\001\000\000\000"+
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+
     "\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000\000"+

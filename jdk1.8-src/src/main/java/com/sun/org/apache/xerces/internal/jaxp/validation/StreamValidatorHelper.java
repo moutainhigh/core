@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -20,27 +20,27 @@
 
 package com.sun.org.apache.xerces.internal.jaxp.validation;
 
-import java.lang.ref.SoftReference;
-import java.io.IOException;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
 import com.sun.org.apache.xerces.internal.impl.msg.XMLMessageFormatter;
 import com.sun.org.apache.xerces.internal.parsers.XML11Configuration;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
 import com.sun.org.apache.xerces.internal.xni.XNIException;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLInputSource;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLParseException;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration;
+import java.io.IOException;
+import java.lang.ref.SoftReference;
+import javax.xml.XMLConstants;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -85,6 +85,11 @@ final class StreamValidatorHelper implements ValidatorHelper {
         Constants.XERCES_PROPERTY_PREFIX + Constants.VALIDATION_MANAGER_PROPERTY;
 
     private static final String DEFAULT_TRANSFORMER_IMPL = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+
+    /** Property id: security manager. */
+    private static final String SECURITY_MANAGER =
+        Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
+
     //
     // Data
     //
@@ -164,6 +169,9 @@ final class StreamValidatorHelper implements ValidatorHelper {
 
     private XMLParserConfiguration initialize() {
         XML11Configuration config = new XML11Configuration();
+        if (fComponentManager.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING)) {
+            config.setProperty(SECURITY_MANAGER, new XMLSecurityManager());
+        }
         config.setProperty(ENTITY_RESOLVER, fComponentManager.getProperty(ENTITY_RESOLVER));
         config.setProperty(ERROR_HANDLER, fComponentManager.getProperty(ERROR_HANDLER));
         XMLErrorReporter errorReporter = (XMLErrorReporter) fComponentManager.getProperty(ERROR_REPORTER);
@@ -179,6 +187,10 @@ final class StreamValidatorHelper implements ValidatorHelper {
         config.setDocumentHandler(fSchemaValidator);
         config.setDTDHandler(null);
         config.setDTDContentModelHandler(null);
+        config.setProperty(Constants.XML_SECURITY_PROPERTY_MANAGER,
+                fComponentManager.getProperty(Constants.XML_SECURITY_PROPERTY_MANAGER));
+        config.setProperty(Constants.SECURITY_MANAGER,
+                fComponentManager.getProperty(Constants.SECURITY_MANAGER));
         fConfiguration = new SoftReference(config);
         return config;
     }

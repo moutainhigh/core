@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,10 +26,10 @@
 package java.security.cert;
 
 /**
- * The <code>PKIXReason</code> enumerates the potential PKIX-specific reasons
+ * The {@code PKIXReason} enumerates the potential PKIX-specific reasons
  * that an X.509 certification path may be invalid according to the PKIX
  * (RFC 3280) standard. These reasons are in addition to those of the
- * <code>CertPathValidatorException.BasicReason</code> enumeration.
+ * {@code CertPathValidatorException.BasicReason} enumeration.
  *
  * @since 1.7
  */

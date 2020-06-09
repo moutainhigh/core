@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,7 +57,6 @@ import java.awt.geom.AffineTransform;
 *   <code>FontRenderContext</code> which is directly constructed will
 *   most likely not represent any actual graphics device, and may lead
 *   to unexpected or incorrect results.
-*   <p>
 *   @see java.awt.RenderingHints#KEY_TEXT_ANTIALIASING
 *   @see java.awt.RenderingHints#KEY_FRACTIONALMETRICS
 *   @see java.awt.Graphics2D#getFontRenderContext()
@@ -126,7 +125,7 @@ public class FontRenderContext {
      * anti-aliasing or fractional metrics.
      * @param tx the transform which is used to scale typographical points
      * to pixels in this <code>FontRenderContext</code>.  If null, an
-     * identity tranform is used.
+     * identity transform is used.
      * @param aaHint - one of the text antialiasing rendering hint values
      * defined in {@link java.awt.RenderingHints java.awt.RenderingHints}.
      * Any other value will throw <code>IllegalArgumentException</code>.

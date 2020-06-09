@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,6 +27,7 @@ package javax.swing.event;
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.Array;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * A class that holds a list of EventListeners.  A single instance
@@ -69,7 +70,7 @@ import java.lang.reflect.Array;
  *     Object[] listeners = listenerList.getListenerList();
  *     // Process the listeners last to first, notifying
  *     // those that are interested in this event
- *     for (int i = listeners.length-2; i>=0; i-=2) {
+ *     for (int i = listeners.length-2; i&gt;=0; i-=2) {
  *         if (listeners[i]==FooListener.class) {
  *             // Lazily create the event:
  *             if (fooEvent == null)
@@ -88,7 +89,7 @@ import java.lang.reflect.Array;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -96,6 +97,7 @@ import java.lang.reflect.Array;
  * @author Hans Muller
  * @author James Gosling
  */
+@SuppressWarnings("serial")
 public class EventListenerList implements Serializable {
     /* A null array to be shared by all empty listener lists*/
     private final static Object[] NULL_ARRAY = new Object[0];
@@ -250,7 +252,7 @@ public class EventListenerList implements Serializable {
 
         // Save the non-null event listeners:
         for (int i = 0; i < lList.length; i+=2) {
-            Class t = (Class)lList[i];
+            Class<?> t = (Class)lList[i];
             EventListener l = (EventListener)lList[i+1];
             if ((l!=null) && (l instanceof Serializable)) {
                 s.writeObject(t.getName());
@@ -270,7 +272,9 @@ public class EventListenerList implements Serializable {
         while (null != (listenerTypeOrNull = s.readObject())) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             EventListener l = (EventListener)s.readObject();
-            add((Class<EventListener>)Class.forName((String)listenerTypeOrNull, true, cl), l);
+            String name = (String) listenerTypeOrNull;
+            ReflectUtil.checkPackageAccess(name);
+            add((Class<EventListener>)Class.forName(name, true, cl), l);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -66,7 +66,7 @@ public class CardLayout implements LayoutManager2,
      * pairs of components and their names.
      * @see java.util.Vector
      */
-    Vector vector = new Vector();
+    Vector<Card> vector = new Vector<>();
 
     /*
      * A pair of Component and String that represents its name.
@@ -570,10 +570,10 @@ public class CardLayout implements LayoutManager2,
 
         if (f.defaulted("vector")) {
             //  pre-1.4 stream
-            Hashtable tab = (Hashtable)f.get("tab", null);
-            vector = new Vector();
+            Hashtable<String, Component> tab = (Hashtable)f.get("tab", null);
+            vector = new Vector<>();
             if (tab != null && !tab.isEmpty()) {
-                for (Enumeration e = tab.keys() ; e.hasMoreElements() ; ) {
+                for (Enumeration<String> e = tab.keys() ; e.hasMoreElements() ; ) {
                     String key = (String)e.nextElement();
                     Component comp = (Component)tab.get(key);
                     vector.add(new Card(key, comp));
@@ -594,7 +594,7 @@ public class CardLayout implements LayoutManager2,
     private void writeObject(ObjectOutputStream s)
         throws IOException
     {
-        Hashtable tab = new Hashtable();
+        Hashtable<String, Component> tab = new Hashtable<>();
         int ncomponents = vector.size();
         for (int i = 0; i < ncomponents; i++) {
             Card card = (Card)vector.get(i);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,10 +54,10 @@ import java.io.IOException;
  * <p>
  * <img src="doc-files/FlowLayout-1.gif"
  * ALT="Graphic of Layout for Three Buttons"
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * Here is the code for this applet:
- * <p>
+ *
  * <hr><blockquote><pre>
  * import java.awt.*;
  * import java.applet.Applet;
@@ -129,9 +129,9 @@ public class FlowLayout implements LayoutManager, java.io.Serializable {
      * how each row distributes empty space.
      * It can be one of the following values:
      * <ul>
-     * <code>LEFT</code>
-     * <code>RIGHT</code>
-     * <code>CENTER</code>
+     * <li><code>LEFT</code>
+     * <li><code>RIGHT</code>
+     * <li><code>CENTER</code>
      * </ul>
      *
      * @serial
@@ -146,11 +146,11 @@ public class FlowLayout implements LayoutManager, java.io.Serializable {
      * v1.2 and greater.
      * It can be one of the following three values:
      * <ul>
-     * <code>LEFT</code>
-     * <code>RIGHT</code>
-     * <code>CENTER</code>
-     * <code>LEADING</code>
-     * <code>TRAILING</code>
+     * <li><code>LEFT</code>
+     * <li><code>RIGHT</code>
+     * <li><code>CENTER</code>
+     * <li><code>LEADING</code>
+     * <li><code>TRAILING</code>
      * </ul>
      *
      * @serial

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 // CatalogManager.java - Access CatalogManager.properties
@@ -23,20 +23,18 @@
 
 package com.sun.org.apache.xml.internal.resolver;
 
+import com.sun.org.apache.xerces.internal.utils.SecuritySupport;
+import com.sun.org.apache.xml.internal.resolver.helpers.BootstrapResolver;
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 import java.io.InputStream;
-
-import java.net.URL;
 import java.net.MalformedURLException;
-
+import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
-import com.sun.org.apache.xml.internal.resolver.helpers.BootstrapResolver;
-import com.sun.org.apache.xml.internal.resolver.Catalog;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * CatalogManager provides an interface to the catalog properties.
@@ -142,8 +140,8 @@ public class CatalogManager {
 
   /** Flag to ignore missing property files and/or properties */
   private boolean ignoreMissingProperties
-    = (System.getProperty(pIgnoreMissing) != null
-       || System.getProperty(pFiles) != null);
+    = (SecuritySupport.getSystemProperty(pIgnoreMissing) != null
+       || SecuritySupport.getSystemProperty(pFiles) != null);
 
   /** Holds the resources after they are loaded from the file. */
   private ResourceBundle resources;
@@ -338,7 +336,7 @@ public class CatalogManager {
   private int queryVerbosity () {
     String defaultVerbStr = Integer.toString(defaultVerbosity);
 
-    String verbStr = System.getProperty(pVerbosity);
+    String verbStr = SecuritySupport.getSystemProperty(pVerbosity);
 
     if (verbStr == null) {
       if (resources==null) readProperties();
@@ -473,7 +471,7 @@ public class CatalogManager {
    * @return A semicolon delimited list of catlog file URIs
    */
   private String queryCatalogFiles () {
-    String catalogList = System.getProperty(pFiles);
+    String catalogList = SecuritySupport.getSystemProperty(pFiles);
     fromPropertiesFile = false;
 
     if (catalogList == null) {
@@ -558,7 +556,7 @@ public class CatalogManager {
    * defaultPreferSetting.
    */
   private boolean queryPreferPublic () {
-    String prefer = System.getProperty(pPrefer);
+    String prefer = SecuritySupport.getSystemProperty(pPrefer);
 
     if (prefer == null) {
       if (resources==null) readProperties();
@@ -617,7 +615,7 @@ public class CatalogManager {
    * defaultUseStaticCatalog.
    */
   private boolean queryUseStaticCatalog () {
-    String staticCatalog = System.getProperty(pStatic);
+    String staticCatalog = SecuritySupport.getSystemProperty(pStatic);
 
     if (staticCatalog == null) {
       if (resources==null) readProperties();
@@ -686,7 +684,7 @@ public class CatalogManager {
           catalog = new Catalog();
         } else {
           try {
-            catalog = (Catalog) Class.forName(catalogClassName).newInstance();
+            catalog = (Catalog) ReflectUtil.forName(catalogClassName).newInstance();
           } catch (ClassNotFoundException cnfe) {
             debug.message(1,"Catalog class named '"
                           + catalogClassName
@@ -748,7 +746,7 @@ public class CatalogManager {
    * defaultOasisXMLCatalogPI.
    */
   public boolean queryAllowOasisXMLCatalogPI () {
-    String allow = System.getProperty(pAllowPI);
+    String allow = SecuritySupport.getSystemProperty(pAllowPI);
 
     if (allow == null) {
       if (resources==null) readProperties();
@@ -804,7 +802,7 @@ public class CatalogManager {
    *
    */
   public String queryCatalogClassName () {
-    String className = System.getProperty(pClassname);
+    String className = SecuritySupport.getSystemProperty(pClassname);
 
     if (className == null) {
       if (resources==null) readProperties();

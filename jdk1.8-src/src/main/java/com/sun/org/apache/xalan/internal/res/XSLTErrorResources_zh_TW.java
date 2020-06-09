@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-/*
- * $Id: XSLTErrorResources_zh_TW.java,v 1.2.4.1 2005/09/13 11:19:31 pvedula Exp $
  */
 package com.sun.org.apache.xalan.internal.res;
 
@@ -471,7 +468,13 @@ public class XSLTErrorResources_zh_TW extends ListResourceBundle
 
   // Error messages...
 
-  private static final Object[][] _contents = new Object[][] {
+  /** Get the lookup table for error messages.
+    *
+    * @return The message lookup table.
+    */
+  public Object[][] getContents()
+  {
+      return new Object[][] {
 
   /** Error message ID that has a null message, but takes in a single object.    */
   {"ER0000" , "{0}" },
@@ -1359,7 +1362,7 @@ public class XSLTErrorResources_zh_TW extends ListResourceBundle
   {  "optionQ", "   [-Q  (\u975C\u97F3\u6A21\u5F0F)]"},
   {  "optionLF", "   [-LF (\u8F38\u51FA\u4E0A\u50C5\u4F7F\u7528\u63DB\u884C\u5B57\u5143 {\u9810\u8A2D\u70BA CR/LF})]"},
   {  "optionCR", "   [-CR (\u8F38\u51FA\u4E0A\u50C5\u4F7F\u7528\u6B78\u4F4D\u5B57\u5143 {\u9810\u8A2D\u70BA CR/LF})]"},
-  { "optionESCAPE", "   [-ESCAPE (\u8981\u9041\u96E2\u7684\u5B57\u5143 {\u9810\u8A2D\u70BA <>&\"\'\\r\\n}]"},
+  { "optionESCAPE", "   [-ESCAPE (\u8981\u9041\u96E2\u7684\u5B57\u5143 {\u9810\u8A2D\u70BA <>&\"'\\r\\n}]"},
   { "optionINDENT", "   [-INDENT (\u63A7\u5236\u8981\u7E2E\u6392\u7684\u7A7A\u9593 {\u9810\u8A2D\u70BA 0})]"},
   { "optionTT", "   [-TT (\u8FFD\u8E64\u547C\u53EB\u7684\u6A23\u677F\u3002)]"},
   { "optionTG", "   [-TG (\u8FFD\u8E64\u6BCF\u500B\u7522\u751F\u4E8B\u4EF6\u3002)]"},
@@ -1412,13 +1415,6 @@ public class XSLTErrorResources_zh_TW extends ListResourceBundle
 
   };
 
-  /** Get the lookup table for error messages.
-   *
-   * @return The int to message lookup table.
-   */
-  public Object[][] getContents()
-  {
-      return _contents;
   }
   // ================= INFRASTRUCTURE ======================
 
@@ -1448,68 +1444,4 @@ public class XSLTErrorResources_zh_TW extends ListResourceBundle
   public static final String QUERY_HEADER = "PATTERN ";
 
 
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XSLTErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XSLTErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
     }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XSLTErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
-
-
-}

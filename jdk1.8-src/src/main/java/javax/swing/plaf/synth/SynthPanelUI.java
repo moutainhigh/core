@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,7 +32,7 @@ import java.awt.*;
 import java.beans.*;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JPanel}.
  *
  * @author Steve Wilson
@@ -53,7 +53,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void installUI(JComponent c) {
@@ -64,7 +64,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void uninstallUI(JComponent c) {
@@ -93,7 +93,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults(JPanel p) {
@@ -101,7 +101,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults(JPanel p) {
@@ -119,7 +119,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -127,8 +127,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -187,7 +186,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -196,7 +195,7 @@ public class SynthPanelUI extends BasicPanelUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent pce) {

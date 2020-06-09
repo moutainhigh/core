@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -145,17 +145,17 @@ import javax.management.ServiceNotFoundException;
  * This optional attribute specifies a list of one or more parameters for the
  * MBean to be instantiated. This list describes the parameters to be passed the MBean's constructor.
  * Use the following syntax to specify each item in
- * <VAR>arglist</VAR>:</DD>
+ * <VAR>arglist</VAR>:
  * <DL>
- * <P>
  * <DT>&lt;<CODE>ARG TYPE=</CODE><VAR>argumentType</VAR> <CODE>VALUE=</CODE><VAR>value</VAR>&gt;</DT>
- * <P>
- * <DD>where:</DD>
+ * <DD>where:
  * <UL>
  * <LI><VAR>argumentType</VAR> is the type of the argument that will be passed as parameter to the MBean's constructor.</UL>
+ * </DD>
  * </DL>
  * <P>The arguments' type in the argument list should be a Java primitive type or a Java basic type
  * (<CODE>java.lang.Boolean, java.lang.Byte, java.lang.Short, java.lang.Long, java.lang.Integer, java.lang.Float, java.lang.Double, java.lang.String</CODE>).
+ * </DD>
  * </DL>
  *
  * When an m-let text file is loaded, an
@@ -798,7 +798,7 @@ public class MLet extends java.net.URLClassLoader
       * Allows the m-let to perform any operations it needs before being unregistered
       * by the MBean server.
       *
-      * @exception java.langException This exception should be caught
+      * @exception java.lang.Exception This exception should be caught
       * by the MBean server and re-thrown as an
       * MBeanRegistrationException.
       */

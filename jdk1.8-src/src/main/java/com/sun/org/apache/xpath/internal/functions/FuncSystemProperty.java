@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -102,7 +102,7 @@ public class FuncSystemProperty extends FunctionOneArg
 
         try
         {
-          result = System.getProperty(propName);
+          result = SecuritySupport.getSystemProperty(propName);
 
           if (null == result)
           {
@@ -124,7 +124,7 @@ public class FuncSystemProperty extends FunctionOneArg
     {
       try
       {
-        result = System.getProperty(fullName);
+        result = SecuritySupport.getSystemProperty(fullName);
 
         if (null == result)
         {
@@ -170,7 +170,6 @@ public class FuncSystemProperty extends FunctionOneArg
     try
     {
       // Use SecuritySupport class to provide priveleged access to property file
-
       InputStream is = SecuritySupport.getResourceAsStream(ObjectFactory.findClassLoader(),
                                               file);
 

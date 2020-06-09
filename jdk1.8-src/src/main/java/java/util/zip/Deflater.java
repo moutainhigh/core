@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -79,6 +79,8 @@ class Deflater {
     private int level, strategy;
     private boolean setParams;
     private boolean finish, finished;
+    private long bytesRead;
+    private long bytesWritten;
 
     /**
      * Compression method for the deflate algorithm (the only one currently
@@ -259,6 +261,12 @@ class Deflater {
 
     /**
      * Sets the compression strategy to the specified value.
+     *
+     * <p> If the compression strategy is changed, the next invocation
+     * of {@code deflate} will compress the input available so far with
+     * the old strategy (and may be flushed); the new strategy will take
+     * effect only after that invocation.
+     *
      * @param strategy the new compression strategy
      * @exception IllegalArgumentException if the compression strategy is
      *                                     invalid
@@ -281,7 +289,13 @@ class Deflater {
     }
 
     /**
-     * Sets the current compression level to the specified value.
+     * Sets the compression level to the specified value.
+     *
+     * <p> If the compression level is changed, the next invocation
+     * of {@code deflate} will compress the input available so far
+     * with the old level (and may be flushed); the new level will
+     * take effect only after that invocation.
+     *
      * @param level the new compression level (0-9)
      * @exception IllegalArgumentException if the compression level is invalid
      */
@@ -423,8 +437,13 @@ class Deflater {
         synchronized (zsRef) {
             ensureOpen();
             if (flush == NO_FLUSH || flush == SYNC_FLUSH ||
-                flush == FULL_FLUSH)
-                return deflateBytes(zsRef.address(), b, off, len, flush);
+                flush == FULL_FLUSH) {
+                int thisLen = this.len;
+                int n = deflateBytes(zsRef.address(), b, off, len, flush);
+                bytesWritten += n;
+                bytesRead += (thisLen - this.len);
+                return n;
+            }
             throw new IllegalArgumentException();
         }
     }
@@ -454,7 +473,7 @@ class Deflater {
     }
 
     /**
-     * Returns the total number of uncompressed bytes input so far.</p>
+     * Returns the total number of uncompressed bytes input so far.
      *
      * @return the total (non-negative) number of uncompressed bytes input so far
      * @since 1.5
@@ -462,7 +481,7 @@ class Deflater {
     public long getBytesRead() {
         synchronized (zsRef) {
             ensureOpen();
-            return getBytesRead(zsRef.address());
+            return bytesRead;
         }
     }
 
@@ -480,7 +499,7 @@ class Deflater {
     }
 
     /**
-     * Returns the total number of compressed bytes output so far.</p>
+     * Returns the total number of compressed bytes output so far.
      *
      * @return the total (non-negative) number of compressed bytes output so far
      * @since 1.5
@@ -488,7 +507,7 @@ class Deflater {
     public long getBytesWritten() {
         synchronized (zsRef) {
             ensureOpen();
-            return getBytesWritten(zsRef.address());
+            return bytesWritten;
         }
     }
 
@@ -503,6 +522,7 @@ class Deflater {
             finish = false;
             finished = false;
             off = len = 0;
+            bytesRead = bytesWritten = 0;
         }
     }
 
@@ -543,8 +563,6 @@ class Deflater {
     private native int deflateBytes(long addr, byte[] b, int off, int len,
                                     int flush);
     private native static int getAdler(long addr);
-    private native static long getBytesRead(long addr);
-    private native static long getBytesWritten(long addr);
     private native static void reset(long addr);
     private native static void end(long addr);
 }

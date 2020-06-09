@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -85,6 +85,7 @@ public interface Reference extends URIReference, XMLStructure {
      * @return an unmodifiable list of <code>Transform</code>s
      *    (may be empty but never <code>null</code>)
      */
+    @SuppressWarnings("rawtypes")
     List getTransforms();
 
     /**

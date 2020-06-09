@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,8 +26,10 @@
 package java.sql;
 
 /**
- * <P>The subclass of {@link SQLException} thrown when the timeout specified by <code>Statement</code>
- *  has expired.
+ * <P>The subclass of {@link SQLException} thrown when the timeout specified by
+ * {@code Statement.setQueryTimeout}, {@code DriverManager.setLoginTimeout},
+ * {@code DataSource.setLoginTimeout},{@code XADataSource.setLoginTimeout}
+ * has expired.
  * <P> This exception does not correspond to a standard SQLState.
  *
  * @since 1.6
@@ -52,7 +54,7 @@ public class SQLTimeoutException extends SQLTransientException {
         /**
          * Constructs a <code>SQLTimeoutException</code> object
          * with a given <code>reason</code>. The <code>SQLState</code>
-         * is initialized to <code>null</code> and the vender code is initialized
+         * is initialized to <code>null</code> and the vendor code is initialized
          * to 0.
          *
          * The <code>cause</code> is not initialized, and may subsequently be

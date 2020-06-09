@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ import java.util.Iterator;
 
 /**
  * The <code>CompositeType</code> class is the <i>open type</i> class
- * whose instances describe the types of {@link CompositeData <code>CompositeData</code>} values.
+ * whose instances describe the types of {@link CompositeData CompositeData} values.
  *
  *
  * @since 1.5

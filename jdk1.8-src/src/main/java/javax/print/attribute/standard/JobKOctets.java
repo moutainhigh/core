@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -67,7 +67,7 @@ import javax.print.attribute.PrintJobAttribute;
  * shown in the table below.
  * <P>
  * <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1 SUMMARY="Table showing computation of doc sizes">
- * <TR BGCOLOR="#E5E5E5">
+ * <TR>
  * <TH>Representation Class</TH>
  * <TH>Document Size</TH>
  * </TR>

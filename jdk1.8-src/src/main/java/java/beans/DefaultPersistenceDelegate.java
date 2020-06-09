@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -58,7 +58,8 @@ import sun.reflect.misc.*;
  */
 
 public class DefaultPersistenceDelegate extends PersistenceDelegate {
-    private String[] constructor;
+    private static final String[] EMPTY = {};
+    private final String[] constructor;
     private Boolean definesEquals;
 
     /**
@@ -67,7 +68,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
      * @see #DefaultPersistenceDelegate(java.lang.String[])
      */
     public DefaultPersistenceDelegate() {
-        this(new String[0]);
+        this.constructor = EMPTY;
     }
 
     /**
@@ -92,10 +93,10 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
      * @see #instantiate
      */
     public DefaultPersistenceDelegate(String[] constructorPropertyNames) {
-        this.constructor = constructorPropertyNames;
+        this.constructor = (constructorPropertyNames == null) ? EMPTY : constructorPropertyNames.clone();
     }
 
-    private static boolean definesEquals(Class type) {
+    private static boolean definesEquals(Class<?> type) {
         try {
             return type == type.getMethod("equals", Object.class).getDeclaringClass();
         }
@@ -148,12 +149,13 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
      * @return An expression whose value is <code>oldInstance</code>.
      *
      * @throws NullPointerException if {@code out} is {@code null}
+     *                              and this value is used in the method
      *
      * @see #DefaultPersistenceDelegate(String[])
      */
     protected Expression instantiate(Object oldInstance, Encoder out) {
         int nArgs = constructor.length;
-        Class type = oldInstance.getClass();
+        Class<?> type = oldInstance.getClass();
         Object[] constructorArgs = new Object[nArgs];
         for(int i = 0; i < nArgs; i++) {
             try {
@@ -167,7 +169,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
         return new Expression(oldInstance, oldInstance.getClass(), "new", constructorArgs);
     }
 
-    private Method findMethod(Class type, String property) {
+    private Method findMethod(Class<?> type, String property) {
         if (property == null) {
             throw new IllegalArgumentException("Property name is null");
         }
@@ -182,7 +184,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
         return method;
     }
 
-    private void doProperty(Class type, PropertyDescriptor pd, Object oldInstance, Object newInstance, Encoder out) throws Exception {
+    private void doProperty(Class<?> type, PropertyDescriptor pd, Object oldInstance, Object newInstance, Encoder out) throws Exception {
         Method getter = pd.getReadMethod();
         Method setter = pd.getWriteMethod();
 
@@ -218,8 +220,11 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
     }
 
     // Write out the properties of this instance.
-    private void initBean(Class type, Object oldInstance, Object newInstance, Encoder out) {
+    private void initBean(Class<?> type, Object oldInstance, Object newInstance, Encoder out) {
         for (Field field : type.getFields()) {
+            if (!ReflectUtil.isPackageAccessible(field.getDeclaringClass())) {
+                continue;
+            }
             int mod = field.getModifiers();
             if (Modifier.isFinal(mod) || Modifier.isStatic(mod) || Modifier.isTransient(mod)) {
                 continue;
@@ -268,7 +273,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
         TableModelListener (the JTable itself in this case) to the supplied
         table model.
 
-        We do not need to explictly add these listeners to the model in an
+        We do not need to explicitly add these listeners to the model in an
         archive as they will be added automatically by, in the above case,
         the JTable's "setModel" method. In some cases, we must specifically
         avoid trying to do this since the listener may be an inner class
@@ -288,7 +293,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
             if (d.isTransient()) {
                 continue;
             }
-            Class listenerType = d.getListenerType();
+            Class<?> listenerType = d.getListenerType();
 
 
             // The ComponentListener is added automatically, when
@@ -318,7 +323,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
             }
             catch (Exception e2) {
                 try {
-                    Method m = type.getMethod("getListeners", new Class[]{Class.class});
+                    Method m = type.getMethod("getListeners", new Class<?>[]{Class.class});
                     oldL = (EventListener[])MethodUtil.invoke(m, oldInstance, new Object[]{listenerType});
                     newL = (EventListener[])MethodUtil.invoke(m, newInstance, new Object[]{listenerType});
                 }
@@ -381,6 +386,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
      * a class such that no property value depends on the value of
      * a subsequent property.
      *
+     * @param type the type of the instances
      * @param oldInstance The instance to be copied.
      * @param newInstance The instance that is to be modified.
      * @param out The stream to which any initialization statements should be written.
@@ -401,7 +407,7 @@ public class DefaultPersistenceDelegate extends PersistenceDelegate {
         }
     }
 
-    private static PropertyDescriptor getPropertyDescriptor(Class type, String property) {
+    private static PropertyDescriptor getPropertyDescriptor(Class<?> type, String property) {
         try {
             for (PropertyDescriptor pd : Introspector.getBeanInfo(type).getPropertyDescriptors()) {
                 if (property.equals(pd.getName()))

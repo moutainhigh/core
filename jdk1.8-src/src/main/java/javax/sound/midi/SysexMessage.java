@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2002, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -204,6 +204,7 @@ public class SysexMessage extends MidiMessage {
      * @param data the system exclusive message data
      * @param length the length of the valid message data in
      * the array
+     * @throws InvalidMidiDataException if the status byte is invalid for a sysex message
      */
     public void setMessage(int status, byte[] data, int length) throws InvalidMidiDataException {
         if ( (status != 0xF0) && (status != 0xF7) ) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import sun.awt.AWTAccessor;
 import sun.util.logging.PlatformLogger;
+import sun.security.util.SecurityConstants;
 
 /**
  * The root event class for all component-level input events.
@@ -321,14 +322,15 @@ public abstract class InputEvent extends ComponentEvent {
      * @param when         a long int that gives the time the event occurred.
      *                     Passing negative or zero value
      *                     is not recommended
-     * @param modifiers    the modifier keys down during event (e.g. shift, ctrl,
-     *                     alt, meta)
-     *                     Passing negative parameter is not recommended.
-     *                     Zero value means no modifiers.
-     *                     Either extended _DOWN_MASK or old _MASK modifiers
-     *                     should be used, but both models should not be mixed
-     *                     in one event. Use of the extended modifiers is
-     *                     preferred
+     * @param modifiers    a modifier mask describing the modifier keys and mouse
+     *                     buttons (for example, shift, ctrl, alt, and meta) that
+     *                     are down during the event.
+     *                     Only extended modifiers are allowed to be used as a
+     *                     value for this parameter (see the {@link InputEvent#getModifiersEx}
+     *                     class for the description of extended modifiers).
+     *                     Passing negative parameter
+     *                     is not recommended.
+     *                     Zero value means that no modifiers were passed
      * @throws IllegalArgumentException if <code>source</code> is null
      * @see #getSource()
      * @see #getID()
@@ -349,10 +351,10 @@ public abstract class InputEvent extends ComponentEvent {
             SecurityManager sm = System.getSecurityManager();
             if (sm != null) {
                 try {
-                    sm.checkSystemClipboardAccess();
+                    sm.checkPermission(SecurityConstants.AWT.ACCESS_CLIPBOARD_PERMISSION);
                     b = true;
                 } catch (SecurityException se) {
-                    if (logger.isLoggable(PlatformLogger.FINE)) {
+                    if (logger.isLoggable(PlatformLogger.Level.FINE)) {
                         logger.fine("InputEvent.canAccessSystemClipboard() got SecurityException ", se);
                     }
                 }
@@ -416,9 +418,13 @@ public abstract class InputEvent extends ComponentEvent {
 
     /**
      * Returns the extended modifier mask for this event.
+     * <P>
+     * Extended modifiers are the modifiers that ends with the _DOWN_MASK suffix,
+     * such as ALT_DOWN_MASK, BUTTON1_DOWN_MASK, and others.
+     * <P>
      * Extended modifiers represent the state of all modal keys,
      * such as ALT, CTRL, META, and the mouse buttons just after
-     * the event occurred
+     * the event occurred.
      * <P>
      * For example, if the user presses <b>button 1</b> followed by
      * <b>button 2</b>, and then releases them in the same order,
@@ -439,7 +445,7 @@ public abstract class InputEvent extends ComponentEvent {
      * <PRE>
      *    int onmask = SHIFT_DOWN_MASK | BUTTON1_DOWN_MASK;
      *    int offmask = CTRL_DOWN_MASK;
-     *    if ((event.getModifiersEx() & (onmask | offmask)) == onmask) {
+     *    if ((event.getModifiersEx() &amp; (onmask | offmask)) == onmask) {
      *        ...
      *    }
      * </PRE>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,7 +55,7 @@ public class RSAPrivateCrtKeySpec extends RSAPrivateKeySpec {
 
 
    /**
-    * Creates a new <code>RSAPrivateCrtKeySpec</code>
+    * Creates a new {@code RSAPrivateCrtKeySpec}
     * given the modulus, publicExponent, privateExponent,
     * primeP, primeQ, primeExponentP, primeExponentQ, and
     * crtCoefficient as defined in PKCS#1.

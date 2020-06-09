@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -136,6 +136,7 @@ public interface XMLSignature extends XMLStructure {
      * @return an unmodifiable list of <code>XMLObject</code>s (may be empty
      *    but never <code>null</code>)
      */
+    @SuppressWarnings("rawtypes")
     List getObjects();
 
     /**

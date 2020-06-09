@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -68,8 +68,10 @@ import com.sun.media.sound.MidiDeviceTransmitterEnvelope;
  *
  * <p>Properties can be used to specify default MIDI devices.
  * Both system properties and a properties file are considered.
- * The properties file is &quot;lib/sound.properties&quot; in the JRE
- * directory. If a property exists both as a system property and in the
+ * The <code>sound.properties</code> properties file is read from
+ * an implementation-specific location (typically it is the <code>lib</code>
+ * directory in the Java installation directory).
+ * If a property exists both as a system property and in the
  * properties file, the system property takes precedence. If none is
  * specified, a suitable default is chosen among the available devices.
  * The syntax of the properties file is specified in
@@ -78,6 +80,7 @@ import com.sun.media.sound.MidiDeviceTransmitterEnvelope;
  * consider them:
  *
  * <table border=0>
+ *  <caption>MIDI System Property Keys</caption>
  *  <tr>
  *   <th>Property Key</th>
  *   <th>Interface</th>
@@ -117,7 +120,7 @@ import com.sun.media.sound.MidiDeviceTransmitterEnvelope;
  * is optional.
  *
  * <p>If the provider class is specified, and it can be
- * successully retrieved from the installed providers,
+ * successfully retrieved from the installed providers,
  * the list of
  * <code>MidiDevice.Info</code> objects is retrieved
  * from the provider. Otherwise, or when these devices
@@ -423,6 +426,8 @@ public class MidiSystem {
      * it is used to identify the default sequencer.
      * For details, refer to the {@link MidiSystem class description}.
      *
+     * @param connected whether or not the returned {@code Sequencer}
+     * is connected to the default {@code Synthesizer}
      * @return the default sequencer
      * @throws MidiUnavailableException if the sequencer is not
      *         available due to resource restrictions,

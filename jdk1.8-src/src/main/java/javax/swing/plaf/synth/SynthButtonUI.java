@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.View;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JButton}.
  *
  * @author Scott Violet
@@ -55,7 +55,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults(AbstractButton b) {
@@ -65,7 +65,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners(AbstractButton b) {
@@ -109,7 +109,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners(AbstractButton b) {
@@ -118,7 +118,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults(AbstractButton b) {
@@ -130,7 +130,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -138,9 +138,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     SynthContext getContext(JComponent c, int state) {
-        Region region = SynthLookAndFeel.getRegion(c);
-        return SynthContext.getContext(SynthContext.class, c, region,
-                                       style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     /**
@@ -182,7 +180,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int getBaseline(JComponent c, int width, int height) {
@@ -305,7 +303,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -449,7 +447,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     // ********************************
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getMinimumSize(JComponent c) {
@@ -470,7 +468,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getPreferredSize(JComponent c) {
@@ -491,7 +489,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getMaximumSize(JComponent c) {
@@ -525,7 +523,7 @@ public class SynthButtonUI extends BasicButtonUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

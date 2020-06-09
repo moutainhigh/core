@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,7 +32,7 @@ import javax.swing.plaf.basic.BasicSpinnerUI;
 import java.beans.*;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JSpinner}.
  *
  * @author Hans Muller
@@ -65,7 +65,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -81,7 +81,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -156,7 +156,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected LayoutManager createLayout() {
@@ -165,7 +165,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
 
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Component createPreviousButton() {
@@ -177,7 +177,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
 
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Component createNextButton() {
@@ -270,7 +270,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -278,8 +278,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     /**
@@ -334,7 +333,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -439,7 +438,7 @@ public class SynthSpinnerUI extends BasicSpinnerUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

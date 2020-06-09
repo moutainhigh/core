@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import java.io.IOException;
  * BasicFileAttributeView}, and in addition, the following attributes are
  * supported:
  * <blockquote>
- * <table border="1" cellpadding="8">
+ * <table border="1" cellpadding="8" summary="Supported attributes">
  *   <tr>
  *     <th> Name </th>
  *     <th> Type </th>

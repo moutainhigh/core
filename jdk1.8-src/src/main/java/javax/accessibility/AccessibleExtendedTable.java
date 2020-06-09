@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -60,7 +60,7 @@ public interface AccessibleExtendedTable extends AccessibleTable {
       */
      public int getAccessibleColumn(int index);
 
-     /*
+    /**
       * Returns the index at a row and column in the table.
       *
       * @param r zero-based row of the table

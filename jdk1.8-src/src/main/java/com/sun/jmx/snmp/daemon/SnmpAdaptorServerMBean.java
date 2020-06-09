@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -140,6 +140,7 @@ public interface SnmpAdaptorServerMBean extends CommunicatorServerMBean {
      *
      * @return The string "snmp".
      */
+    @Override
     public String getProtocol();
 
     /**
@@ -472,7 +473,7 @@ public interface SnmpAdaptorServerMBean extends CommunicatorServerMBean {
      * @param specific The specific number of the trap.
      * @param varBindList A list of <CODE>SnmpVarBind</CODE> instances or null.
      *
-     * @exception IOException An I/O error occured while sending the trap.
+     * @exception IOException An I/O error occurred while sending the trap.
      * @exception SnmpStatusException If the trap exceeds the limit defined by <CODE>bufferSize</CODE>.
      */
     public void snmpV1Trap(int generic, int specific, SnmpVarBindList varBindList) throws IOException, SnmpStatusException;
@@ -562,7 +563,7 @@ public interface SnmpAdaptorServerMBean extends CommunicatorServerMBean {
      * @param trapOid The OID identifying the trap.
      * @param varBindList A list of <CODE>SnmpVarBind</CODE> instances or null.
      *
-     * @exception IOException An I/O error occured while sending the trap.
+     * @exception IOException An I/O error occurred while sending the trap.
      * @exception SnmpStatusException If the trap exceeds the limit defined by <CODE>bufferSize</CODE>.
      */
     public void snmpV2Trap(SnmpOid trapOid, SnmpVarBindList varBindList) throws IOException, SnmpStatusException;
@@ -636,7 +637,8 @@ public interface SnmpAdaptorServerMBean extends CommunicatorServerMBean {
      * @exception IOException An I/O error occurred while sending the inform request.
      * @exception SnmpStatusException If the inform request exceeds the limit defined by <CODE>bufferSize</CODE>.
      */
-    public Vector snmpInformRequest(SnmpInformHandler cb, SnmpOid trapOid, SnmpVarBindList varBindList)
+    public Vector<?> snmpInformRequest(SnmpInformHandler cb, SnmpOid trapOid,
+            SnmpVarBindList varBindList)
         throws IllegalStateException, IOException, SnmpStatusException;
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -423,7 +423,7 @@ public abstract class ImageWriter implements ImageTranscoder {
     // Thumbnails
 
     /**
-     * Returns the number of thumbnails suported by the format being
+     * Returns the number of thumbnails supported by the format being
      * written, given the image type and any additional write
      * parameters and metadata objects that will be used during
      * encoding.  A return value of <code>-1</code> indicates that
@@ -692,7 +692,7 @@ public abstract class ImageWriter implements ImageTranscoder {
      * output prior to the current seek position may be flushed, and
      * need not be readable or writable, unless the plug-in needs to
      * be able to patch up the header information when
-     * <code>endWriteSequence</code> is called (<italic>e.g.</italic> TIFF).
+     * <code>endWriteSequence</code> is called (<i>e.g.</i> TIFF).
      *
      * <p> If <code>canWriteSequence</code> returns <code>false</code>,
      * this method will throw an
@@ -923,7 +923,7 @@ public abstract class ImageWriter implements ImageTranscoder {
      * <p> The default implementation throws an
      * <code>IllegalStateException</code> if the output is
      * <code>null</code>, and otherwise returns <code>false</code>
-     * withour checking the value of <code>imageIndex</code>.
+     * without checking the value of <code>imageIndex</code>.
      *
      * @param imageIndex the index at which the image is to be
      * inserted.

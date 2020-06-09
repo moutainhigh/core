@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -395,7 +395,7 @@ public abstract class GlyphVector implements Cloneable {
      * indicates that no special transform is applied for the specified
      * glyph.
      * This method can be used to rotate, mirror, translate and scale the
-     * glyph.  Adding a transform can result in signifant performance changes.
+     * glyph.  Adding a transform can result in significant performance changes.
      * @param glyphIndex the index into this <code>GlyphVector</code>
      * @param newTX the new transform of the glyph at <code>glyphIndex</code>
      * @throws IndexOutOfBoundsException if <code>glyphIndex</code>

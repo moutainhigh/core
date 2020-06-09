@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -124,19 +124,19 @@ public class IIOPOutputStream
         }
     }
 
-    public final void setOrbStream(org.omg.CORBA_2_3.portable.OutputStream os) {
+    final void setOrbStream(org.omg.CORBA_2_3.portable.OutputStream os) {
         orbStream = os;
     }
 
-    public final org.omg.CORBA_2_3.portable.OutputStream getOrbStream() {
+    final org.omg.CORBA_2_3.portable.OutputStream getOrbStream() {
         return orbStream;
     }
 
-    public final void increaseRecursionDepth(){
+    final void increaseRecursionDepth(){
         recursionDepth++;
     }
 
-    public final int decreaseRecursionDepth(){
+    final int decreaseRecursionDepth(){
         return --recursionDepth;
     }
 
@@ -559,6 +559,10 @@ public class IIOPOutputStream
              * Push all the clases of the current object onto a stack.
              * Remember the stack pointer where this set of classes is being pushed.
              */
+            if (currentClassDesc.forClass().getName().equals("java.lang.String")) {
+                    this.writeUTF((String)obj);
+                    return;
+            }
             int stackMark = classDescStack.size();
             try {
                 ObjectStreamClass next;

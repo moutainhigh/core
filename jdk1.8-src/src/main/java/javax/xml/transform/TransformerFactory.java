@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -52,8 +52,8 @@ public abstract class TransformerFactory {
 
     /**
      * <p>Obtain a new instance of a <code>TransformerFactory</code>.
-     * This static method creates a new factory instance
-     * This method uses the following ordered lookup procedure to determine
+     * This static method creates a new factory instance.</p>
+     * <p>This method uses the following ordered lookup procedure to determine
      * the <code>TransformerFactory</code> implementation class to
      * load:</p>
      * <ul>
@@ -67,7 +67,7 @@ public abstract class TransformerFactory {
      * </code> format and contains the fully qualified name of the
      * implementation class with the key being the system property defined
      * above.
-     *
+     * <br>
      * The jaxp.properties file is read only once by the JAXP implementation
      * and it's values are then cached for future use.  If the file does not exist
      * when the first attempt is made to read from it, no further attempts are
@@ -75,14 +75,18 @@ public abstract class TransformerFactory {
      * of any property in jaxp.properties after it has been read for the first time.
      * </li>
      * <li>
-     * Use the Services API (as detailed in the JAR specification), if
-     * available, to determine the classname. The Services API will look
-     * for a classname in the file
-     * <code>META-INF/services/javax.xml.transform.TransformerFactory</code>
-     * in jars available to the runtime.
+     *   Use the service-provider loading facilities, defined by the
+     *   {@link java.util.ServiceLoader} class, to attempt to locate and load an
+     *   implementation of the service using the {@linkplain
+     *   java.util.ServiceLoader#load(java.lang.Class) default loading mechanism}:
+     *   the service-provider loading facility will use the {@linkplain
+     *   java.lang.Thread#getContextClassLoader() current thread's context class loader}
+     *   to attempt to load the service. If the context class
+     *   loader is null, the {@linkplain
+     *   ClassLoader#getSystemClassLoader() system class loader} will be used.
      * </li>
      * <li>
-     * Platform default <code>TransformerFactory</code> instance.
+     *   Otherwise, the system-default implementation is returned.
      * </li>
      * </ul>
      *
@@ -92,22 +96,18 @@ public abstract class TransformerFactory {
      *
      * @return new TransformerFactory instance, never null.
      *
-     * @throws TransformerFactoryConfigurationError Thrown if the implementation
-     *    is not available or cannot be instantiated.
+     * @throws TransformerFactoryConfigurationError Thrown in case of {@linkplain
+     * java.util.ServiceConfigurationError service configuration error} or if
+     * the implementation is not available or cannot be instantiated.
      */
     public static TransformerFactory newInstance()
         throws TransformerFactoryConfigurationError {
-        try {
-            return (TransformerFactory) FactoryFinder.find(
+
+        return FactoryFinder.find(
             /* The default property name according to the JAXP spec */
-            "javax.xml.transform.TransformerFactory",
+            TransformerFactory.class,
             /* The fallback implementation class name, XSLTC */
             "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-        } catch (FactoryFinder.ConfigurationError e) {
-            throw new TransformerFactoryConfigurationError(
-                e.getException(),
-                e.getMessage());
-        }
     }
 
     /**
@@ -147,14 +147,10 @@ public abstract class TransformerFactory {
      */
     public static TransformerFactory newInstance(String factoryClassName, ClassLoader classLoader)
         throws TransformerFactoryConfigurationError{
-        try {
-            //do not fallback if given classloader can't find the class, throw exception
-            return (TransformerFactory) FactoryFinder.newInstance(factoryClassName, classLoader, false);
-        } catch (FactoryFinder.ConfigurationError e) {
-            throw new TransformerFactoryConfigurationError(
-                e.getException(),
-                e.getMessage());
-        }
+
+        //do not fallback if given classloader can't find the class, throw exception
+        return  FactoryFinder.newInstance(TransformerFactory.class,
+                    factoryClassName, classLoader, false, false);
     }
     /**
      * <p>Process the <code>Source</code> into a <code>Transformer</code>
@@ -335,6 +331,46 @@ public abstract class TransformerFactory {
      * be an option that the implementation provides.
      * An <code>IllegalArgumentException</code> is thrown if the underlying
      * implementation doesn't recognize the attribute.
+     * <p>
+     * All implementations that implement JAXP 1.5 or newer are required to
+     * support the {@link javax.xml.XMLConstants#ACCESS_EXTERNAL_DTD}  and
+     * {@link javax.xml.XMLConstants#ACCESS_EXTERNAL_STYLESHEET} properties.
+     * </p>
+     * <ul>
+     *   <li>
+     *      <p>
+     *      Access to external DTDs in the source file is restricted to the protocols
+     *      specified by the {@link javax.xml.XMLConstants#ACCESS_EXTERNAL_DTD} property.
+     *      If access is denied during transformation due to the restriction of this property,
+     *      {@link javax.xml.transform.TransformerException} will be thrown by
+     *      {@link javax.xml.transform.Transformer#transform(Source, Result)}.
+     *      </p>
+     *      <p>
+     *      Access to external DTDs in the stylesheet is restricted to the protocols
+     *      specified by the {@link javax.xml.XMLConstants#ACCESS_EXTERNAL_DTD} property.
+     *      If access is denied during the creation of a new transformer due to the
+     *      restriction of this property,
+     *      {@link javax.xml.transform.TransformerConfigurationException} will be thrown
+     *      by the {@link #newTransformer(Source)} method.
+     *      </p>
+     *      <p>
+     *      Access to external reference set by the stylesheet processing instruction,
+     *      Import and Include element is restricted to the protocols specified by the
+     *      {@link javax.xml.XMLConstants#ACCESS_EXTERNAL_STYLESHEET} property.
+     *      If access is denied during the creation of a new transformer due to the
+     *      restriction of this property,
+     *      {@link javax.xml.transform.TransformerConfigurationException} will be thrown
+     *      by the {@link #newTransformer(Source)} method.
+     *      </p>
+     *      <p>
+     *      Access to external document through XSLT document function is restricted
+     *      to the protocols specified by the property. If access is denied during
+     *      the transformation due to the restriction of this property,
+     *      {@link javax.xml.transform.TransformerException} will be thrown by the
+     *      {@link javax.xml.transform.Transformer#transform(Source, Result)} method.
+     *      </p>
+     *   </li>
+     * </ul>
      *
      * @param name The name of the attribute.
      * @param value The value of the attribute.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -346,7 +346,7 @@ import java.io.Reader;
  * terminates the marshal  operation after encountering either a fatal error or an error.
  * For a JAXB 2.0 client application, there is no explicitly defined default
  * validation handler and the default event handling only
- * terminates the marshal operation after encountering a fatal error.
+ * terminates the unmarshal operation after encountering a fatal error.
  *
  * </blockquote>
  *

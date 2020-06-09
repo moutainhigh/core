@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -56,7 +56,7 @@ public interface AppletContext {
 
     /**
      * Returns an <code>Image</code> object that can then be painted on
-     * the screen. The <code>url</code> argument<code> </code>that is
+     * the screen. The <code>url</code> argument that is
      * passed as an argument must specify an absolute URL.
      * <p>
      * This method always returns immediately, whether or not the image
@@ -107,7 +107,7 @@ public interface AppletContext {
      * <code>target</code> argument indicates in which HTML frame the
      * document is to be displayed.
      * The target argument is interpreted as follows:
-     * <p>
+     *
      * <center><table border="3" summary="Target arguments and their descriptions">
      * <tr><th>Target Argument</th><th>Description</th></tr>
      * <tr><td><code>"_self"</code>  <td>Show in the window and frame that
@@ -157,7 +157,7 @@ public interface AppletContext {
      * @param stream stream to be associated with the specified key. If this
      *               parameter is <code>null</code>, the specified key is removed
      *               in this applet context.
-     * @throws <code>IOException</code> if the stream size exceeds a certain
+     * @throws IOException if the stream size exceeds a certain
      *         size limit. Size limit is decided by the implementor of this
      *         interface.
      * @since 1.4

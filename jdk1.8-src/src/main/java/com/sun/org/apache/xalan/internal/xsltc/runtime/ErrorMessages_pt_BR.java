@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
  * limitations under the License.
  */
 
-/*
- * $Id: ErrorMessages_pt_BR.java 3023 2011-03-01 00:53:34Z joehw $
- */
 package com.sun.org.apache.xalan.internal.xsltc.runtime;
 
 import java.util.ListResourceBundle;
@@ -81,7 +78,13 @@ public class ErrorMessages_pt_BR extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    private static final Object[][] _contents =  new Object[][] {
+    /** Get the lookup table for error messages.
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+        return new Object[][] {
 
         /*
          * Note to translators:  the substitution text in the following message
@@ -276,13 +279,6 @@ public class ErrorMessages_pt_BR extends ListResourceBundle {
         {BasisLibrary.UNALLOWED_EXTENSION_ELEMENT_ERR,
         "O uso do elemento da extens\u00E3o ''{0}'' n\u00E3o ser\u00E1 permitido quando o recurso de processamento seguro for definido como verdadeiro."},
     };
-    /** Get the lookup table for error messages.
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-        return _contents;
     }
 
 }

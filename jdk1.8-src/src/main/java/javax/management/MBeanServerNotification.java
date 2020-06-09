@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -86,7 +86,7 @@ package javax.management;
  *     be set to an array of ObjectNames containing the names of all MBeans
  *     being registered or unregistered.</li>
  * </ul>
- * </p>
+ *
  * <p>
  * MBeans which emit these group registration/unregistration notifications will
  * declare them in their {@link MBeanInfo#getNotifications()

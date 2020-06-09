@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -175,7 +175,7 @@ public interface AccessibleText {
      * If there is no selection, but there is
      * a caret, the start and end offsets will be the same.
      *
-     * @return the index into teh text of the end of the selection
+     * @return the index into the text of the end of the selection
      */
     public int getSelectionEnd();
 

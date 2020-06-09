@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -48,7 +48,7 @@ import sun.security.action.GetPropertyAction;
  * Provides the basic look and feel for a <code>JOptionPane</code>.
  * <code>BasicMessagePaneUI</code> provides a means to place an icon,
  * message and buttons into a <code>Container</code>.
- * Generally, the layout will look like:<p>
+ * Generally, the layout will look like:
  * <pre>
  *        ------------------
  *        | i | message    |
@@ -131,7 +131,7 @@ public class BasicOptionPaneUI extends OptionPaneUI {
     }
 
     /**
-      * Installs the receiver as the L&F for the passed in
+      * Installs the receiver as the L&amp;F for the passed in
       * <code>JOptionPane</code>.
       */
     public void installUI(JComponent c) {
@@ -144,7 +144,7 @@ public class BasicOptionPaneUI extends OptionPaneUI {
     }
 
     /**
-      * Removes the receiver from the L&F controller of the passed in split
+      * Removes the receiver from the L&amp;F controller of the passed in split
       * pane.
       */
     public void uninstallUI(JComponent c) {
@@ -827,7 +827,7 @@ public class BasicOptionPaneUI extends OptionPaneUI {
     }
 
     /**
-     * Returns true, basic L&F wants all the buttons to have the same
+     * Returns true, basic L&amp;F wants all the buttons to have the same
      * width.
      */
     protected boolean getSizeButtonsToSameWidth() {
@@ -923,7 +923,7 @@ public class BasicOptionPaneUI extends OptionPaneUI {
         private boolean reverseButtons;
         /**
          * Indicates whether or not centersChildren should be used vs
-         * the orientation. This is done for backward compatability
+         * the orientation. This is done for backward compatibility
          * for subclassers.
          */
         private boolean useOrientation;

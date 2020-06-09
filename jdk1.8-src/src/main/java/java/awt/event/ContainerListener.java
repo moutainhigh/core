@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,11 +42,11 @@ import java.util.EventListener;
  * Container events are provided for notification purposes ONLY;
  * The AWT will automatically handle add and remove operations
  * internally so the program works properly regardless of
- * whether the program registers a <code>ComponentListener</code> or not.
+ * whether the program registers a {@code ContainerListener} or not.
  *
  * @see ContainerAdapter
  * @see ContainerEvent
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/containerlistener.html">Tutorial: Writing a Container Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/containerlistener.html">Tutorial: Writing a Container Listener</a>
  *
  * @author Tim Prinzing
  * @author Amy Fowler

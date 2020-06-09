@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -45,8 +45,8 @@ import javax.management.ObjectName;
 /**
  * The <code>SimpleType</code> class is the <i>open type</i> class whose instances describe
  * all <i>open data</i> values which are neither arrays,
- * nor {@link CompositeData <code>CompositeData</code>} values,
- * nor {@link TabularData <code>TabularData</code>} values.
+ * nor {@link CompositeData CompositeData} values,
+ * nor {@link TabularData TabularData} values.
  * It predefines all its possible instances as static fields, and has no public constructor.
  * <p>
  * Given a <code>SimpleType</code> instance describing values whose Java class name is <i>className</i>,

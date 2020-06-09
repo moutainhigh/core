@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,6 +36,10 @@ import java.beans.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.*;
+
+import static sun.swing.SwingUtilities2.drawHLine;
+import static sun.swing.SwingUtilities2.drawRect;
+import static sun.swing.SwingUtilities2.drawVLine;
 
 
 /**
@@ -572,17 +576,17 @@ public class BasicScrollBarUI
         g.translate(thumbBounds.x, thumbBounds.y);
 
         g.setColor(thumbDarkShadowColor);
-        g.drawRect(0, 0, w-1, h-1);
+        drawRect(g, 0, 0, w - 1, h - 1);
         g.setColor(thumbColor);
-        g.fillRect(0, 0, w-1, h-1);
+        g.fillRect(0, 0, w - 1, h - 1);
 
         g.setColor(thumbHighlightColor);
-        g.drawLine(1, 1, 1, h-2);
-        g.drawLine(2, 1, w-3, 1);
+        drawVLine(g, 1, 1, h - 2);
+        drawHLine(g, 2, w - 3, 1);
 
         g.setColor(thumbLightShadowColor);
-        g.drawLine(2, h-2, w-2, h-2);
-        g.drawLine(w-2, 1, w-2, h-3);
+        drawHLine(g, 2, w - 2, h - 2);
+        drawVLine(g, w - 2, 1, h - 3);
 
         g.translate(-thumbBounds.x, -thumbBounds.y);
     }
@@ -1489,7 +1493,7 @@ public class BasicScrollBarUI
 
     public class PropertyChangeHandler implements PropertyChangeListener
     {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.

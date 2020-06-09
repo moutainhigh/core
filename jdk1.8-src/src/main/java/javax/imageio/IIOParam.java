@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -95,7 +95,7 @@ public abstract class IIOParam {
     /**
      * An <code>ImageTypeSpecifier</code> to be used to generate a
      * destination image when reading, or to set the output color type
-     * when writing.  If non has been setm the value will be
+     * when writing.  If non has been set the value will be
      * <code>null</code>.  By default, the value is <code>null</code>.
      */
     protected ImageTypeSpecifier destinationType = null;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,6 +26,7 @@
 package java.awt.image;
 
 import java.awt.Image;
+
 
 /**
  * An asynchronous update interface for receiving notifications about

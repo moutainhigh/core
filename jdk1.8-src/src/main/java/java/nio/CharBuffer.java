@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -31,6 +31,11 @@ package java.nio;
 import java.io.IOException;
 
 
+import java.util.Spliterator;
+import java.util.stream.StreamSupport;
+import java.util.stream.IntStream;
+
+
 /**
  * A char buffer.
  *
@@ -39,15 +44,15 @@ import java.io.IOException;
  *
  * <ul>
  *
- *   <li><p> Absolute and relative {@link #get() </code><i>get</i><code>} and
- *   {@link #put(char) </code><i>put</i><code>} methods that read and write
+ *   <li><p> Absolute and relative {@link #get() <i>get</i>} and
+ *   {@link #put(char) <i>put</i>} methods that read and write
  *   single chars; </p></li>
  *
- *   <li><p> Relative {@link #get(char[]) </code><i>bulk get</i><code>}
+ *   <li><p> Relative {@link #get(char[]) <i>bulk get</i>}
  *   methods that transfer contiguous sequences of chars from this buffer
  *   into an array; and</p></li>
  *
- *   <li><p> Relative {@link #put(char[]) </code><i>bulk put</i><code>}
+ *   <li><p> Relative {@link #put(char[]) <i>bulk put</i>}
  *   methods that transfer contiguous sequences of chars from a
  *   char array,&#32;a&#32;string, or some other char
  *   buffer into this buffer;&#32;and </p></li>
@@ -65,14 +70,14 @@ import java.io.IOException;
 
 
  *
- *   <li><p> Methods for {@link #compact </code>compacting<code>}, {@link
- *   #duplicate </code>duplicating<code>}, and {@link #slice
- *   </code>slicing<code>} a char buffer.  </p></li>
+ *   <li><p> Methods for {@link #compact compacting}, {@link
+ *   #duplicate duplicating}, and {@link #slice slicing}
+ *   a char buffer.  </p></li>
  *
  * </ul>
  *
  * <p> Char buffers can be created either by {@link #allocate
- * </code><i>allocation</i><code>}, which allocates space for the buffer's
+ * <i>allocation</i>}, which allocates space for the buffer's
  *
 
 
@@ -81,7 +86,7 @@ import java.io.IOException;
 
 
  *
- * content, by {@link #wrap(char[]) </code><i>wrapping</i><code>} an existing
+ * content, by {@link #wrap(char[]) <i>wrapping</i>} an existing
  * char array or&#32;string into a buffer, or by creating a
  * <a href="ByteBuffer.html#views"><i>view</i></a> of an existing byte buffer.
  *
@@ -313,9 +318,8 @@ public abstract class CharBuffer
      *
      * <p> The new buffer's position will be zero, its limit will be its
      * capacity, its mark will be undefined, and each of its elements will be
-     * initialized to zero.  It will have a {@link #array
-     * </code>backing array<code>}, and its {@link #arrayOffset </code>array
-     * offset<code>} will be zero.
+     * initialized to zero.  It will have a {@link #array backing array},
+     * and its {@link #arrayOffset array offset} will be zero.
      *
      * @param  capacity
      *         The new buffer's capacity, in chars
@@ -339,8 +343,8 @@ public abstract class CharBuffer
      * and vice versa.  The new buffer's capacity will be
      * <tt>array.length</tt>, its position will be <tt>offset</tt>, its limit
      * will be <tt>offset + length</tt>, and its mark will be undefined.  Its
-     * {@link #array </code>backing array<code>} will be the given array, and
-     * its {@link #arrayOffset </code>array offset<code>} will be zero.  </p>
+     * {@link #array backing array} will be the given array, and
+     * its {@link #arrayOffset array offset} will be zero.  </p>
      *
      * @param  array
      *         The array that will back the new buffer
@@ -379,8 +383,8 @@ public abstract class CharBuffer
      * that is, modifications to the buffer will cause the array to be modified
      * and vice versa.  The new buffer's capacity and limit will be
      * <tt>array.length</tt>, its position will be zero, and its mark will be
-     * undefined.  Its {@link #array </code>backing array<code>} will be the
-     * given array, and its {@link #arrayOffset </code>array offset<code>} will
+     * undefined.  Its {@link #array backing array} will be the
+     * given array, and its {@link #arrayOffset array offset>} will
      * be zero.  </p>
      *
      * @param  array
@@ -546,7 +550,7 @@ public abstract class CharBuffer
 
     /**
      * Relative <i>get</i> method.  Reads the char at this buffer's
-     * current position, and then increments the position. </p>
+     * current position, and then increments the position.
      *
      * @return  The char at the buffer's current position
      *
@@ -576,7 +580,7 @@ public abstract class CharBuffer
 
     /**
      * Absolute <i>get</i> method.  Reads the char at the given
-     * index. </p>
+     * index.
      *
      * @param  index
      *         The index from which the char will be read
@@ -588,6 +592,19 @@ public abstract class CharBuffer
      *          or not smaller than the buffer's limit
      */
     public abstract char get(int index);
+
+
+    /**
+     * Absolute <i>get</i> method.  Reads the char at the given
+     * index without any validation of the index.
+     *
+     * @param  index
+     *         The index from which the char will be read
+     *
+     * @return  The char at the given index
+     */
+    abstract char getUnchecked(int index);   // package-private
+
 
     /**
      * Absolute <i>put</i> method&nbsp;&nbsp;<i>(optional operation)</i>.
@@ -634,12 +651,13 @@ public abstract class CharBuffer
      * <tt>src.get(dst,&nbsp;off,&nbsp;len)</tt> has exactly the same effect as
      * the loop
      *
-     * <pre>
+     * <pre>{@code
      *     for (int i = off; i < off + len; i++)
-     *         dst[i] = src.get(); </pre>
+     *         dst[i] = src.get():
+     * }</pre>
      *
      * except that it first checks that there are sufficient chars in
-     * this buffer and it is potentially much more efficient. </p>
+     * this buffer and it is potentially much more efficient.
      *
      * @param  dst
      *         The array into which chars are to be written
@@ -684,6 +702,9 @@ public abstract class CharBuffer
      * <pre>
      *     src.get(a, 0, a.length) </pre>
      *
+     * @param   dst
+     *          The destination array
+     *
      * @return  This buffer
      *
      * @throws  BufferUnderflowException
@@ -720,7 +741,7 @@ public abstract class CharBuffer
      *         dst.put(src.get()); </pre>
      *
      * except that it first checks that there is sufficient space in this
-     * buffer and it is potentially much more efficient. </p>
+     * buffer and it is potentially much more efficient.
      *
      * @param  src
      *         The source buffer from which chars are to be read;
@@ -741,6 +762,8 @@ public abstract class CharBuffer
     public CharBuffer put(CharBuffer src) {
         if (src == this)
             throw new IllegalArgumentException();
+        if (isReadOnly())
+            throw new ReadOnlyBufferException();
         int n = src.remaining();
         if (n > remaining())
             throw new BufferOverflowException();
@@ -768,12 +791,13 @@ public abstract class CharBuffer
      * <tt>dst.put(src,&nbsp;off,&nbsp;len)</tt> has exactly the same effect as
      * the loop
      *
-     * <pre>
+     * <pre>{@code
      *     for (int i = off; i < off + len; i++)
-     *         dst.put(a[i]); </pre>
+     *         dst.put(a[i]);
+     * }</pre>
      *
      * except that it first checks that there is sufficient space in this
-     * buffer and it is potentially much more efficient. </p>
+     * buffer and it is potentially much more efficient.
      *
      * @param  src
      *         The array from which chars are to be read
@@ -820,6 +844,9 @@ public abstract class CharBuffer
      * <pre>
      *     dst.put(a, 0, a.length) </pre>
      *
+     * @param   src
+     *          The source array
+     *
      * @return  This buffer
      *
      * @throws  BufferOverflowException
@@ -854,12 +881,13 @@ public abstract class CharBuffer
      * <tt>dst.put(src,&nbsp;start,&nbsp;end)</tt> has exactly the same effect
      * as the loop
      *
-     * <pre>
+     * <pre>{@code
      *     for (int i = start; i < end; i++)
-     *         dst.put(src.charAt(i)); </pre>
+     *         dst.put(src.charAt(i));
+     * }</pre>
      *
      * except that it first checks that there is sufficient space in this
-     * buffer and it is potentially much more efficient. </p>
+     * buffer and it is potentially much more efficient.
      *
      * @param  src
      *         The string from which chars are to be read
@@ -888,6 +916,10 @@ public abstract class CharBuffer
      */
     public CharBuffer put(String src, int start, int end) {
         checkBounds(start, end - start, src.length());
+        if (isReadOnly())
+            throw new ReadOnlyBufferException();
+        if (end - start > remaining())
+            throw new BufferOverflowException();
         for (int i = start; i < end; i++)
             this.put(src.charAt(i));
         return this;
@@ -902,6 +934,9 @@ public abstract class CharBuffer
      *
      * <pre>
      *     dst.put(s, 0, s.length()) </pre>
+     *
+     * @param   src
+     *          The source string
      *
      * @return  This buffer
      *
@@ -1023,6 +1058,7 @@ public abstract class CharBuffer
 
 
 
+
      *
      * @return  This buffer
      *
@@ -1032,7 +1068,7 @@ public abstract class CharBuffer
     public abstract CharBuffer compact();
 
     /**
-     * Tells whether or not this char buffer is direct. </p>
+     * Tells whether or not this char buffer is direct.
      *
      * @return  <tt>true</tt> if, and only if, this buffer is direct
      */
@@ -1080,7 +1116,11 @@ public abstract class CharBuffer
         int h = 1;
         int p = position();
         for (int i = limit() - 1; i >= p; i--)
+
+
+
             h = 31 * h + (int)get(i);
+
         return h;
     }
 
@@ -1089,7 +1129,7 @@ public abstract class CharBuffer
      *
      * <p> Two char buffers are equal if, and only if,
      *
-     * <p><ol>
+     * <ol>
      *
      *   <li><p> They have the same element type,  </p></li>
      *
@@ -1222,7 +1262,7 @@ public abstract class CharBuffer
 
     /**
      * Reads the character at the given index relative to the current
-     * position. </p>
+     * position.
      *
      * @param  index
      *         The index of the character to be read, relative to the position;
@@ -1387,7 +1427,7 @@ public abstract class CharBuffer
      *
      * <p> The byte order of a char buffer created by allocation or by
      * wrapping an existing <tt>char</tt> array is the {@link
-     * ByteOrder#nativeOrder </code>native order<code>} of the underlying
+     * ByteOrder#nativeOrder native order} of the underlying
      * hardware.  The byte order of a char buffer created as a <a
      * href="ByteBuffer.html#views">view</a> of a byte buffer is that of the
      * byte buffer at the moment that the view is created.  </p>
@@ -1445,6 +1485,18 @@ public abstract class CharBuffer
 
 
 
+
+
+
+
+
+
+    @Override
+
+    public IntStream chars() {
+        return StreamSupport.intStream(() -> new CharBufferSpliterator(this),
+            Buffer.SPLITERATOR_CHARACTERISTICS, false);
+    }
 
 
 

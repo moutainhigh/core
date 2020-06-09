@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ package java.awt.font;
  * <p>
  * For more information on TrueType and OpenType fonts, see the
  * OpenType specification.
- * ( <a href=http://www.microsoft.com/typography/otspec/">http://www.microsoft.com/typography/otspec/l</a> ).
+ * ( <a href="http://www.microsoft.com/typography/otspec/">http://www.microsoft.com/typography/otspec/</a> ).
  */
 public interface OpenType {
 
@@ -268,7 +268,7 @@ public interface OpenType {
   public final static int       TAG_ACNT        = 0x61636e74;
 
   /**
-   * Axis variaiton.  Table tag "avar" in the Open
+   * Axis variation.  Table tag "avar" in the Open
    * Type Specification.
    */
   public final static int       TAG_AVAR        = 0x61766172;

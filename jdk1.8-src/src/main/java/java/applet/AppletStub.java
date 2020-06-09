@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,11 +54,11 @@ public interface AppletStub {
      * For example, suppose an applet is contained
      * within the document:
      * <blockquote><pre>
-     *    http://java.sun.com/products/jdk/1.2/index.html
+     *    http://www.oracle.com/technetwork/java/index.html
      * </pre></blockquote>
      * The document base is:
      * <blockquote><pre>
-     *    http://java.sun.com/products/jdk/1.2/index.html
+     *    http://www.oracle.com/technetwork/java/index.html
      * </pre></blockquote>
      *
      * @return  the {@link java.net.URL} of the document that contains the

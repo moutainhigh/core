@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -47,7 +47,7 @@ import java.util.EventListener;
  *
  * @see MouseMotionAdapter
  * @see MouseEvent
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/mousemotionlistener.html">Tutorial: Writing a Mouse Motion Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/mousemotionlistener.html">Tutorial: Writing a Mouse Motion Listener</a>
  *
  * @since 1.1
  */
@@ -60,9 +60,9 @@ public interface MouseMotionListener extends EventListener {
      * mouse button is released (regardless of whether the mouse position
      * is within the bounds of the component).
      * <p>
-     * Due to platform-dependent Drag&Drop implementations,
+     * Due to platform-dependent Drag&amp;Drop implementations,
      * <code>MOUSE_DRAGGED</code> events may not be delivered during a native
-     * Drag&Drop operation.
+     * Drag&amp;Drop operation.
      */
     public void mouseDragged(MouseEvent e);
 

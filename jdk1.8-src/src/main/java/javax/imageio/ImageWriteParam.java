@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -49,7 +49,7 @@ import java.util.Locale;
  * and include additional pixels within the intersected bounds
  * according to the horizontal and vertical subsampling factors
  * specified by {@link IIOParam#setSourceSubsampling
- * <code>IIOParam.setSourceSubsampling</code>}.
+ * IIOParam.setSourceSubsampling}.
  *
  * <p> Individual features such as tiling, progressive encoding, and
  * compression may be set in one of four modes.
@@ -253,7 +253,7 @@ public class ImageWriteParam extends IIOParam {
      * <code>false</code>.  Subclasses must set the value manually.
      *
      * <p> Subclasses that do not support writing tiles, or that
-     * supprt writing but not offsetting tiles must ensure that this
+     * support writing but not offsetting tiles must ensure that this
      * value is set to <code>false</code>.
      */
     protected boolean canOffsetTiles = false;
@@ -462,9 +462,8 @@ public class ImageWriteParam extends IIOParam {
      * <code>IllegalStateException</code>.
      *
      * <li><code>MODE_EXPLICIT</code> - The image will be tiled
-     * according to parameters given in the {@link #setTiling
-     * <code>setTiling</code>} method.  Any previously set tiling
-     * parameters are discarded.
+     * according to parameters given in the {@link #setTiling setTiling}
+     * method.  Any previously set tiling parameters are discarded.
      *
      * <li><code>MODE_COPY_FROM_METADATA</code> - The image will
      * conform to the metadata object passed in to a write.
@@ -804,7 +803,7 @@ public class ImageWriteParam extends IIOParam {
      *
      * <ul>
      *   <li><code>MODE_DISABLED</code> - No progression.  Use this to
-     *   turn off progession.
+     *   turn off progression.
      *
      *   <li><code>MODE_COPY_FROM_METADATA</code> - The output image
      *   will use whatever progression parameters are found in the
@@ -1421,7 +1420,7 @@ public class ImageWriteParam extends IIOParam {
      * with <code>getCompressionQualityDescriptions</code> as part of a user
      * interface for setting or displaying the compression quality
      * level.  See {@link #getCompressionQualityDescriptions
-     * <code>getCompressionQualityDescriptions</code>} for more information.
+     * getCompressionQualityDescriptions} for more information.
      *
      * <p> If no descriptions are available, <code>null</code> is
      * returned.  If <code>null</code> is returned from

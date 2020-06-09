@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -1094,7 +1094,7 @@ public interface GSSContext {
      * side  and it has to be done prior to the first call to
      * <code>initSecContext</code>.<p>
      *
-     * The actual lifetime of the context will depend on the capabilites of
+     * The actual lifetime of the context will depend on the capabilities of
      * the underlying mechanism and the application should call the {@link
      * #getLifetime() getLifetime} method to determine this.<p>
      *

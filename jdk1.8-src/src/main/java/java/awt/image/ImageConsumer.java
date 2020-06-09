@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,6 +26,7 @@
 package java.awt.image;
 
 import java.util.Hashtable;
+
 
 /**
  * The interface for objects expressing interest in image data through
@@ -190,7 +191,7 @@ public interface ImageConsumer {
      * finished delivering all of the pixels that the source image
      * contains, or when a single frame of a multi-frame animation has
      * been completed, or when an error in loading or producing the
-     * image has occured.  The ImageConsumer should remove itself from the
+     * image has occurred.  The ImageConsumer should remove itself from the
      * list of consumers registered with the ImageProducer at this time,
      * unless it is interested in successive frames.
      * @param status the status of image loading

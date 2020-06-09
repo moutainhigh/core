@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ class Inet4AddressImpl implements InetAddressImpl {
     public synchronized InetAddress anyLocalAddress() {
         if (anyLocalAddress == null) {
             anyLocalAddress = new Inet4Address(); // {0x00,0x00,0x00,0x00}
-            anyLocalAddress.hostName = "0.0.0.0";
+            anyLocalAddress.holder().hostName = "0.0.0.0";
         }
         return anyLocalAddress;
     }
@@ -59,11 +59,11 @@ class Inet4AddressImpl implements InetAddressImpl {
           /*
            * Let's make sure we use an address of the proper family
            */
-          java.util.Enumeration it = netif.getInetAddresses();
+          java.util.Enumeration<InetAddress> it = netif.getInetAddresses();
           InetAddress inetaddr = null;
           while (!(inetaddr instanceof Inet4Address) &&
                  it.hasMoreElements())
-              inetaddr = (InetAddress) it.nextElement();
+              inetaddr = it.nextElement();
           if (inetaddr instanceof Inet4Address)
               ifaddr = inetaddr.getAddress();
       }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,6 +33,7 @@ import javax.management.Descriptor;
 import javax.management.MBeanException;
 import javax.management.openmbean.OpenDataException;
 import javax.management.openmbean.OpenType;
+import sun.reflect.misc.MethodUtil;
 
 final class ConvertingMethod {
     static ConvertingMethod from(Method m) {
@@ -189,7 +190,7 @@ final class ConvertingMethod {
                 "from open values: " + e;
             throw new MBeanException(e, msg);
         }
-        final Object javaReturn = method.invoke(obj, javaParams);
+        final Object javaReturn = MethodUtil.invoke(method, obj, javaParams);
         try {
             return returnMapping.toOpenValue(javaReturn);
         } catch (OpenDataException e) {

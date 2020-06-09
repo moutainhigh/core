@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -16,9 +16,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-/*
- * $Id: ErrorMessages_fr.java,v 1.2.4.1 2005/09/14 05:15:37 pvedula Exp $
  */
 
 package com.sun.org.apache.xalan.internal.xsltc.runtime;
@@ -81,7 +78,13 @@ public class ErrorMessages_fr extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    private static final Object[][] _contents =  new Object[][] {
+    /** Get the lookup table for error messages.
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+        return new Object[][] {
 
         /*
          * Note to translators:  the substitution text in the following message
@@ -276,13 +279,6 @@ public class ErrorMessages_fr extends ListResourceBundle {
         {BasisLibrary.UNALLOWED_EXTENSION_ELEMENT_ERR,
         "L''utilisation de l''\u00E9l\u00E9ment d''extension ''{0}'' n''est pas autoris\u00E9e lorsque la fonctionnalit\u00E9 de traitement s\u00E9curis\u00E9 est d\u00E9finie sur True."},
     };
-    /** Get the lookup table for error messages.
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-        return _contents;
     }
 
 }

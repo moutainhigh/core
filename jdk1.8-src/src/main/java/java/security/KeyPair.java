@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,7 +50,7 @@ public final class KeyPair implements java.io.Serializable {
      *
      * <p>Note that this constructor only stores references to the public
      * and private key components in the generated key pair. This is safe,
-     * because <code>Key</code> objects are immutable.
+     * because {@code Key} objects are immutable.
      *
      * @param publicKey the public key.
      *

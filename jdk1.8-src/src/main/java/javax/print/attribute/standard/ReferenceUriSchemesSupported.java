@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -141,7 +141,7 @@ public class ReferenceUriSchemesSupported
      * Returns the string table for class ReferenceUriSchemesSupported.
      */
     protected String[] getStringTable() {
-        return (String[])myStringTable.clone();
+        return myStringTable.clone();
     }
 
     /**

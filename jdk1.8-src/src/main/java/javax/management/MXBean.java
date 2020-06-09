@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,9 +54,9 @@ import javax.management.openmbean.TabularType;
 /**
     <p>Annotation to mark an interface explicitly as being an MXBean
     interface, or as not being an MXBean interface.  By default, an
-    interface is an MXBean interface if its name ends with {@code
-    MXBean}, as in {@code SomethingMXBean}.  The following interfaces
-    are MXBean interfaces:</p>
+    interface is an MXBean interface if it is public and its name ends
+    with {@code MXBean}, as in {@code SomethingMXBean}.  The following
+    interfaces are MXBean interfaces:</p>
 
     <pre>
     public interface WhatsitMXBean {}
@@ -71,13 +71,15 @@ import javax.management.openmbean.TabularType;
     <p>The following interfaces are not MXBean interfaces:</p>
 
     <pre>
+    interface NonPublicInterfaceNotMXBean{}
+
     public interface Whatsit3Interface{}
 
     &#64;MXBean(false)
     public interface MisleadingMXBean {}
     </pre>
 
-    <h3 id="MXBean-spec">MXBean specification</a></h3>
+    <h3 id="MXBean-spec">MXBean specification</h3>
 
     <p>The MXBean concept provides a simple way to code an MBean
       that only references a predefined set of types, the ones defined
@@ -91,7 +93,7 @@ import javax.management.openmbean.TabularType;
       Standard MBean concept.  Here is how a managed object might be
       represented as a Standard MBean, and as an MXBean:</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -131,7 +133,7 @@ public interface MemoryPool<b>MXBean</b> {
 
     <p>So, we might define <code>MemoryUsage</code> like this:</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -193,7 +195,7 @@ public class MemoryUsage {
     <p>This becomes clearer if we compare what the clients of the two
       models might look like:</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -230,7 +232,7 @@ String name = (String)
       managed objects when you know the model beforehand, regardless
       of whether you are using Standard MBeans or MXBeans:</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -263,7 +265,7 @@ long used = usage.getUsed();
     <p>Implementing the MemoryPool object works similarly for both
       Standard MBeans and MXBeans.</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -290,7 +292,7 @@ public class MemoryPool
     <p>Registering the MBean in the MBean Server works in the same way
       in both cases:</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Standard Bean vs. MXBean">
       <tr>
         <th>Standard MBean</th><th>MXBean</th>
       </tr>
@@ -476,13 +478,13 @@ public class MemoryPool
 
     <p>The following table summarizes the type mapping rules.</p>
 
-    <table border="1" cellpadding="5">
+    <table border="1" cellpadding="5" summary="Type Mapping Rules">
       <tr>
         <th>Java type <em>J</em></th>
         <th><em>opentype(J)</em></th>
         <th><em>opendata(J)</em></th>
       </tr>
-      <tbody cellvalign="top">
+      <tbody valign="top">
         <tr>
           <td>{@code int}, {@code boolean}, etc<br>
             (the 8 primitive Java types)</td>
@@ -783,7 +785,7 @@ public interface ModuleMXBean {
     </blockquote>
 
     then the item in the {@code CompositeType} is called {@code name}
-    and has type {@code SimpleType.BOOLEAN}.</p>
+    and has type {@code SimpleType.BOOLEAN}.
 
     <p>Notice that the first character (or code point) is converted to
       lower case.  This follows the Java Beans convention, which for
@@ -906,6 +908,14 @@ public interface ModuleMXBean {
 
       <li><p>Otherwise, <em>J</em> is not reconstructible.</p></li>
     </ol>
+
+    <p>Rule 2 is not applicable to subset Profiles of Java SE that do not
+    include the {@code java.beans} package. When targeting a runtime that does
+    not include the {@code java.beans} package, and where there is a mismatch
+    between the compile-time and runtime environment whereby <em>J</em> is
+    compiled with a public constructor and the {@code ConstructorProperties}
+    annotation, then <em>J</em> is not reconstructible unless another rule
+    applies.</p>
 
     <p>Here are examples showing different ways to code a type {@code
       NamedNumber} that consists of an {@code int} and a {@code

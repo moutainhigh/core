@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,6 +27,8 @@ package java.awt;
 
 import java.beans.ConstructorProperties;
 
+import java.lang.annotation.Native;
+
 /**
  * The <code>BasicStroke</code> class defines a basic set of rendering
  * attributes for the outlines of graphics primitives, which are rendered
@@ -37,7 +39,7 @@ import java.beans.ConstructorProperties;
  * {@link Shape} and the decorations applied at the ends and joins of
  * path segments of the <code>Shape</code>.
  * These rendering attributes include:
- * <dl compact>
+ * <dl>
  * <dt><i>width</i>
  * <dd>The pen width, measured perpendicularly to the pen trajectory.
  * <dt><i>end caps</i>
@@ -86,7 +88,7 @@ import java.beans.ConstructorProperties;
  * but also by the transform attribute of the
  * <code>Graphics2D</code> object.  Consider this code:
  * <blockquote><tt>
- *      // sets the Graphics2D object's Tranform attribute
+ *      // sets the Graphics2D object's Transform attribute
  *      g2d.scale(10, 10);
  *      // sets the Graphics2D object's Stroke attribute
  *      g2d.setStroke(new BasicStroke(1.5f));
@@ -115,39 +117,39 @@ public class BasicStroke implements Stroke {
      * Joins path segments by extending their outside edges until
      * they meet.
      */
-    public final static int JOIN_MITER = 0;
+    @Native public final static int JOIN_MITER = 0;
 
     /**
      * Joins path segments by rounding off the corner at a radius
      * of half the line width.
      */
-    public final static int JOIN_ROUND = 1;
+    @Native public final static int JOIN_ROUND = 1;
 
     /**
      * Joins path segments by connecting the outer corners of their
      * wide outlines with a straight segment.
      */
-    public final static int JOIN_BEVEL = 2;
+    @Native public final static int JOIN_BEVEL = 2;
 
     /**
      * Ends unclosed subpaths and dash segments with no added
      * decoration.
      */
-    public final static int CAP_BUTT = 0;
+    @Native public final static int CAP_BUTT = 0;
 
     /**
      * Ends unclosed subpaths and dash segments with a round
      * decoration that has a radius equal to half of the width
      * of the pen.
      */
-    public final static int CAP_ROUND = 1;
+    @Native public final static int CAP_ROUND = 1;
 
     /**
      * Ends unclosed subpaths and dash segments with a square
      * projection that extends beyond the end of the segment
      * to a distance equal to half of the line width.
      */
-    public final static int CAP_SQUARE = 2;
+    @Native public final static int CAP_SQUARE = 2;
 
     float width;
 

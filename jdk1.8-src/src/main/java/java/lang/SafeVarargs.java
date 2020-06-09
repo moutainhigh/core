@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -82,8 +82,10 @@ import java.lang.annotation.*;
  *
  * </ul>
  *
+ * @since 1.7
  * @jls 4.7 Reifiable Types
  * @jls 8.4.1 Formal Parameters
+ * @jls 9.6.3.7 @SafeVarargs
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

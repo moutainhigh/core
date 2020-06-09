@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -315,7 +315,7 @@ public abstract class FileSystem
      * that resembles regular expressions but with a simpler syntax. For example:
      *
      * <blockquote>
-     * <table border="0">
+     * <table border="0" summary="Pattern Language">
      * <tr>
      *   <td>{@code *.java}</td>
      *   <td>Matches a path that represents a file name ending in {@code .java}</td>
@@ -324,7 +324,6 @@ public abstract class FileSystem
      *   <td>{@code *.*}</td>
      *   <td>Matches file names containing a dot</td>
      * </tr>
-     * <tr>
      * <tr>
      *   <td>{@code *.{java,class}}</td>
      *   <td>Matches file names ending with {@code .java} or {@code .class}</td>
@@ -347,7 +346,7 @@ public abstract class FileSystem
      *   <td><tt>C:&#92;&#92;*</tt>
      *   <td>Matches <tt>C:&#92;foo</tt> and <tt>C:&#92;bar</tt> on the Windows
      *   platform (note that the backslash is escaped; as a string literal in the
-     *   Java Language the pattern would be <tt>"C:&#92;&#92;&#92;&#92*"</tt>) </td>
+     *   Java Language the pattern would be <tt>"C:&#92;&#92;&#92;&#92;*"</tt>) </td>
      * </tr>
      *
      * </table>
@@ -355,7 +354,7 @@ public abstract class FileSystem
      *
      * <p> The following rules are used to interpret glob patterns:
      *
-     * <p> <ul>
+     * <ul>
      *   <li><p> The {@code *} character matches zero or more {@link Character
      *   characters} of a {@link Path#getName(int) name} component without
      *   crossing directory boundaries. </p></li>

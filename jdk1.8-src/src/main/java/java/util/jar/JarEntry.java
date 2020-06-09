@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -81,6 +81,7 @@ class JarEntry extends ZipEntry {
      *
      * @return the <code>Manifest</code> <code>Attributes</code> for this
      * entry, or <code>null</code> if none
+     * @throws IOException  if an I/O error has occurred
      */
     public Attributes getAttributes() throws IOException {
         return attr;

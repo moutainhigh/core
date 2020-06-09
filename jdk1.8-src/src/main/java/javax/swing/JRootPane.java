@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -43,13 +43,13 @@ import sun.security.action.GetBooleanAction;
  * <code>JFrame</code>, <code>JDialog</code>, <code>JWindow</code>,
  * <code>JApplet</code>, and <code>JInternalFrame</code>.
  * For task-oriented information on functionality provided by root panes
- * see <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/rootpane.html">How to Use Root Panes</a>,
+ * see <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/rootpane.html">How to Use Root Panes</a>,
  * a section in <em>The Java Tutorial</em>.
  *
  * <p>
  * The following image shows the relationships between
  * the classes that use root panes.
- * <p align=center><img src="doc-files/JRootPane-1.gif"
+ * <p style="text-align:center"><img src="doc-files/JRootPane-1.gif"
  * alt="The following text describes this graphic."
  * HEIGHT=484 WIDTH=629></p>
  * The &quot;heavyweight&quot; components (those that delegate to a peer, or native
@@ -69,7 +69,7 @@ import sun.security.action.GetBooleanAction;
  * can be used to obtain the <code>JRootPane</code> that contains
  * a given component.
  * </blockquote>
- * <table align="right" border="0" summary="layout">
+ * <table style="float:right" border="0" summary="layout">
  * <tr>
  * <td align="center">
  * <img src="doc-files/JRootPane-2.gif"
@@ -161,7 +161,7 @@ import sun.security.action.GetBooleanAction;
  * <p>
  * The painting architecture of Swing requires an opaque
  * <code>JComponent</code>
- * to exist in the containment hieararchy above all other components. This is
+ * to exist in the containment hierarchy above all other components. This is
  * typically provided by way of the content pane. If you replace the content
  * pane, it is recommended that you make the content pane opaque
  * by way of <code>setOpaque(true)</code>. Additionally, if the content pane
@@ -179,7 +179,7 @@ import sun.security.action.GetBooleanAction;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -199,6 +199,7 @@ import sun.security.action.GetBooleanAction;
  * @author David Kloba
  */
 /// PENDING(klobad) Who should be opaque in this component?
+@SuppressWarnings("serial")
 public class JRootPane extends JComponent implements Accessible {
 
     private static final String uiClassID = "RootPaneUI";
@@ -447,7 +448,7 @@ public class JRootPane extends JComponent implements Accessible {
     }
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      *
      * @return <code>LabelUI</code> object
      * @since 1.3
@@ -457,9 +458,9 @@ public class JRootPane extends JComponent implements Accessible {
     }
 
     /**
-     * Sets the L&F object that renders this component.
+     * Sets the L&amp;F object that renders this component.
      *
-     * @param ui  the <code>LabelUI</code> L&F object
+     * @param ui  the <code>LabelUI</code> L&amp;F object
      * @see UIDefaults#getUI
      * @beaninfo
      *        bound: true
@@ -485,7 +486,7 @@ public class JRootPane extends JComponent implements Accessible {
 
 
     /**
-     * Returns a string that specifies the name of the L&F class
+     * Returns a string that specifies the name of the L&amp;F class
      * that renders this component.
      *
      * @return the string "RootPaneUI"
@@ -607,7 +608,7 @@ public class JRootPane extends JComponent implements Accessible {
      * parented by the root pane.
      * <p>
      * Swing's painting architecture requires an opaque <code>JComponent</code>
-     * in the containment hiearchy. This is typically provided by the
+     * in the containment hierarchy. This is typically provided by the
      * content pane. If you replace the content pane it is recommended you
      * replace it with an opaque <code>JComponent</code>.
      *
@@ -740,7 +741,7 @@ public class JRootPane extends JComponent implements Accessible {
      * On the other hand, the <code>glassPane</code>
      * is normally not visible, and so this can return true if the
      * <code>glassPane</code> isn't visible. Therefore, the
-     * return value here depends upon the visiblity of the
+     * return value here depends upon the visibility of the
      * <code>glassPane</code>.
      *
      * @return true if this component's children don't overlap
@@ -834,6 +835,7 @@ public class JRootPane extends JComponent implements Accessible {
         }
     }
 
+    @SuppressWarnings("serial")
     static class DefaultAction extends AbstractAction {
         JButton owner;
         JRootPane root;
@@ -896,10 +898,11 @@ public class JRootPane extends JComponent implements Accessible {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class RootLayout implements LayoutManager2, Serializable
     {
         /**
@@ -1061,10 +1064,11 @@ public class JRootPane extends JComponent implements Accessible {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class AccessibleJRootPane extends AccessibleJComponent {
         /**
          * Get the role of this object.

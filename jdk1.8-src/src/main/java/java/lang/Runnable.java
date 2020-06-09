@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -52,8 +52,8 @@ package java.lang;
  * @see     java.util.concurrent.Callable
  * @since   JDK1.0
  */
-public
-interface Runnable {
+@FunctionalInterface
+public interface Runnable {
     /**
      * When an object implementing interface <code>Runnable</code> is used
      * to create a thread, starting the thread causes the object's

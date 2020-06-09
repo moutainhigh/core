@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -102,7 +102,7 @@ public final class ImageIO {
      * into the registry for later retrieval.
      *
      * <p> The exact set of locations searched depends on the
-     * implementation of the Java runtime enviroment.
+     * implementation of the Java runtime environment.
      *
      * @see ClassLoader#getResources
      */
@@ -228,7 +228,7 @@ public final class ImageIO {
      * be used when creating <code>ImageInputStream</code>s and
      * <code>ImageOutputStream</code>s.
      *
-     * <p> When reading from a standard <code>InputStream</code>>, it
+     * <p> When reading from a standard <code>InputStream</code>, it
      * may be necessary to save previously read information in a cache
      * since the underlying stream does not allow data to be re-read.
      * Similarly, when writing to a standard
@@ -1466,7 +1466,7 @@ public final class ImageIO {
      * it is the responsibility of the caller to close the stream, if desired.
      *
      * @param im a <code>RenderedImage</code> to be written.
-     * @param formatName a <code>String</code> containg the informal
+     * @param formatName a <code>String</code> containing the informal
      * name of the format.
      * @param output an <code>ImageOutputStream</code> to be written to.
      *
@@ -1499,7 +1499,7 @@ public final class ImageIO {
      * discarded.
      *
      * @param im a <code>RenderedImage</code> to be written.
-     * @param formatName a <code>String</code> containg the informal
+     * @param formatName a <code>String</code> containing the informal
      * name of the format.
      * @param output a <code>File</code> to be written to.
      *
@@ -1551,7 +1551,7 @@ public final class ImageIO {
      * <code>getCacheDirectory</code> will be used to control caching.
      *
      * @param im a <code>RenderedImage</code> to be written.
-     * @param formatName a <code>String</code> containg the informal
+     * @param formatName a <code>String</code> containing the informal
      * name of the format.
      * @param output an <code>OutputStream</code> to be written to.
      *

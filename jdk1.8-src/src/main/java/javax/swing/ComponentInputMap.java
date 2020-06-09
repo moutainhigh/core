@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -35,6 +35,7 @@ package javax.swing;
  * @author Scott Violet
  * @since 1.3
  */
+@SuppressWarnings("serial")
 public class ComponentInputMap extends InputMap {
     /** Component binding is created for. */
     private JComponent          component;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,6 +32,14 @@ import java.awt.Window;
  * The native peer interface for {@link KeyboardFocusManager}.
  */
 public interface KeyboardFocusManagerPeer {
+
+    /**
+     * Sets the window that should become the focused window.
+     *
+     * @param win the window that should become the focused window
+     *
+     */
+    void setCurrentFocusedWindow(Window win);
 
     /**
      * Returns the currently focused window.

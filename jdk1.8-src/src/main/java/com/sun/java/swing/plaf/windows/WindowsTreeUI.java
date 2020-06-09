@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -93,6 +93,11 @@ public class WindowsTreeUI extends BasicTreeUI {
                             counter = endRow;
                         }
                     }
+
+                    if (testRect == null) {
+                        return;
+                    }
+
                     tree.scrollRectToVisible(new Rectangle(visRect.x, beginY, 1,
                                                       testRect.y + testRect.height-
                                                       beginY));

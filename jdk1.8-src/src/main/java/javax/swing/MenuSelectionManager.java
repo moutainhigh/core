@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -30,6 +30,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 
 import sun.awt.AppContext;
+import sun.swing.SwingUtilities2;
 
 /**
  * A MenuSelectionManager owns the selection in menu hierarchy.
@@ -60,6 +61,12 @@ public class MenuSelectionManager {
             if (msm == null) {
                 msm = new MenuSelectionManager();
                 context.put(MENU_SELECTION_MANAGER_KEY, msm);
+
+                // installing additional listener if found in the AppContext
+                Object o = context.get(SwingUtilities2.MENU_SELECTION_MANAGER_LISTENER_KEY);
+                if (o != null && o instanceof ChangeListener) {
+                    msm.addChangeListener((ChangeListener) o);
+                }
             }
 
             return msm;
@@ -213,7 +220,7 @@ public class MenuSelectionManager {
         MenuElement menuElement;
         MenuElement subElements[];
         MenuElement path[];
-        Vector tmp;
+        Vector<MenuElement> tmp;
         int selectionSize;
         p = event.getPoint();
 
@@ -242,7 +249,7 @@ public class MenuSelectionManager {
         screenX = p.x;
         screenY = p.y;
 
-        tmp = (Vector)selection.clone();
+        tmp = (Vector<MenuElement>)selection.clone();
         selectionSize = tmp.size();
         boolean success = false;
         for (i=selectionSize - 1;i >= 0 && success == false; i--) {
@@ -377,7 +384,7 @@ public class MenuSelectionManager {
         int cWidth,cHeight;
         MenuElement menuElement;
         MenuElement subElements[];
-        Vector tmp;
+        Vector<MenuElement> tmp;
         int selectionSize;
 
         SwingUtilities.convertPointToScreen(p,source);
@@ -385,7 +392,7 @@ public class MenuSelectionManager {
         screenX = p.x;
         screenY = p.y;
 
-        tmp = (Vector)selection.clone();
+        tmp = (Vector<MenuElement>)selection.clone();
         selectionSize = tmp.size();
         for(i=selectionSize - 1 ; i >= 0 ; i--) {
             menuElement = (MenuElement) tmp.elementAt(i);

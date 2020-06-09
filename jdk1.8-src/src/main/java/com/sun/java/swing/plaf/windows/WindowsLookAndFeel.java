@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,7 +55,6 @@ import javax.swing.text.DefaultEditorKit;
 
 import java.awt.Font;
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.awt.event.ActionEvent;
 
 import java.security.AccessController;
@@ -523,6 +522,7 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
         Object ScrollbarBackgroundColor = new DesktopProperty(
                                                        "win.scrollbar.backgroundColor",
                                                         table.get("scrollbar"));
+        Object buttonFocusColor = new FocusColorProperty();
 
         Object TextBackground         = new XPColorValue(Part.EP_EDIT, null, Prop.FILLCOLOR,
                                                          WindowBackgroundColor);
@@ -629,7 +629,7 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
             "Button.highlight", ControlHighlightColor,
             "Button.disabledForeground", InactiveTextColor,
             "Button.disabledShadow", ControlHighlightColor,
-            "Button.focus", black,
+            "Button.focus", buttonFocusColor,
             "Button.dashedRectGapX", new XPValue(Integer.valueOf(3), Integer.valueOf(5)),
             "Button.dashedRectGapY", new XPValue(Integer.valueOf(3), Integer.valueOf(4)),
             "Button.dashedRectGapWidth", new XPValue(Integer.valueOf(6), Integer.valueOf(10)),
@@ -655,7 +655,7 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
             "CheckBox.darkShadow", ControlDarkShadowColor,
             "CheckBox.light", ControlLightColor,
             "CheckBox.highlight", ControlHighlightColor,
-            "CheckBox.focus", black,
+            "CheckBox.focus", buttonFocusColor,
             "CheckBox.focusInputMap",
                new UIDefaults.LazyInputMap(new Object[] {
                             "SPACE", "pressed",
@@ -773,9 +773,6 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
                                                                "icons/NewFolder.gif"),
             "FileChooser.useSystemExtensionHiding", Boolean.TRUE,
 
-            "FileChooser.lookInLabelMnemonic", Integer.valueOf(KeyEvent.VK_I),
-            "FileChooser.fileNameLabelMnemonic", Integer.valueOf(KeyEvent.VK_N),
-            "FileChooser.filesOfTypeLabelMnemonic", Integer.valueOf(KeyEvent.VK_T),
             "FileChooser.usesSingleFilePane", Boolean.TRUE,
             "FileChooser.noPlacesBar", new DesktopProperty("win.comdlg.noPlacesBar",
                                                            Boolean.FALSE),
@@ -1013,7 +1010,7 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
             "RadioButton.darkShadow", ControlDarkShadowColor,
             "RadioButton.light", ControlLightColor,
             "RadioButton.highlight", ControlHighlightColor,
-            "RadioButton.focus", black,
+            "RadioButton.focus", buttonFocusColor,
             "RadioButton.focusInputMap",
                new UIDefaults.LazyInputMap(new Object[] {
                           "SPACE", "pressed",
@@ -2015,7 +2012,7 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
      * results.
      * </p>
      *
-     * @param component Component the error occured in, may be
+     * @param component Component the error occurred in, may be
      *                  null indicating the error condition is
      *                  not directly associated with a
      *                  <code>Component</code>.
@@ -2402,8 +2399,9 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
         }
 
         public Object getXPValue(UIDefaults table) {
-            Border xpBorder = XPStyle.getXP().getBorder(null, (Part)xpValue);
-            if (extraMargin != null) {
+            XPStyle xp = XPStyle.getXP();
+            Border xpBorder = xp != null ? xp.getBorder(null, (Part)xpValue) : null;
+            if (xpBorder != null && extraMargin != null) {
                 return new BorderUIResource.
                         CompoundBorderUIResource(xpBorder, extraMargin);
             } else {
@@ -2419,7 +2417,8 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
 
         public Object getXPValue(UIDefaults table) {
             XPColorValueKey key = (XPColorValueKey)xpValue;
-            return XPStyle.getXP().getColor(key.skin, key.prop, null);
+            XPStyle xp = XPStyle.getXP();
+            return xp != null ? xp.getColor(key.skin, key.prop, null) : null;
         }
 
         private static class XPColorValueKey {
@@ -2617,6 +2616,23 @@ public class WindowsLookAndFeel extends BasicLookAndFeel
                          (int)(avg   * 255f) <<  8 |
                          (int)(avg   * 255f);
             return rgbval;
+        }
+    }
+
+    private static class FocusColorProperty extends DesktopProperty {
+        public FocusColorProperty () {
+            // Fallback value is never used because of the configureValue method doesn't return null
+            super("win.3d.backgroundColor", Color.BLACK);
+        }
+
+        @Override
+        protected Object configureValue(Object value) {
+            Object highContrastOn = Toolkit.getDefaultToolkit().
+                    getDesktopProperty("win.highContrast.on");
+            if (highContrastOn == null || !((Boolean) highContrastOn).booleanValue()) {
+                return Color.BLACK;
+            }
+            return Color.BLACK.equals(value) ? Color.WHITE : Color.BLACK;
         }
     }
 

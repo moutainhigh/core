@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -87,6 +87,11 @@ public class WindowsRadioButtonUI extends BasicRadioButtonUI
         if (XPStyle.getXP() != null) {
             LookAndFeel.installProperty(b, "rolloverEnabled", Boolean.TRUE);
         }
+    }
+
+    protected void uninstallDefaults(AbstractButton b) {
+        super.uninstallDefaults(b);
+        initialized = false;
     }
 
     protected Color getFocusColor() {

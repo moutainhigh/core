@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -31,7 +31,7 @@ package java.lang;
  * have the appropriate format.
  *
  * @author  unascribed
- * @see     java.lang.Integer#toString()
+ * @see     java.lang.Integer#parseInt(String)
  * @since   JDK1.0
  */
 public

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -101,9 +101,9 @@ abstract class ActionPropertyChangeListener<T extends JComponent>
         // Check to see whether any old buttons have
         // been enqueued for GC.  If so, look up their
         // PCL instance and remove it from its Action.
-        OwnedWeakReference r;
+        OwnedWeakReference<?> r;
         while ((r = (OwnedWeakReference)queue.poll()) != null) {
-            ActionPropertyChangeListener oldPCL = r.getOwner();
+            ActionPropertyChangeListener<?> oldPCL = r.getOwner();
             Action oldAction = oldPCL.getAction();
             if (oldAction!=null) {
                 oldAction.removePropertyChangeListener(oldPCL);
@@ -142,15 +142,15 @@ abstract class ActionPropertyChangeListener<T extends JComponent>
 
     private static class OwnedWeakReference<U extends JComponent> extends
                               WeakReference<U> {
-        private ActionPropertyChangeListener owner;
+        private ActionPropertyChangeListener<?> owner;
 
         OwnedWeakReference(U target, ReferenceQueue<? super U> queue,
-                           ActionPropertyChangeListener owner) {
+                           ActionPropertyChangeListener<?> owner) {
             super(target, queue);
             this.owner = owner;
         }
 
-        public ActionPropertyChangeListener getOwner() {
+        public ActionPropertyChangeListener<?> getOwner() {
             return owner;
         }
     }

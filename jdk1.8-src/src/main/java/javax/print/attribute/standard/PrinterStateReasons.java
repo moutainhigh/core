@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -129,7 +129,7 @@ public final class PrinterStateReasons
      * Severity} mappings as the given map. The underlying hash map's initial
      * capacity and load factor are as specified in the superclass constructor
      * {@link java.util.HashMap#HashMap(java.util.Map)
-     * <CODE>HashMap(Map)</CODE>}.
+     * HashMap(Map)}.
      *
      * @param  map  Map to copy.
      *
@@ -180,8 +180,7 @@ public final class PrinterStateReasons
         if (severity == null) {
             throw new NullPointerException("severity is null");
         }
-        return super.put((PrinterStateReason) reason,
-                         (Severity) severity);
+        return super.put(reason, severity);
     }
 
     /**

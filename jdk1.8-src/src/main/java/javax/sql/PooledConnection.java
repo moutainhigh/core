@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -73,7 +73,7 @@ import java.sql.SQLException;
  * if a fatal error has made the connection unusable.
  *
  * <p>
- * A connection pool manager is often also a statement pool manager, maintining
+ * A connection pool manager is often also a statement pool manager, maintaining
  *  a pool of <code>PreparedStatement</code> objects.
  *  When an application closes a prepared statement, it calls the
  *  <code>PreparedStatement</code>
@@ -102,7 +102,7 @@ public interface PooledConnection {
    * @return  a <code>Connection</code> object that is a handle to
    *          this <code>PooledConnection</code> object
    * @exception SQLException if a database access error occurs
-   * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
+   * @exception java.sql.SQLFeatureNotSupportedException if the JDBC driver does not support
    * this method
    * @since 1.4
    */
@@ -117,7 +117,7 @@ public interface PooledConnection {
    * information.
    *
    * @exception SQLException if a database access error occurs
-   * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
+   * @exception java.sql.SQLFeatureNotSupportedException if the JDBC driver does not support
    * this method
    * @since 1.4
    */

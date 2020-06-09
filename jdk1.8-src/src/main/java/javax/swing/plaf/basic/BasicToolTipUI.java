@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ import javax.swing.text.View;
 
 
 /**
- * Standard tool tip L&F.
+ * Standard tool tip L&amp;F.
  * <p>
  *
  * @author Dave Moore
@@ -204,7 +204,7 @@ public class BasicToolTipUI extends ToolTipUI
         JComponent comp = ((JToolTip)c).getComponent();
 
         if (comp != null && !(comp.isEnabled())) {
-            // For better backward compatability, only install inactive
+            // For better backward compatibility, only install inactive
             // properties if they are defined.
             if (UIManager.getBorder("ToolTip.borderInactive") != null) {
                 LookAndFeel.installBorder(c, "ToolTip.borderInactive");

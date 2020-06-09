@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -201,7 +201,7 @@ public abstract class InputStreamHook extends ObjectInputStream
         readObjectState.endDefaultReadObject(this);
     }
 
-    public abstract void defaultReadObjectDelegate();
+    abstract void defaultReadObjectDelegate();
 
     abstract void readFields(java.util.Map fieldToValueMap)
         throws java.io.InvalidClassException, java.io.StreamCorruptedException,
@@ -251,7 +251,7 @@ public abstract class InputStreamHook extends ObjectInputStream
     }
 
     protected abstract byte getStreamFormatVersion();
-    protected abstract org.omg.CORBA_2_3.portable.InputStream getOrbStream();
+    abstract org.omg.CORBA_2_3.portable.InputStream getOrbStream();
 
     // Description of possible actions
     protected static class ReadObjectState {

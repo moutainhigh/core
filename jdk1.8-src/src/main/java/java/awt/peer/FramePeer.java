@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -125,4 +125,10 @@ public interface FramePeer extends WindowPeer {
     // into an EmbeddedFramePeer which would extend FramePeer
     Rectangle getBoundsPrivate();
 
+    /**
+     * Requests the peer to emulate window activation.
+     *
+     * @param activate activate or deactivate the window
+     */
+    void emulateActivation(boolean activate);
 }

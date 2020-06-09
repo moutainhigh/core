@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,8 +37,8 @@ import javax.sql.rowset.serial.*;
 /**
  * An abstract class providing a <code>RowSet</code> object with its basic functionality.
  * The basic functions include having properties and sending event notifications,
- * which all JavaBeans<sup><font size=-2>TM</font></sup> components must implement.
- * <P>
+ * which all JavaBeans&trade; components must implement.
+ *
  * <h3>1.0 Overview</h3>
  * The <code>BaseRowSet</code> class provides the core functionality
  * for all <code>RowSet</code> implementations,
@@ -52,19 +52,19 @@ import javax.sql.rowset.serial.*;
  * interfaces.
  * <p>
  * The <code>BaseRowSet</code> class provides the following:
- * <p>
+ *
  * <UL>
  * <LI><b>Properties</b>
  *     <ul>
  *     <li>Fields for storing current properties
  *     <li>Methods for getting and setting properties
  *     </ul>
- *  <p>
+ *
  * <LI><b>Event notification</b>
- * <P>
+ *
  * <LI><b>A complete set of setter methods</b> for setting the parameters in a
  *      <code>RowSet</code> object's command
- *  <p>
+ *
  * <LI> <b>Streams</b>
  *  <ul>
  *  <li>Fields for storing stream instances
@@ -93,9 +93,9 @@ import javax.sql.rowset.serial.*;
  * NOTE:  In order to use a <code>DataSource</code> object for making a
  * connection, the <code>DataSource</code> object must have been registered
  * with a naming service that uses the Java Naming and Directory
- * Interface<sup><font size=-2>TM</font></sup> (JNDI) API.  This registration
+ * Interface&trade; (JNDI) API.  This registration
  * is usually done by a person acting in the capacity of a system administrator.
- * <P>
+ *
  * <h3>3.0 Setting the Command and Its Parameters</h3>
  * When a rowset gets its data from a relational database, it executes a command (a query)
  * that produces a <code>ResultSet</code> object.  This query is the command that is set
@@ -106,13 +106,13 @@ import javax.sql.rowset.serial.*;
  * to <code>null</code> if required.
  * <P>
  * The following code fragment illustrates how the
- * <code>CachedRowSet</code><sup><font size=-2>TM</font></sup>
+ * <code>CachedRowSet</code>&trade;
  * object <code>crs</code> might have its command property set.  Note that if a
  * tool is used to set properties, this is the code that the tool would use.
- * <PRE>
+ * <PRE>{@code
  *    crs.setCommand("SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS" +
  *                   "WHERE CREDIT_LIMIT > ? AND REGION = ?");
- * </PRE>
+ * }</PRE>
  * <P>
  * In this example, the values for <code>CREDIT_LIMIT</code> and
  * <code>REGION</code> are placeholder parameters, which are indicated with a
@@ -129,16 +129,16 @@ import javax.sql.rowset.serial.*;
  * <P>
  * The following code fragment demonstrates
  * setting the two parameters in the query from the previous example.
- * <PRE>
+ * <PRE>{@code
  *    crs.setInt(1, 5000);
  *    crs.setString(2, "West");
- * </PRE>
+ * }</PRE>
  * If the <code>execute</code> method is called at this point, the query
  * sent to the DBMS will be:
- * <PRE>
+ * <PRE>{@code
  *    "SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS" +
  *                   "WHERE CREDIT_LIMIT > 5000 AND REGION = 'West'"
- * </PRE>
+ * }</PRE>
  * NOTE: Setting <code>Array</code>, <code>Clob</code>, <code>Blob</code> and
  * <code>Ref</code> objects as a command parameter, stores these values as
  * <code>SerialArray</code>, <code>SerialClob</code>, <code>SerialBlob</code>
@@ -158,7 +158,7 @@ import javax.sql.rowset.serial.*;
  * When the method <code>execute</code> is called, the values in the
  * <code>Hashtable</code> object are substituted for the appropriate placeholder
  * parameters in the command.
- * <P)>
+ * <P>
  * A call to the method <code>getParams</code> returns the values stored in the
  * <code>Hashtable</code> object as an array of <code>Object</code> instances.
  * An element in this array may be a simple <code>Object</code> instance or an
@@ -211,7 +211,7 @@ import javax.sql.rowset.serial.*;
  * to the driver or the DBMS. For example, the methods <code>setDate</code>,
  * <code>setTime</code>, and <code>setTimestamp</code> can take a <code>Calendar</code>
  * object as their third parameter.  If the DBMS does not store time zone information,
- * the drivern uses the <code>Calendar</code> object to construct the <code>Date</code>,
+ * the driver uses the <code>Calendar</code> object to construct the <code>Date</code>,
  * <code>Time</code>, or <code>Timestamp</code> object being set. As is true with other
  * methods that provide additional information, the element in the array returned
  * by <code>getParams</code> is an array instead of a simple <code>Object</code> instance.
@@ -255,7 +255,7 @@ import javax.sql.rowset.serial.*;
 * identify the <code>RowSet</code> object on which the event occurred.
 * What the listener does with this information, which may be nothing, depends on how it was
 * implemented.
-* <p>
+*
 * <h3>6.0 Default Behavior</h3>
 * A default <code>BaseRowSet</code> object is initialized with many starting values.
 *
@@ -461,7 +461,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
      * <code>false</code> that it is not. The default is <code>true</code>.
      * @serial
      */
-    private boolean escapeProcessing;
+    private boolean escapeProcessing = true;
 
     /**
      * A constant indicating the isolation level of the connection
@@ -619,8 +619,8 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
         checkforRowSetInterface();
         if (listeners.isEmpty() == false) {
             RowSetEvent event = new RowSetEvent((RowSet)this);
-            for (Iterator i = listeners.iterator(); i.hasNext(); ) {
-                ((RowSetListener)i.next()).cursorMoved(event);
+            for (RowSetListener rsl : listeners) {
+                rsl.cursorMoved(event);
             }
         }
     }
@@ -644,8 +644,8 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
         checkforRowSetInterface();
         if (listeners.isEmpty() == false) {
                 RowSetEvent event = new RowSetEvent((RowSet)this);
-                for (Iterator i = listeners.iterator(); i.hasNext(); ) {
-                        ((RowSetListener)i.next()).rowChanged(event);
+                for (RowSetListener rsl : listeners) {
+                    rsl.rowChanged(event);
                 }
         }
     }
@@ -669,8 +669,8 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
         checkforRowSetInterface();
         if (listeners.isEmpty() == false) {
                 RowSetEvent event = new RowSetEvent((RowSet)this);
-                for (Iterator i = listeners.iterator(); i.hasNext(); ) {
-                        ((RowSetListener)i.next()).rowSetChanged(event);
+                for (RowSetListener rsl : listeners) {
+                    rsl.rowSetChanged(event);
                 }
         }
 }
@@ -1850,7 +1850,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
         if(params == null){
              throw new SQLException("Set initParams() before setFloat");
         }
-        params.put(Integer.valueOf(parameterIndex - 1), new Float(x));
+        params.put(Integer.valueOf(parameterIndex - 1), Float.valueOf(x));
     }
 
     /**
@@ -1882,7 +1882,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
         if(params == null){
              throw new SQLException("Set initParams() before setDouble");
         }
-        params.put(Integer.valueOf(parameterIndex - 1), new Double(x));
+        params.put(Integer.valueOf(parameterIndex - 1), Double.valueOf(x));
     }
 
     /**
@@ -2389,7 +2389,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
      * @deprecated getCharacterStream should be used in its place
      * @see #getParams
      */
-
+    @Deprecated
     public void setUnicodeStream(int parameterIndex, java.io.InputStream x, int length) throws SQLException {
         Object unicodeStream[];
         checkParamIndex(parameterIndex);
@@ -2530,12 +2530,12 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
      * <code>Struct</code>, or <code>Array</code>,
      * the driver should pass it to the database as a value of the
      * corresponding SQL type.
-     * <P>
+     *
      * <p>Note that this method may be used to pass database-
      * specific abstract data types.
      * <P>
      * The parameter value set by this method is stored internally and
-     * will be supplied as the appropriate parameter in this <code>RowSet</code
+     * will be supplied as the appropriate parameter in this <code>RowSet</code>
      * object's command when the method <code>execute</code> is called.
      * Methods such as <code>execute</code> and <code>populate</code> must be
      * provided in any class that extends this class and implements one or
@@ -3162,7 +3162,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
      * @return an array of <code>Object</code> instances that includes the
      *         parameter values that may be set in this <code>RowSet</code> object's
      *         command; an empty array if no parameters have been set
-     * @throws SQLException if an error occurs retrieveing the object array of
+     * @throws SQLException if an error occurs retrieving the object array of
      *         parameters of this <code>RowSet</code> object or if not all parameters have
      *         been set
      */
@@ -3810,7 +3810,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
     * if parameterIndex does not correspond
     * to a parameter marker in the SQL statement,  if the length specified
     * is less than zero or if the number of bytes in the inputstream does not match
-    * the specfied length.
+    * the specified length.
     * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
     *
     * @since 1.6
@@ -3870,7 +3870,7 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
      * @throws SQLException  if parameterIndex does not correspond
      * to a parameter marker in the SQL statement,  or if the length specified
      * is less than zero; if the number of bytes in the inputstream does not match
-     * the specfied length; if a database access error occurs or
+     * the specified length; if a database access error occurs or
      * this method is called on a closed <code>CallableStatement</code>
      * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
      * this method
@@ -4175,43 +4175,47 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
 
 
  /**
-   * Sets the designated parameter to the given <code>java.sql.SQLXML</code> object. The driver converts this to an
-    * SQL <code>XML</code> value when it sends it to the database.
-    * @param parameterIndex index of the first parameter is 1, the second is 2, ...
-    * @param xmlObject a <code>SQLXML</code> object that maps an SQL <code>XML</code> value
-    * @throws SQLException if a database access error occurs, this method
-    *  is called on a closed result set,
-    * the <code>java.xml.transform.Result</code>,
-    *  <code>Writer</code> or <code>OutputStream</code> has not been closed
-    * for the <code>SQLXML</code> object  or
-    *  if there is an error processing the XML value.  The <code>getCause</code> method
-    *  of the exception may provide a more detailed exception, for example, if the
-    *  stream does not contain valid XML.
-    * @since 1.6
-    */
-   public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  * Sets the designated parameter to the given <code>java.sql.SQLXML</code> object. The driver converts this to an
+  * SQL <code>XML</code> value when it sends it to the database.
+  * @param parameterIndex index of the first parameter is 1, the second is 2, ...
+  * @param xmlObject a <code>SQLXML</code> object that maps an SQL <code>XML</code> value
+  * @throws SQLException if a database access error occurs, this method
+  *  is called on a closed result set,
+  * the <code>java.xml.transform.Result</code>,
+  *  <code>Writer</code> or <code>OutputStream</code> has not been closed
+  * for the <code>SQLXML</code> object  or
+  *  if there is an error processing the XML value.  The <code>getCause</code> method
+  *  of the exception may provide a more detailed exception, for example, if the
+  *  stream does not contain valid XML.
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
+  * @since 1.6
+  */
+ public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException{
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
-  /**
-   * Sets the designated parameter to the given <code>java.sql.SQLXML</code> object. The driver converts this to an
-    * <code>SQL XML</code> value when it sends it to the database.
-    * @param parameterName the name of the parameter
-    * @param xmlObject a <code>SQLXML</code> object that maps an <code>SQL XML</code> value
-    * @throws SQLException if a database access error occurs, this method
-    *  is called on a closed result set,
-    * the <code>java.xml.transform.Result</code>,
-    *  <code>Writer</code> or <code>OutputStream</code> has not been closed
-    * for the <code>SQLXML</code> object  or
-    *  if there is an error processing the XML value.  The <code>getCause</code> method
-    *  of the exception may provide a more detailed exception, for example, if the
-    *  stream does not contain valid XML.
-    * @since 1.6
-    */
-   public void setSQLXML(String parameterName, SQLXML xmlObject) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+ /**
+  * Sets the designated parameter to the given <code>java.sql.SQLXML</code> object. The driver converts this to an
+  * <code>SQL XML</code> value when it sends it to the database.
+  * @param parameterName the name of the parameter
+  * @param xmlObject a <code>SQLXML</code> object that maps an <code>SQL XML</code> value
+  * @throws SQLException if a database access error occurs, this method
+  *  is called on a closed result set,
+  * the <code>java.xml.transform.Result</code>,
+  *  <code>Writer</code> or <code>OutputStream</code> has not been closed
+  * for the <code>SQLXML</code> object  or
+  *  if there is an error processing the XML value.  The <code>getCause</code> method
+  *  of the exception may provide a more detailed exception, for example, if the
+  *  stream does not contain valid XML.
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
+  * @since 1.6
+  */
+ public void setSQLXML(String parameterName, SQLXML xmlObject) throws SQLException{
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
@@ -4222,30 +4226,34 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   * @param parameterIndex the first parameter is 1, the second is 2, ...
   * @param x the parameter value
   * @throws SQLException if a database access error occurs
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
   *
   * @since 1.6
   */
  public void setRowId(int parameterIndex, RowId x) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
- * Sets the designated parameter to the given <code>java.sql.RowId</code> object. The
- * driver converts this to a SQL <code>ROWID</code> when it sends it to the
- * database.
- *
- * @param parameterName the name of the parameter
- * @param x the parameter value
- * @throws SQLException if a database access error occurs
- * @since 1.6
- */
+  * Sets the designated parameter to the given <code>java.sql.RowId</code> object. The
+  * driver converts this to a SQL <code>ROWID</code> when it sends it to the
+  * database.
+  *
+  * @param parameterName the name of the parameter
+  * @param x the parameter value
+  * @throws SQLException if a database access error occurs
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
+  * @since 1.6
+  */
  public void setRowId(String parameterName, RowId x) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
  /**
-  * Sets the designated paramter to the given <code>String</code> object.
+  * Sets the designated parameter to the given <code>String</code> object.
   * The driver converts this to a SQL <code>NCHAR</code> or
   * <code>NVARCHAR</code> or <code>LONGNVARCHAR</code> value
   * (depending on the argument's
@@ -4257,15 +4265,17 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   * @throws SQLException if the driver does not support national
   *         character sets;  if the driver can detect that a data conversion
   *  error could occur ; or if a database access error occurs
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
   * @since 1.6
   */
-  public void setNString(int parameterIndex, String value) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+ public void setNString(int parameterIndex, String value) throws SQLException{
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
-  * Sets the designated paramter to the given <code>String</code> object.
+  * Sets the designated parameter to the given <code>String</code> object.
   * The driver converts this to a SQL <code>NCHAR</code> or
   * <code>NVARCHAR</code> or <code>LONGNVARCHAR</code>
   * @param parameterName the name of the column to be set
@@ -4273,12 +4283,14 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   * @throws SQLException if the driver does not support national
   *         character sets;  if the driver can detect that a data conversion
   *  error could occur; or if a database access error occurs
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
   * @since 1.6
   */
  public void setNString(String parameterName, String value)
          throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
@@ -4292,11 +4304,13 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   * @throws SQLException if the driver does not support national
   *         character sets;  if the driver can detect that a data conversion
   *  error could occur ; or if a database access error occurs
+  * @throws SQLFeatureNotSupportedException if the JDBC driver does not
+  * support this method
   * @since 1.6
   */
-  public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+ public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException{
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
@@ -4310,12 +4324,14 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   * @throws SQLException if the driver does not support national
   *         character sets;  if the driver can detect that a data conversion
   *  error could occur; or if a database access error occurs
+  * @throws SQLFeatureNotSupportedException  if the JDBC driver does not
+  * support this method
   * @since 1.6
   */
  public void setNCharacterStream(String parameterName, Reader value, long length)
          throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+     throw new SQLFeatureNotSupportedException("Feature not supported");
+ }
 
 
  /**
@@ -4345,119 +4361,125 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
    }
 
 
- /**
- * Sets the designated parameter to a <code>java.sql.NClob</code> object. The object
- * implements the <code>java.sql.NClob</code> interface. This <code>NClob</code>
- * object maps to a SQL <code>NCLOB</code>.
- * @param parameterName the name of the column to be set
- * @param value the parameter value
- * @throws SQLException if the driver does not support national
- *         character sets;  if the driver can detect that a data conversion
- *  error could occur; or if a database access error occurs
- * @since 1.6
- */
- public void setNClob(String parameterName, NClob value) throws SQLException{
+  /**
+   * Sets the designated parameter to a <code>java.sql.NClob</code> object. The object
+   * implements the <code>java.sql.NClob</code> interface. This <code>NClob</code>
+   * object maps to a SQL <code>NCLOB</code>.
+   * @param parameterName the name of the column to be set
+   * @param value the parameter value
+   * @throws SQLException if the driver does not support national
+   *         character sets;  if the driver can detect that a data conversion
+   *  error could occur; or if a database access error occurs
+   * @throws SQLFeatureNotSupportedException  if the JDBC driver does not
+   * support this method
+   * @since 1.6
+   */
+  public void setNClob(String parameterName, NClob value) throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  }
 
 
- /**
-  * Sets the designated parameter to a <code>Reader</code> object.  The <code>reader</code> must contain    * the number
-             * of characters specified by length otherwise a <code>SQLException</code> will be
-            * generated when the <code>CallableStatement</code> is executed.
-            * This method differs from the <code>setCharacterStream (int, Reader, int)</code> method
-            * because it informs the driver that the parameter value should be sent to
-            * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
-            * driver may have to do extra work to determine whether the parameter
-            * data should be send to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
-            *
-            * @param parameterName the name of the parameter to be set
-            * @param reader An object that contains the data to set the parameter value to.
-            * @param length the number of characters in the parameter data.
-            * @throws SQLException if parameterIndex does not correspond to a parameter
-            * marker in the SQL statement; if the length specified is less than zero;
-            * if the driver does not support national
-            *         character sets;  if the driver can detect that a data conversion
-            *  error could occur; if a database access error occurs or
-            * this method is called on a closed <code>CallableStatement</code>
-            * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
-            * this method
-            * @since 1.6
-            */
-            public void setNClob(String parameterName, Reader reader, long length)
-    throws SQLException{
-        throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  /**
+   * Sets the designated parameter to a <code>Reader</code> object.  The <code>reader</code> must contain
+   * the number
+   * of characters specified by length otherwise a <code>SQLException</code> will be
+   * generated when the <code>CallableStatement</code> is executed.
+   * This method differs from the <code>setCharacterStream (int, Reader, int)</code> method
+   * because it informs the driver that the parameter value should be sent to
+   * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
+   * driver may have to do extra work to determine whether the parameter
+   * data should be send to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
+   *
+   * @param parameterName the name of the parameter to be set
+   * @param reader An object that contains the data to set the parameter value to.
+   * @param length the number of characters in the parameter data.
+   * @throws SQLException if parameterIndex does not correspond to a parameter
+   * marker in the SQL statement; if the length specified is less than zero;
+   * if the driver does not support national
+   *         character sets;  if the driver can detect that a data conversion
+   *  error could occur; if a database access error occurs or
+   * this method is called on a closed <code>CallableStatement</code>
+   * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
+   * this method
+   * @since 1.6
+   */
+  public void setNClob(String parameterName, Reader reader, long length)
+           throws SQLException{
+       throw new SQLFeatureNotSupportedException("Feature not supported");
+  }
 
 
- /**
-  * Sets the designated parameter to a <code>Reader</code> object.
-  * This method differs from the <code>setCharacterStream (int, Reader)</code> method
-  * because it informs the driver that the parameter value should be sent to
-  * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
-  * driver may have to do extra work to determine whether the parameter
-  * data should be send to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
-  * <P><B>Note:</B> Consult your JDBC driver documentation to determine if
-  * it might be more efficient to use a version of
-  * <code>setNClob</code> which takes a length parameter.
-  *
-  * @param parameterName the name of the parameter
-  * @param reader An object that contains the data to set the parameter value to.
-  * @throws SQLException if the driver does not support national character sets;
-  * if the driver can detect that a data conversion
-  *  error could occur;  if a database access error occurs or
-  * this method is called on a closed <code>CallableStatement</code>
-  * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
-  *
-  * @since 1.6
-  */
+  /**
+   * Sets the designated parameter to a <code>Reader</code> object.
+   * This method differs from the <code>setCharacterStream (int, Reader)</code> method
+   * because it informs the driver that the parameter value should be sent to
+   * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
+   * driver may have to do extra work to determine whether the parameter
+   * data should be send to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
+   * <P><B>Note:</B> Consult your JDBC driver documentation to determine if
+   * it might be more efficient to use a version of
+   * <code>setNClob</code> which takes a length parameter.
+   *
+   * @param parameterName the name of the parameter
+   * @param reader An object that contains the data to set the parameter value to.
+   * @throws SQLException if the driver does not support national character sets;
+   * if the driver can detect that a data conversion
+   *  error could occur;  if a database access error occurs or
+   * this method is called on a closed <code>CallableStatement</code>
+   * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
+   *
+   * @since 1.6
+   */
   public void setNClob(String parameterName, Reader reader)
     throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  }
 
 
-    /**
-     * Sets the designated parameter to a <code>Reader</code> object.  The reader must contain  the number
-     * of characters specified by length otherwise a <code>SQLException</code> will be
-     * generated when the <code>PreparedStatement</code> is executed.
-     * This method differs from the <code>setCharacterStream (int, Reader, int)</code> method
-     * because it informs the driver that the parameter value should be sent to
-     * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
-     * driver may have to do extra work to determine whether the parameter
-     * data should be sent to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
-     * @param parameterIndex index of the first parameter is 1, the second is 2, ...
-     * @param reader An object that contains the data to set the parameter value to.
-     * @param length the number of characters in the parameter data.
-     * @throws SQLException if parameterIndex does not correspond to a parameter
-     * marker in the SQL statement; if the length specified is less than zero;
-     * if the driver does not support national character sets;
-     * if the driver can detect that a data conversion
-     *  error could occur;  if a database access error occurs or
-     * this method is called on a closed <code>PreparedStatement</code>
-     * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
-     *
-     * @since 1.6
-     */
-     public void setNClob(int parameterIndex, Reader reader, long length)
+  /**
+   * Sets the designated parameter to a <code>Reader</code> object.  The reader must contain  the number
+   * of characters specified by length otherwise a <code>SQLException</code> will be
+   * generated when the <code>PreparedStatement</code> is executed.
+   * This method differs from the <code>setCharacterStream (int, Reader, int)</code> method
+   * because it informs the driver that the parameter value should be sent to
+   * the server as a <code>NCLOB</code>.  When the <code>setCharacterStream</code> method is used, the
+   * driver may have to do extra work to determine whether the parameter
+   * data should be sent to the server as a <code>LONGNVARCHAR</code> or a <code>NCLOB</code>
+   * @param parameterIndex index of the first parameter is 1, the second is 2, ...
+   * @param reader An object that contains the data to set the parameter value to.
+   * @param length the number of characters in the parameter data.
+   * @throws SQLException if parameterIndex does not correspond to a parameter
+   * marker in the SQL statement; if the length specified is less than zero;
+   * if the driver does not support national character sets;
+   * if the driver can detect that a data conversion
+   *  error could occur;  if a database access error occurs or
+   * this method is called on a closed <code>PreparedStatement</code>
+   * @throws SQLFeatureNotSupportedException  if the JDBC driver does not
+   * support this method
+   *
+   * @since 1.6
+   */
+  public void setNClob(int parameterIndex, Reader reader, long length)
        throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  }
 
 
-    /**
-     * Sets the designated parameter to a <code>java.sql.NClob</code> object. The driver converts this oa
-     * SQL <code>NCLOB</code> value when it sends it to the database.
-     * @param parameterIndex of the first parameter is 1, the second is 2, ...
-     * @param value the parameter value
-     * @throws SQLException if the driver does not support national
-     *         character sets;  if the driver can detect that a data conversion
-     *  error could occur ; or if a database access error occurs
-     * @since 1.6
-     */
-     public void setNClob(int parameterIndex, NClob value) throws SQLException{
+  /**
+   * Sets the designated parameter to a <code>java.sql.NClob</code> object. The driver converts this oa
+   * SQL <code>NCLOB</code> value when it sends it to the database.
+   * @param parameterIndex of the first parameter is 1, the second is 2, ...
+   * @param value the parameter value
+   * @throws SQLException if the driver does not support national
+   *         character sets;  if the driver can detect that a data conversion
+   *  error could occur ; or if a database access error occurs
+   * @throws SQLFeatureNotSupportedException  if the JDBC driver does not
+   * support this method
+   * @since 1.6
+   */
+ public void setNClob(int parameterIndex, NClob value) throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+ }
 
 
  /**
@@ -4486,27 +4508,27 @@ public abstract class BaseRowSet implements Serializable, Cloneable {
   public void setNClob(int parameterIndex, Reader reader)
     throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  }
 
 
- /**
-  * Sets the designated parameter to the given <code>java.net.URL</code> value.
-  * The driver converts this to an SQL <code>DATALINK</code> value
-  * when it sends it to the database.
-  *
-  * @param parameterIndex the first parameter is 1, the second is 2, ...
-  * @param x the <code>java.net.URL</code> object to be set
-  * @exception SQLException if a database access error occurs or
-  * this method is called on a closed <code>PreparedStatement</code>
-  * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
-  * @since 1.4
-  */
+  /**
+   * Sets the designated parameter to the given <code>java.net.URL</code> value.
+   * The driver converts this to an SQL <code>DATALINK</code> value
+   * when it sends it to the database.
+   *
+   * @param parameterIndex the first parameter is 1, the second is 2, ...
+   * @param x the <code>java.net.URL</code> object to be set
+   * @exception SQLException if a database access error occurs or
+   * this method is called on a closed <code>PreparedStatement</code>
+   * @throws SQLFeatureNotSupportedException  if the JDBC driver does not support this method
+   * @since 1.4
+   */
   public void setURL(int parameterIndex, java.net.URL x) throws SQLException{
         throw new SQLFeatureNotSupportedException("Feature not supported");
-   }
+  }
 
 
 
-    static final long serialVersionUID = 4886719666485113312L;
+  static final long serialVersionUID = 4886719666485113312L;
 
 } //end class

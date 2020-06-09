@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,7 +53,7 @@ import sun.swing.UIAction;
 import sun.awt.AppContext;
 
 /**
- * A Windows L&F implementation of PopupMenuUI.  This implementation
+ * A Windows L&amp;F implementation of PopupMenuUI.  This implementation
  * is a "combined" view/controller.
  *
  * @author Georges Saab
@@ -884,7 +884,9 @@ public class BasicPopupMenuUI extends PopupMenuUI {
                     processMouseEvent(me);
                 break;
             case MouseEvent.MOUSE_WHEEL:
-                if (isInPopup(src)) {
+                if (isInPopup(src)
+                    || ((src instanceof JComboBox) && ((JComboBox) src).isPopupVisible())) {
+
                     return;
                 }
                 cancelPopupMenu();

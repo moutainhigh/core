@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,11 +42,11 @@ import javax.accessibility.*;
  * the red, green, and blue components of a color:
  * <p>
  * <img src="doc-files/Scrollbar-1.gif" alt="Image shows 3 vertical sliders, side-by-side."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * Each scroll bar in this example could be created with
  * code similar to the following:
- * <p>
+ *
  * <hr><blockquote><pre>
  * redSlider=new Scrollbar(Scrollbar.VERTICAL, 0, 1, 0, 255);
  * add(redSlider);
@@ -60,12 +60,12 @@ import javax.accessibility.*;
  * <p>
  * <img src="doc-files/Scrollbar-2.gif"
  * alt="Image shows horizontal slider with starting range of 0 and ending range of 300. The slider thumb is labeled 60."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * The value range represented by the bubble in this example
  * is the <em>visible amount</em>. The horizontal scroll bar
  * in this example could be created with code like the following:
- * <p>
+ *
  * <hr><blockquote><pre>
  * ranger = new Scrollbar(Scrollbar.HORIZONTAL, 0, 60, 0, 300);
  * add(ranger);
@@ -103,7 +103,7 @@ import javax.accessibility.*;
  * <p>
  * The <code>AdjustmentEvent</code> class defines five types
  * of adjustment event, listed here:
- * <p>
+ *
  * <ul>
  * <li><code>AdjustmentEvent.TRACK</code> is sent out when the
  * user drags the scroll bar's bubble.
@@ -136,7 +136,7 @@ import javax.accessibility.*;
  * that are associated with scroll bars in previous platform versions.
  * The following list gives the adjustment event type,
  * and the corresponding JDK&nbsp;1.0 event type it replaces.
- * <p>
+ *
  * <ul>
  * <li><code>AdjustmentEvent.TRACK</code> replaces
  * <code>Event.SCROLL_ABSOLUTE</code>
@@ -295,7 +295,7 @@ public class Scrollbar extends Component implements Adjustable, Accessible {
      * Constructs a new vertical scroll bar.
      * The default properties of the scroll bar are listed in
      * the following table:
-     * <p> </p>
+     *
      * <table border=1 summary="Scrollbar default properties">
      * <tr>
      *   <th>Property</th>
@@ -715,6 +715,9 @@ public class Scrollbar extends Component implements Adjustable, Accessible {
      * The unit increment must be greater than zero.
      * Attepts to set the unit increment to a value lower than 1
      * will result in a value of 1 being set.
+     * <p>
+     * In some operating systems, this property
+     * can be ignored by the underlying controls.
      *
      * @param        v  the amount by which to increment or decrement
      *                         the scroll bar's value
@@ -752,6 +755,9 @@ public class Scrollbar extends Component implements Adjustable, Accessible {
      * scroll bar, generally through a mouse or keyboard gesture
      * that the scroll bar receives as an adjustment event.
      * The unit increment must be greater than zero.
+     * <p>
+     * In some operating systems, this property
+     * can be ignored by the underlying controls.
      *
      * @return      the unit increment of this scroll bar
      * @see         java.awt.Scrollbar#setUnitIncrement
@@ -1012,7 +1018,7 @@ public class Scrollbar extends Component implements Adjustable, Accessible {
      * @since 1.4
      */
     public synchronized AdjustmentListener[] getAdjustmentListeners() {
-        return (AdjustmentListener[])(getListeners(AdjustmentListener.class));
+        return getListeners(AdjustmentListener.class);
     }
 
     /**
@@ -1098,11 +1104,11 @@ public class Scrollbar extends Component implements Adjustable, Accessible {
      * This method is not called unless adjustment events are
      * enabled for this component. Adjustment events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>AdjustmentListener</code> object is registered
      * via <code>addAdjustmentListener</code>.
      * <li>Adjustment events are enabled via <code>enableEvents</code>.
-     * </ul><p>
+     * </ul>
      * <p>Note that if the event parameter is <code>null</code>
      * the behavior is unspecified and may result in an
      * exception.

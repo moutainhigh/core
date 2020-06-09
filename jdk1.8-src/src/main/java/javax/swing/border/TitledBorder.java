@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -45,7 +45,7 @@ import javax.swing.plaf.basic.BasicHTML;
  * specified position and justification.
  * <p>
  * If the border, font, or color property values are not
- * specified in the constuctor or by invoking the appropriate
+ * specified in the constructor or by invoking the appropriate
  * set methods, the property values will be defined by the current
  * look and feel, using the following property names in the
  * Defaults Table:
@@ -60,13 +60,14 @@ import javax.swing.plaf.basic.BasicHTML;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
  * @author David Kloba
  * @author Amy Fowler
  */
+@SuppressWarnings("serial")
 public class TitledBorder extends AbstractBorder
 {
     protected String title;
@@ -439,7 +440,7 @@ public class TitledBorder extends AbstractBorder
      * @return the title-font of the titled border
      */
     public Font getTitleFont() {
-        return titleFont;
+        return titleFont == null ? UIManager.getFont("TitledBorder.font") : titleFont;
     }
 
     /**
@@ -448,7 +449,7 @@ public class TitledBorder extends AbstractBorder
      * @return the title-color of the titled border
      */
     public Color getTitleColor() {
-        return titleColor;
+        return titleColor == null ? UIManager.getColor("TitledBorder.titleColor") : titleColor;
     }
 
 
@@ -680,10 +681,6 @@ public class TitledBorder extends AbstractBorder
         if (font != null) {
             return font;
         }
-        font = UIManager.getFont("TitledBorder.font");
-        if (font != null) {
-            return font;
-        }
         if (c != null) {
             font = c.getFont();
             if (font != null) {
@@ -695,10 +692,6 @@ public class TitledBorder extends AbstractBorder
 
     private Color getColor(Component c) {
         Color color = getTitleColor();
-        if (color != null) {
-            return color;
-        }
-        color = UIManager.getColor("TitledBorder.titleColor");
         if (color != null) {
             return color;
         }

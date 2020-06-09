@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -47,7 +47,7 @@ public interface MultiDocPrintJob extends DocPrintJob {
      * PrintJobListener.
      *
      * @param multiDoc The documents to be printed. ALL must be a flavor
-     *                          supported by the PrintJob & PrintService.
+     *        supported by the PrintJob {@literal &} PrintService.
      *
      * @param attributes The job attributes to be applied to this print job.
      *        If this parameter is null then the default attributes are used.

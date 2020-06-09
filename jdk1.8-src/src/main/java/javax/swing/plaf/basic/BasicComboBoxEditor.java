@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -31,6 +31,8 @@ import java.awt.Component;
 import java.awt.event.*;
 
 import java.lang.reflect.Method;
+
+import sun.reflect.misc.MethodUtil;
 
 /**
  * The default editor for editable combo boxes. The editor is implemented as a JTextField.
@@ -73,6 +75,9 @@ public class BasicComboBoxEditor implements ComboBoxEditor,FocusListener {
 
         if ( anObject != null )  {
             text = anObject.toString();
+            if (text == null) {
+                text = "";
+            }
             oldValue = anObject;
         } else {
             text = "";
@@ -95,8 +100,8 @@ public class BasicComboBoxEditor implements ComboBoxEditor,FocusListener {
                 // Must take the value from the editor and get the value and cast it to the new type.
                 Class<?> cls = oldValue.getClass();
                 try {
-                    Method method = cls.getMethod("valueOf", new Class[]{String.class});
-                    newValue = method.invoke(oldValue, new Object[] { editor.getText()});
+                    Method method = MethodUtil.getMethod(cls, "valueOf", new Class[]{String.class});
+                    newValue = MethodUtil.invoke(method, oldValue, new Object[] { editor.getText()});
                 } catch (Exception ex) {
                     // Fail silently and return the newValue (a String object)
                 }
@@ -157,7 +162,7 @@ public class BasicComboBoxEditor implements ComboBoxEditor,FocusListener {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */

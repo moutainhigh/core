@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,12 +26,13 @@
 package javax.swing.tree;
 
 import javax.swing.event.TreeModelEvent;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+
+import sun.swing.SwingUtilities2;
 
 /**
  * NOTE: This will become more open in a future release.
@@ -41,7 +42,7 @@ import java.util.Stack;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -346,7 +347,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
         if(e != null) {
             int                 changedIndexs[];
             FHTreeStateNode     changedParent = getNodeForPath
-                                  (e.getTreePath(), false, false);
+                                  (SwingUtilities2.getTreePath(e, getModel()), false, false);
             int                 maxCounter;
 
             changedIndexs = e.getChildIndices();
@@ -390,7 +391,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
         if(e != null) {
             int                 changedIndexs[];
             FHTreeStateNode     changedParent = getNodeForPath
-                                  (e.getTreePath(), false, false);
+                                  (SwingUtilities2.getTreePath(e, getModel()), false, false);
             int                 maxCounter;
 
             changedIndexs = e.getChildIndices();
@@ -429,7 +430,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
         if(e != null) {
             int                  changedIndexs[];
             int                  maxCounter;
-            TreePath             parentPath = e.getTreePath();
+            TreePath             parentPath = SwingUtilities2.getTreePath(e, getModel());
             FHTreeStateNode      changedParentNode = getNodeForPath
                                        (parentPath, false, false);
 
@@ -468,14 +469,14 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
      * <p>Invoked after the tree has drastically changed structure from a
      * given node down.  If the path returned by e.getPath() is of length
      * one and the first element does not identify the current root node
-     * the first element should become the new root of the tree.<p>
+     * the first element should become the new root of the tree.
      *
      * <p>e.path() holds the path to the node.</p>
      * <p>e.childIndices() returns null.</p>
      */
     public void treeStructureChanged(TreeModelEvent e) {
         if(e != null) {
-            TreePath          changedPath = e.getTreePath();
+            TreePath          changedPath = SwingUtilities2.getTreePath(e, getModel());
             FHTreeStateNode   changedNode = getNodeForPath
                                                 (changedPath, false, false);
 
@@ -676,7 +677,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
 
     /**
      * Messages getTreeNodeForPage(path, onlyIfVisible, shouldCreate,
-     * path.length) as long as path is non-null and the length is > 0.
+     * path.length) as long as path is non-null and the length is {@literal >} 0.
      * Otherwise returns null.
      */
     private FHTreeStateNode getNodeForPath(TreePath path,
@@ -935,7 +936,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
         }
 
         /**
-         * Recreates the receivers path, and all its childrens paths.
+         * Recreates the receivers path, and all its children's paths.
          */
         protected void resetChildrenPaths(TreePath parentPath) {
             removeMapping(this);
@@ -1078,7 +1079,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
         }
 
         /**
-         * Resets the receivers childrens rows. Starting with the child
+         * Resets the receivers children's rows. Starting with the child
          * at <code>childIndex</code> (and <code>modelIndex</code>) to
          * <code>newRow</code>. This uses <code>setRowAndChildren</code>
          * to recursively descend children, and uses
@@ -1282,7 +1283,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
 
         /**
          * Messaged when a child has been inserted at index. For all the
-         * children that have a childIndex >= index their index is incremented
+         * children that have a childIndex &ge; index their index is incremented
          * by one.
          */
         protected void childInsertedAtModelIndex(int index,
@@ -1345,7 +1346,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
                         return true;
                     }
                     else {
-                        // May have been in last childs bounds.
+                        // May have been in last child's bounds.
                         int          lastChildEndRow = 1 + child.row -
                                      (child.childIndex - lastChild.childIndex);
 
@@ -1473,7 +1474,7 @@ public class FixedHeightLayoutCache extends AbstractLayoutCache {
     /**
      * An enumerator to iterate through visible nodes.
      */
-    // This is very similiar to
+    // This is very similar to
     // VariableHeightTreeState.VisibleTreeStateNodeEnumeration
     private class VisibleFHTreeStateNodeEnumeration
         implements Enumeration<TreePath>

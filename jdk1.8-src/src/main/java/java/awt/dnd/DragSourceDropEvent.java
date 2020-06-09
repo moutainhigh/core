@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,7 +37,6 @@ package java.awt.dnd;
  * to provide appropriate feedback to the end user
  * when the operation completes.
  * <P>
- * <P>
  * @since 1.2
  */
 
@@ -63,7 +62,7 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * @param action the drop action
      * @param success a boolean indicating if the drop was successful
      *
-     * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
+     * @throws IllegalArgumentException if <code>dsc</code> is <code>null</code>.
      *
      * @see DragSourceEvent#getLocation
      */
@@ -91,7 +90,7 @@ public class DragSourceDropEvent extends DragSourceEvent {
      * @param x   the horizontal coordinate for the cursor location
      * @param y   the vertical coordinate for the cursor location
      *
-     * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
+     * @throws IllegalArgumentException if <code>dsc</code> is <code>null</code>.
      *
      * @since 1.4
      */
@@ -112,7 +111,7 @@ public class DragSourceDropEvent extends DragSourceEvent {
      *
      * @param dsc the <code>DragSourceContext</code>
      *
-     * @throws <code>IllegalArgumentException</code> if <code>dsc</code> is <code>null</code>.
+     * @throws IllegalArgumentException if <code>dsc</code> is <code>null</code>.
      *
      * @see DragSourceEvent#getLocation
      */

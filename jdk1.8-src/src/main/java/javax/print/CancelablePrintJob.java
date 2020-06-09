@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,7 +55,7 @@ public interface CancelablePrintJob extends DocPrintJob {
      * Stops further processing of a print job.
      * <p>
      * If a service supports this method it cannot be concluded that
-     * job cancellation will always suceeed. A job may not be able to be
+     * job cancellation will always succeed. A job may not be able to be
      * cancelled once it has reached and passed some point in its processing.
      * A successful cancellation means only that the entire job was not
      * printed, some portion may already have printed when cancel returns.

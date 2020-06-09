@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -49,7 +49,7 @@ package javax.accessibility;
  */
 public class AccessibleTextSequence {
 
-    /* The start index of the text sequence */
+    /** The start index of the text sequence */
     public int startIndex;
 
     /** The end index of the text sequence */

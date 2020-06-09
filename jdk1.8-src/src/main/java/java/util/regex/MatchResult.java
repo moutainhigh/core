@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -77,9 +77,9 @@ public interface MatchResult {
     public int start(int group);
 
     /**
-     * Returns the offset after the last character matched.  </p>
+     * Returns the offset after the last character matched.
      *
-     * @return  @return  The offset after the last character matched
+     * @return  The offset after the last character matched
      *
      * @throws  IllegalStateException
      *          If no match has yet been attempted,

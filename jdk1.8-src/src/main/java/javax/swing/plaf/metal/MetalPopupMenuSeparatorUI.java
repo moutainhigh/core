@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -35,7 +35,7 @@ import javax.swing.plaf.*;
 
 
 /**
- * A Metal L&F implementation of PopupMenuSeparatorUI.  This implementation
+ * A Metal L&amp;F implementation of PopupMenuSeparatorUI.  This implementation
  * is a "combined" view/controller.
  *
  * @author Jeff Shapiro

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -22,14 +22,12 @@
  *
  *
  */
-
 package javax.sql.rowset.serial;
 
 import java.sql.*;
-import javax.sql.*;
-import java.io.*;
-import java.math.*;
+import java.util.Arrays;
 import java.util.Map;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * An input stream used for custom mapping user-defined types (UDTs).
@@ -58,6 +56,7 @@ import java.util.Map;
  * stream to the method <code>SQLData.readSQL</code>, which in turn
  * calls the <code>SQLInputImpl</code> reader methods
  * to read the attributes from the input stream.
+ * @since 1.5
  * @see java.sql.SQLData
  */
 public class SQLInputImpl implements SQLInput {
@@ -91,7 +90,7 @@ public class SQLInputImpl implements SQLInput {
      * <code>SQLData</code> (the Java class that defines how the UDT
      * will be mapped).
      */
-    private Map map;
+    private Map<String,Class<?>> map;
 
 
     /**
@@ -123,7 +122,7 @@ public class SQLInputImpl implements SQLInput {
             "object with null parameters");
         }
         // assign our local reference to the attribute stream
-        attrib = attributes;
+        attrib = Arrays.copyOf(attributes, attributes.length);
         // init the index point before the head of the stream
         idx = -1;
         // set the map
@@ -145,6 +144,7 @@ public class SQLInputImpl implements SQLInput {
             throw new SQLException("SQLInputImpl exception: Invalid read " +
                                    "position");
         } else {
+            lastValueWasNull = attrib[idx] == null;
             return attrib[idx];
         }
     }
@@ -171,16 +171,7 @@ public class SQLInputImpl implements SQLInput {
      *     position or if there are no further values in the stream.
      */
     public String readString() throws SQLException {
-
-        String attrib = (String)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return  (String)getNextAttribute();
     }
 
     /**
@@ -198,16 +189,8 @@ public class SQLInputImpl implements SQLInput {
      *     position or if there are no further values in the stream.
      */
     public boolean readBoolean() throws SQLException {
-
         Boolean attrib = (Boolean)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return false;
-        } else {
-            lastValueWasNull = false;
-            return attrib.booleanValue();
-        }
+        return  (attrib == null) ? false : attrib.booleanValue();
     }
 
     /**
@@ -226,14 +209,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public byte readByte() throws SQLException {
         Byte attrib = (Byte)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (byte)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.byteValue();
-        }
+        return  (attrib == null) ? 0 : attrib.byteValue();
     }
 
     /**
@@ -251,14 +227,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public short readShort() throws SQLException {
         Short attrib = (Short)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (short)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.shortValue();
-        }
+        return (attrib == null) ? 0 : attrib.shortValue();
     }
 
     /**
@@ -276,14 +245,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public int readInt() throws SQLException {
         Integer attrib = (Integer)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (int)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.intValue();
-        }
+        return (attrib == null) ? 0 : attrib.intValue();
     }
 
     /**
@@ -301,14 +263,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public long readLong() throws SQLException {
         Long attrib = (Long)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (long)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.longValue();
-        }
+        return (attrib == null) ? 0 : attrib.longValue();
     }
 
     /**
@@ -326,14 +281,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public float readFloat() throws SQLException {
         Float attrib = (Float)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (float)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.floatValue();
-        }
+        return (attrib == null) ? 0 : attrib.floatValue();
     }
 
     /**
@@ -351,14 +299,7 @@ public class SQLInputImpl implements SQLInput {
      */
     public double readDouble() throws SQLException {
         Double attrib = (Double)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return (double)0;
-        } else {
-            lastValueWasNull = false;
-            return attrib.doubleValue();
-        }
+        return (attrib == null)  ? 0 :  attrib.doubleValue();
     }
 
     /**
@@ -375,15 +316,7 @@ public class SQLInputImpl implements SQLInput {
      *       position or if there are no more values in the stream
      */
     public java.math.BigDecimal readBigDecimal() throws SQLException {
-        java.math.BigDecimal attrib = (java.math.BigDecimal)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.math.BigDecimal)getNextAttribute();
     }
 
     /**
@@ -400,15 +333,7 @@ public class SQLInputImpl implements SQLInput {
      *       position or if there are no more values in the stream
      */
     public byte[] readBytes() throws SQLException {
-        byte[] attrib = (byte[])getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (byte[])getNextAttribute();
     }
 
     /**
@@ -425,15 +350,7 @@ public class SQLInputImpl implements SQLInput {
      *       position or if there are no more values in the stream
      */
     public java.sql.Date readDate() throws SQLException {
-        java.sql.Date attrib = (java.sql.Date)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.sql.Date)getNextAttribute();
     }
 
     /**
@@ -451,15 +368,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.sql.Time readTime() throws SQLException {
-        java.sql.Time attrib = (java.sql.Time)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.sql.Time)getNextAttribute();
     }
 
     /**
@@ -472,15 +381,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.sql.Timestamp readTimestamp() throws SQLException {
-        java.sql.Timestamp attrib = (java.sql.Timestamp)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.sql.Timestamp)getNextAttribute();
     }
 
     /**
@@ -497,15 +398,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.io.Reader readCharacterStream() throws SQLException {
-        java.io.Reader attrib = (java.io.Reader)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.io.Reader)getNextAttribute();
     }
 
     /**
@@ -523,15 +416,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.io.InputStream readAsciiStream() throws SQLException {
-        java.io.InputStream attrib = (java.io.InputStream)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.io.InputStream)getNextAttribute();
     }
 
     /**
@@ -549,15 +434,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.io.InputStream readBinaryStream() throws SQLException {
-        java.io.InputStream attrib = (java.io.InputStream)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (java.io.InputStream)getNextAttribute();
     }
 
     //================================================================
@@ -591,40 +468,29 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public Object readObject() throws SQLException {
-        Object attrib = (Object)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            if (attrib instanceof Struct) {
-                Struct s = (Struct)attrib;
-                // look up the class in the map
-                Class c = (Class)map.get(s.getSQLTypeName());
-                if (c != null) {
-                    // create new instance of the class
-                    SQLData obj = null;
-                    try {
-                        obj = (SQLData)c.newInstance();
-                    } catch (java.lang.InstantiationException ex) {
-                        throw new SQLException("Unable to instantiate: " +
-                                               ex.getMessage());
-                    } catch (java.lang.IllegalAccessException ex) {
-                        throw new SQLException("Unable to instantiate: " +
-                                               ex.getMessage());
-                    }
-                    // get the attributes from the struct
-                    Object attribs[] = s.getAttributes(map);
-                    // create the SQLInput "stream"
-                    SQLInputImpl sqlInput = new SQLInputImpl(attribs, map);
-                    // read the values...
-                    obj.readSQL(sqlInput, s.getSQLTypeName());
-                    return (Object)obj;
+        Object attrib = getNextAttribute();
+        if (attrib instanceof Struct) {
+            Struct s = (Struct)attrib;
+            // look up the class in the map
+            Class<?> c = map.get(s.getSQLTypeName());
+            if (c != null) {
+                // create new instance of the class
+                SQLData obj = null;
+                try {
+                    obj = (SQLData)ReflectUtil.newInstance(c);
+                } catch (Exception ex) {
+                    throw new SQLException("Unable to Instantiate: ", ex);
                 }
+                // get the attributes from the struct
+                Object attribs[] = s.getAttributes(map);
+                // create the SQLInput "stream"
+                SQLInputImpl sqlInput = new SQLInputImpl(attribs, map);
+                // read the values...
+                obj.readSQL(sqlInput, s.getSQLTypeName());
+                return obj;
             }
-            return (Object)attrib;
         }
+        return attrib;
     }
 
     /**
@@ -638,15 +504,7 @@ public class SQLInputImpl implements SQLInput {
      *         position; or if there are no further values in the stream.
      */
     public Ref readRef() throws SQLException {
-        Ref attrib = (Ref)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (Ref)getNextAttribute();
     }
 
     /**
@@ -667,15 +525,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public Blob readBlob() throws SQLException {
-        Blob attrib = (Blob)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (Blob)getNextAttribute();
     }
 
     /**
@@ -696,15 +546,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public Clob readClob() throws SQLException {
-
-        Clob attrib = (Clob)getNextAttribute();
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (Clob)getNextAttribute();
     }
 
     /**
@@ -726,15 +568,7 @@ public class SQLInputImpl implements SQLInput {
 
      */
     public Array readArray() throws SQLException {
-        Array attrib = (Array)getNextAttribute();
-
-        if (attrib == null) {
-            lastValueWasNull = true;
-            return null;
-        } else {
-            lastValueWasNull = false;
-            return attrib;
-        }
+        return (Array)getNextAttribute();
     }
 
     /**
@@ -769,7 +603,7 @@ public class SQLInputImpl implements SQLInput {
      * position; or if there are no further values in the stream.
      */
     public java.net.URL readURL() throws SQLException {
-        throw new SQLException("Operation not supported");
+        return (java.net.URL)getNextAttribute();
     }
 
     //---------------------------- JDBC 4.0 -------------------------
@@ -782,10 +616,11 @@ public class SQLInputImpl implements SQLInput {
      * at the head of the stream; <code>null</code> if the value read is
      * SQL <code>NULL</code>
      * @exception SQLException if a database access error occurs
+     * @since 1.6
      */
      public NClob readNClob() throws SQLException {
-        throw new UnsupportedOperationException("Operation not supported");
-    }
+        return (NClob)getNextAttribute();
+     }
 
     /**
      * Reads the next attribute in the stream and returns it as a <code>String</code>
@@ -795,9 +630,10 @@ public class SQLInputImpl implements SQLInput {
      *
      * @return the attribute; if the value is SQL <code>NULL</code>, returns <code>null</code>
      * @exception SQLException if a database access error occurs
+     * @since 1.6
      */
     public String readNString() throws SQLException {
-        throw new UnsupportedOperationException("Operation not supported");
+        return (String)getNextAttribute();
     }
 
     /**
@@ -808,12 +644,13 @@ public class SQLInputImpl implements SQLInput {
      * at the head of the stream; <code>null</code> if the value read is
      * SQL <code>NULL</code>
      * @exception SQLException if a database access error occurs
+     * @since 1.6
      */
     public SQLXML readSQLXML() throws SQLException {
-        throw new UnsupportedOperationException("Operation not supported");
+        return (SQLXML)getNextAttribute();
     }
 
-     /**
+    /**
      * Reads an SQL <code>ROWID</code> value from the stream and returns it as a
      * <code>RowId</code> object in the Java programming language.
      *
@@ -821,9 +658,10 @@ public class SQLInputImpl implements SQLInput {
      * at the head of the stream; <code>null</code> if the value read is
      * SQL <code>NULL</code>
      * @exception SQLException if a database access error occurs
+     * @since 1.6
      */
     public RowId readRowId() throws SQLException {
-        throw new UnsupportedOperationException("Operation not supported");
+        return  (RowId)getNextAttribute();
     }
 
 

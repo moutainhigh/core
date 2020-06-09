@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,7 +26,6 @@ package javax.swing.text.html;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import java.util.EventListener;
 import java.util.BitSet;
 import java.io.Serializable;
 
@@ -44,7 +43,7 @@ import java.io.Serializable;
   @author Sunita Mani
  */
 
-class OptionListModel extends DefaultListModel implements ListSelectionModel, Serializable {
+class OptionListModel<E> extends DefaultListModel<E> implements ListSelectionModel, Serializable {
 
 
     private static final int MIN = -1;
@@ -503,7 +502,7 @@ class OptionListModel extends DefaultListModel implements ListSelectionModel, Se
      * leadIndex and newLeadIndex is the new one.
      * <p>
      * If the value at the anchor index is not selected, do the same thing in reverse,
-     * selecting values in the old range and deslecting values in the new one.
+     * selecting values in the old range and deselecting values in the new one.
      * <p>
      * Generate a single event for this change and notify all listeners.
      * For the purposes of generating minimal bounds in this event, do the

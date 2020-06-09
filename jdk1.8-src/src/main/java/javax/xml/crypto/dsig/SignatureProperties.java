@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -87,5 +87,6 @@ public interface SignatureProperties extends XMLStructure {
      * @return an unmodifiable list of one or more
      *    <code>SignatureProperty</code>s
      */
+    @SuppressWarnings("rawtypes")
     List getProperties();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,14 +54,14 @@ import sun.text.normalizer.NormalizerBase;
  * For example, consider the following in Spanish:
  * <blockquote>
  * <pre>
- * "ca" -> the first key is key('c') and second key is key('a').
- * "cha" -> the first key is key('ch') and second key is key('a').
+ * "ca" &rarr; the first key is key('c') and second key is key('a').
+ * "cha" &rarr; the first key is key('ch') and second key is key('a').
  * </pre>
  * </blockquote>
  * And in German,
  * <blockquote>
  * <pre>
- * "\u00e4b"-> the first key is key('a'), the second key is key('e'), and
+ * "\u00e4b" &rarr; the first key is key('a'), the second key is key('e'), and
  * the third key is key('b').
  * </pre>
  * </blockquote>
@@ -119,7 +119,7 @@ public final class CollationElementIterator
      * on the predefined collation rules.  If the source string is empty,
      * NULLORDER will be returned on the calls to next().
      * @param sourceText the source string.
-     * @param order the collation object.
+     * @param owner the collation object.
      */
     CollationElementIterator(String sourceText, RuleBasedCollator owner) {
         this.owner = owner;
@@ -137,7 +137,7 @@ public final class CollationElementIterator
      * on the predefined collation rules.  If the source string is empty,
      * NULLORDER will be returned on the calls to next().
      * @param sourceText the source string.
-     * @param order the collation object.
+     * @param owner the collation object.
      */
     CollationElementIterator(CharacterIterator sourceText, RuleBasedCollator owner) {
         this.owner = owner;
@@ -177,6 +177,8 @@ public final class CollationElementIterator
      * means that when you change direction while iterating (i.e., call next() and
      * then call previous(), or call previous() and then call next()), you'll get
      * back the same element twice.</p>
+     *
+     * @return the next collation element
      */
     public int next()
     {
@@ -272,6 +274,8 @@ public final class CollationElementIterator
      * updates the pointer.  This means that when you change direction while
      * iterating (i.e., call next() and then call previous(), or call previous()
      * and then call next()), you'll get back the same element twice.</p>
+     *
+     * @return the previous collation element
      * @since 1.2
      */
     public int previous()
@@ -412,6 +416,7 @@ public final class CollationElementIterator
      * @param newOffset The new character offset into the original text.
      * @since 1.2
      */
+    @SuppressWarnings("deprecation") // getBeginIndex, getEndIndex and setIndex are deprecated
     public void setOffset(int newOffset)
     {
         if (text != null) {
@@ -645,14 +650,14 @@ public final class CollationElementIterator
     {
         // First get the ordering of this single character,
         // which is always the first element in the list
-        Vector list = ordering.getContractValues(ch);
-        EntryPair pair = (EntryPair)list.firstElement();
+        Vector<EntryPair> list = ordering.getContractValues(ch);
+        EntryPair pair = list.firstElement();
         int order = pair.value;
 
         // find out the length of the longest contracting character sequence in the list.
         // There's logic in the builder code to make sure the longest sequence is always
         // the last.
-        pair = (EntryPair)list.lastElement();
+        pair = list.lastElement();
         int maxLength = pair.entryName.length();
 
         // (the Normalizer is cloned here so that the seeking we do in the next loop
@@ -684,7 +689,7 @@ public final class CollationElementIterator
         // to this sequence
         maxLength = 1;
         for (int i = list.size() - 1; i > 0; i--) {
-            pair = (EntryPair)list.elementAt(i);
+            pair = list.elementAt(i);
             if (!pair.fwd)
                 continue;
 
@@ -721,11 +726,11 @@ public final class CollationElementIterator
         // rather than off.  Notice that we still use append() and startsWith() when
         // working on the fragment.  This is because the entry pairs that are used
         // in reverse iteration have their names reversed already.
-        Vector list = ordering.getContractValues(ch);
-        EntryPair pair = (EntryPair)list.firstElement();
+        Vector<EntryPair> list = ordering.getContractValues(ch);
+        EntryPair pair = list.firstElement();
         int order = pair.value;
 
-        pair = (EntryPair)list.lastElement();
+        pair = list.lastElement();
         int maxLength = pair.entryName.length();
 
         NormalizerBase tempText = (NormalizerBase)text.clone();
@@ -747,7 +752,7 @@ public final class CollationElementIterator
 
         maxLength = 1;
         for (int i = list.size() - 1; i > 0; i--) {
-            pair = (EntryPair)list.elementAt(i);
+            pair = list.elementAt(i);
             if (pair.fwd)
                 continue;
 

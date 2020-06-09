@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -94,6 +94,7 @@ public interface KeyInfo extends XMLStructure {
      *    in this <code>KeyInfo</code>. Never returns <code>null</code> or an
      *    empty list.
      */
+    @SuppressWarnings("rawtypes")
     List getContent();
 
     /**

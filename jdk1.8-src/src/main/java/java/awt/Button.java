@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ import javax.accessibility.*;
  * under the Solaris operating system:
  * <p>
  * <img src="doc-files/Button-1.gif" alt="The following context describes the graphic"
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * The first view shows the button as it appears normally.
  * The second view shows the button
@@ -300,7 +300,7 @@ public class Button extends Component implements Accessible {
      * @since 1.4
      */
     public synchronized ActionListener[] getActionListeners() {
-        return (ActionListener[]) (getListeners(ActionListener.class));
+        return getListeners(ActionListener.class);
     }
 
     /**
@@ -388,7 +388,7 @@ public class Button extends Component implements Accessible {
      * This method is not called unless action events are
      * enabled for this button. Action events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>ActionListener</code> object is registered
      * via <code>addActionListener</code>.
      * <li>Action events are enabled via <code>enableEvents</code>.

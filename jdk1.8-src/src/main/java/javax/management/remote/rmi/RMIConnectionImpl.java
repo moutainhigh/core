@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,6 +25,30 @@
 
 package javax.management.remote.rmi;
 
+import java.io.IOException;
+import java.rmi.MarshalledObject;
+import java.rmi.UnmarshalException;
+import java.rmi.server.Unreferenced;
+import java.security.AccessControlContext;
+import java.security.AccessController;
+import java.security.Permission;
+import java.security.Permissions;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
+import java.security.ProtectionDomain;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import javax.management.*;
+import javax.management.remote.JMXServerErrorException;
+import javax.management.remote.NotificationResult;
+import javax.management.remote.TargetedNotification;
+import javax.security.auth.Subject;
+import sun.reflect.misc.ReflectUtil;
+
 import static com.sun.jmx.mbeanserver.Util.cast;
 import com.sun.jmx.remote.internal.ServerCommunicatorAdmin;
 import com.sun.jmx.remote.internal.ServerNotifForwarder;
@@ -34,51 +58,7 @@ import com.sun.jmx.remote.util.ClassLoaderWithRepository;
 import com.sun.jmx.remote.util.ClassLogger;
 import com.sun.jmx.remote.util.EnvHelp;
 import com.sun.jmx.remote.util.OrderClassLoaders;
-
-import java.io.IOException;
-import java.rmi.MarshalledObject;
-import java.rmi.UnmarshalException;
-import java.rmi.server.Unreferenced;
-
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.Permission;
-import java.security.PermissionCollection;
-import java.security.Permissions;
-import java.security.PrivilegedAction;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
-import java.security.ProtectionDomain;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.ListenerNotFoundException;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanPermission;
-import javax.management.MBeanServer;
-import javax.management.NotCompliantMBeanException;
-import javax.management.NotificationFilter;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.QueryExp;
-import javax.management.ReflectionException;
-import javax.management.RuntimeOperationsException;
-import javax.management.remote.JMXServerErrorException;
-import javax.management.remote.NotificationResult;
-import javax.management.remote.TargetedNotification;
-import javax.security.auth.Subject;
+import javax.management.loading.ClassLoaderRepository;
 
 /**
  * <p>Implementation of the {@link RMIConnection} interface.  User
@@ -151,20 +131,24 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
 
         final ClassLoader dcl = defaultClassLoader;
 
-        this.classLoaderWithRepository =
-            AccessController.doPrivileged(
-                new PrivilegedAction<ClassLoaderWithRepository>() {
-                    public ClassLoaderWithRepository run() {
-                        return new ClassLoaderWithRepository(
-                                      mbeanServer.getClassLoaderRepository(),
-                                      dcl);
-                    }
-                },
-
-                withPermissions( new MBeanPermission("*", "getClassLoaderRepository"),
-                                 new RuntimePermission("createClassLoader"))
-            );
-
+        ClassLoaderRepository repository = AccessController.doPrivileged(
+            new PrivilegedAction<ClassLoaderRepository>() {
+                public ClassLoaderRepository run() {
+                    return mbeanServer.getClassLoaderRepository();
+                }
+            },
+            withPermissions(new MBeanPermission("*", "getClassLoaderRepository"))
+        );
+        this.classLoaderWithRepository = AccessController.doPrivileged(
+            new PrivilegedAction<ClassLoaderWithRepository>() {
+                public ClassLoaderWithRepository run() {
+                    return new ClassLoaderWithRepository(
+                        repository,
+                        dcl);
+                }
+            },
+            withPermissions(new RuntimePermission("createClassLoader"))
+        );
 
         this.defaultContextClassLoader =
             AccessController.doPrivileged(
@@ -377,7 +361,6 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
                              "connectionId=" + connectionId
                              +", className=" + className
                              +", name=" + name
-                             +", params=" + objects(values)
                              +", signature=" + strings(signature));
 
             return (ObjectInstance)
@@ -443,7 +426,6 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
                  +", className=" + className
                  +", name=" + name
                  +", loaderName=" + loaderName
-                 +", params=" + objects(values)
                  +", signature=" + strings(signature));
 
             return (ObjectInstance)
@@ -735,7 +717,7 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
             if (debug) logger.debug("setAttribute",
                              "connectionId=" + connectionId
                              +", name="+name
-                             +", attribute="+attr);
+                             +", attribute name="+attr.getName());
 
             doPrivilegedOperation(
               SET_ATTRIBUTE,
@@ -786,7 +768,7 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
             if (debug) logger.debug("setAttributes",
                              "connectionId=" + connectionId
                              +", name="+name
-                             +", attributes="+attrlist);
+                             +", attribute names="+RMIConnector.getAttributesNames(attrlist));
 
             return (AttributeList)
                 doPrivilegedOperation(
@@ -841,7 +823,6 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
                              "connectionId=" + connectionId
                              +", name="+name
                              +", operationName="+operationName
-                             +", params="+objects(values)
                              +", signature="+strings(signature));
 
             return
@@ -1274,10 +1255,11 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
             if (serverTerminated) {
                 // we must not call fetchNotifs() if the server is
                 // terminated (timeout elapsed).
-                //
-                return new NotificationResult(0L, 0L,
-                                              new TargetedNotification[0]);
-
+                // returns null to force the client to stop fetching
+                if (logger.debugOn()) logger.debug("fetchNotifications",
+                               "The notification server has been closed, "
+                                       + "returns null to force the client to stop fetching");
+                return null;
             }
             final long csn = clientSequenceNumber;
             final int mn = maxNotifications;
@@ -1633,7 +1615,7 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
 
     /**
      * Construct a new IOException with a nested exception.
-     * The nested exception is set only if JDK >= 1.4
+     * The nested exception is set only if JDK {@literal >= 1.4}
      */
     private static IOException newIOException(String message,
                                               Throwable cause) {
@@ -1813,6 +1795,7 @@ public class RMIConnectionImpl implements RMIConnection, Unreferenced {
         @Override
         protected Class<?> loadClass(String name, boolean resolve)
         throws ClassNotFoundException {
+            ReflectUtil.checkPackageAccess(name);
             try {
                 super.loadClass(name, resolve);
             } catch(Exception e) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -244,7 +244,6 @@ import javax.management.loading.ClassLoaderRepository;
  * the caller's permissions must imply {@link
  * MBeanPermission#MBeanPermission(String,String,ObjectName,String)
  * MBeanPermission(className, null, name, "unregisterMBean")}.</p>
- * </p>
  *
  * </ul>
  *

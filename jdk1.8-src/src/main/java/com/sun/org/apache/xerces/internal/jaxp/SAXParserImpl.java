@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2010, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 /*
- * Copyright 2000-2005 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -20,22 +20,14 @@
 
 package com.sun.org.apache.xerces.internal.jaxp;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.XMLConstants;
-import javax.xml.validation.Schema;
-
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.validation.ValidationManager;
 import com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator;
 import com.sun.org.apache.xerces.internal.jaxp.validation.XSGrammarPoolContainer;
 import com.sun.org.apache.xerces.internal.util.SAXMessageFormatter;
-import com.sun.org.apache.xerces.internal.util.SecurityManager;
 import com.sun.org.apache.xerces.internal.util.Status;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
 import com.sun.org.apache.xerces.internal.xni.XMLDocumentHandler;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponent;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLComponentManager;
@@ -45,6 +37,13 @@ import com.sun.org.apache.xerces.internal.xni.parser.XMLParserConfiguration;
 import com.sun.org.apache.xerces.internal.xs.AttributePSVI;
 import com.sun.org.apache.xerces.internal.xs.ElementPSVI;
 import com.sun.org.apache.xerces.internal.xs.PSVIProvider;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Map;
+import javax.xml.XMLConstants;
+import javax.xml.validation.Schema;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.HandlerBase;
@@ -92,6 +91,10 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
     private static final String SECURITY_MANAGER =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SECURITY_MANAGER_PROPERTY;
 
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
+
     private final JAXPSAXParser xmlReader;
     private String schemaLanguage = null;     // null means DTD
     private final Schema grammar;
@@ -107,24 +110,29 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
     /** Initial EntityResolver */
     private final EntityResolver fInitEntityResolver;
 
+    private final XMLSecurityManager fSecurityManager;
+    private final XMLSecurityPropertyManager fSecurityPropertyMgr;
+
     /**
      * Create a SAX parser with the associated features
-     * @param features Hashtable of SAX features, may be null
+     * @param features Map of SAX features, may be null
      */
-    SAXParserImpl(SAXParserFactoryImpl spf, Hashtable features)
+    SAXParserImpl(SAXParserFactoryImpl spf, Map<String, Boolean> features)
         throws SAXException {
         this(spf, features, false);
     }
 
     /**
      * Create a SAX parser with the associated features
-     * @param features Hashtable of SAX features, may be null
+     * @param features Map of SAX features, may be null
      */
-    SAXParserImpl(SAXParserFactoryImpl spf, Hashtable features, boolean secureProcessing)
+    SAXParserImpl(SAXParserFactoryImpl spf, Map<String, Boolean> features, boolean secureProcessing)
         throws SAXException
     {
+        fSecurityManager = new XMLSecurityManager(secureProcessing);
+        fSecurityPropertyMgr = new XMLSecurityPropertyManager();
         // Instantiate a SAXParser directly and not through SAX so that we use the right ClassLoader
-        xmlReader = new JAXPSAXParser(this);
+        xmlReader = new JAXPSAXParser(this, fSecurityPropertyMgr, fSecurityManager);
 
         // JAXP "namespaceAware" == SAX Namespaces feature
         // Note: there is a compatibility problem here with default values:
@@ -143,9 +151,30 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             xmlReader.setFeature0(XINCLUDE_FEATURE, true);
         }
 
-        // If the secure processing feature is on set a security manager.
+        xmlReader.setProperty0(XML_SECURITY_PROPERTY_MANAGER, fSecurityPropertyMgr);
+
+        xmlReader.setProperty0(SECURITY_MANAGER, fSecurityManager);
+
         if (secureProcessing) {
-            xmlReader.setProperty0(SECURITY_MANAGER, new SecurityManager());
+            /**
+             * By default, secure processing is set, no external access is allowed.
+             * However, we need to check if it is actively set on the factory since we
+             * allow the use of the System Property or jaxp.properties to override
+             * the default value
+             */
+            if (features != null) {
+
+                Boolean temp = features.get(XMLConstants.FEATURE_SECURE_PROCESSING);
+                if (temp != null) {
+                    if (temp && Constants.IS_JDK8_OR_ABOVE) {
+                        fSecurityPropertyMgr.setValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_DTD,
+                                XMLSecurityPropertyManager.State.FSP, Constants.EXTERNAL_ACCESS_DEFAULT_FSP);
+                        fSecurityPropertyMgr.setValue(XMLSecurityPropertyManager.Property.ACCESS_EXTERNAL_SCHEMA,
+                                XMLSecurityPropertyManager.State.FSP, Constants.EXTERNAL_ACCESS_DEFAULT_FSP);
+
+                    }
+                }
+            }
         }
 
         // Set application's features, followed by validation features.
@@ -155,7 +184,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
         // validation errors with a warning telling the user to set an
         // ErrorHandler.
         if (spf.isValidating()) {
-            fInitErrorHandler = new DefaultValidationErrorHandler();
+            fInitErrorHandler = new DefaultValidationErrorHandler(xmlReader.getLocale());
             xmlReader.setErrorHandler(fInitErrorHandler);
         }
         else {
@@ -211,15 +240,11 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
      * XXX Does not handle possible conflicts between SAX feature names and
      * JAXP specific feature names, eg. SAXParserFactory.isValidating()
      */
-    private void setFeatures(Hashtable features)
+    private void setFeatures(Map<String, Boolean> features)
         throws SAXNotSupportedException, SAXNotRecognizedException {
         if (features != null) {
-            Iterator entries = features.entrySet().iterator();
-            while (entries.hasNext()) {
-                Map.Entry entry = (Map.Entry) entries.next();
-                String feature = (String) entry.getKey();
-                boolean value = ((Boolean) entry.getValue()).booleanValue();
-                xmlReader.setFeature0(feature, value);
+            for (Map.Entry<String, Boolean> entry : features.entrySet()) {
+                xmlReader.setFeature0(entry.getKey(), entry.getValue());
             }
         }
     }
@@ -368,14 +393,44 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
         private final HashMap fInitFeatures = new HashMap();
         private final HashMap fInitProperties = new HashMap();
         private final SAXParserImpl fSAXParser;
+        private XMLSecurityManager fSecurityManager;
+        private XMLSecurityPropertyManager fSecurityPropertyMgr;
+
 
         public JAXPSAXParser() {
-            this(null);
+            this(null, null, null);
         }
 
-        JAXPSAXParser(SAXParserImpl saxParser) {
+        JAXPSAXParser(SAXParserImpl saxParser, XMLSecurityPropertyManager securityPropertyMgr,
+                XMLSecurityManager securityManager) {
             super();
             fSAXParser = saxParser;
+            fSecurityManager = securityManager;
+            fSecurityPropertyMgr = securityPropertyMgr;
+            /**
+             * This class may be used directly. So initialize the security manager if
+             * it is null.
+             */
+            if (fSecurityManager == null) {
+                fSecurityManager = new XMLSecurityManager(true);
+                try {
+                    super.setProperty(SECURITY_MANAGER, fSecurityManager);
+                } catch (SAXException e) {
+                    throw new UnsupportedOperationException(
+                    SAXMessageFormatter.formatMessage(fConfiguration.getLocale(),
+                    "property-not-recognized", new Object [] {SECURITY_MANAGER}), e);
+                }
+            }
+            if (fSecurityPropertyMgr == null) {
+                fSecurityPropertyMgr = new XMLSecurityPropertyManager();
+                try {
+                    super.setProperty(XML_SECURITY_PROPERTY_MANAGER, fSecurityPropertyMgr);
+                } catch (SAXException e) {
+                    throw new UnsupportedOperationException(
+                    SAXMessageFormatter.formatMessage(fConfiguration.getLocale(),
+                    "property-not-recognized", new Object [] {SECURITY_MANAGER}), e);
+                }
+            }
         }
 
         /**
@@ -391,7 +446,8 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
             }
             if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
                 try {
-                    setProperty(SECURITY_MANAGER, value ? new SecurityManager() : null);
+                    fSecurityManager.setSecureProcessing(value);
+                    setProperty(SECURITY_MANAGER, fSecurityManager);
                 }
                 catch (SAXNotRecognizedException exc) {
                     // If the property is not supported
@@ -427,13 +483,7 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
                 throw new NullPointerException();
             }
             if (name.equals(XMLConstants.FEATURE_SECURE_PROCESSING)) {
-                try {
-                    return (super.getProperty(SECURITY_MANAGER) != null);
-                }
-                // If the property is not supported the value must be false.
-                catch (SAXException exc) {
-                    return false;
-                }
+                return fSecurityManager.isSecureProcessing();
             }
             return super.getFeature(name);
         }
@@ -508,14 +558,25 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
                     return;
                 }
             }
-            if (!fInitProperties.containsKey(name)) {
-                fInitProperties.put(name, super.getProperty(name));
-            }
             /** Forward property to the schema validator if there is one. **/
             if (fSAXParser != null && fSAXParser.fSchemaValidator != null) {
                 setSchemaValidatorProperty(name, value);
             }
-            super.setProperty(name, value);
+
+            //check if the property is managed by security manager
+            if (fSecurityManager == null ||
+                    !fSecurityManager.setLimit(name, XMLSecurityManager.State.APIPROPERTY, value)) {
+                //check if the property is managed by security property manager
+                if (fSecurityPropertyMgr == null ||
+                        !fSecurityPropertyMgr.setValue(name, XMLSecurityPropertyManager.State.APIPROPERTY, value)) {
+                    //fall back to the existing property manager
+                    if (!fInitProperties.containsKey(name)) {
+                        fInitProperties.put(name, super.getProperty(name));
+                    }
+                    super.setProperty(name, value);
+                }
+            }
+
         }
 
         public synchronized Object getProperty(String name)
@@ -528,6 +589,20 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
                 // JAXP 1.2 support
                 return fSAXParser.schemaLanguage;
             }
+
+            /** Check to see if the property is managed by the security manager **/
+            String propertyValue = (fSecurityManager != null) ?
+                    fSecurityManager.getLimitAsString(name) : null;
+            if (propertyValue != null) {
+                return propertyValue;
+            } else {
+                propertyValue = (fSecurityPropertyMgr != null) ?
+                    fSecurityPropertyMgr.getValue(name) : null;
+                if (propertyValue != null) {
+                    return propertyValue;
+                }
+            }
+
             return super.getProperty(name);
         }
 
@@ -602,6 +677,10 @@ public class SAXParserImpl extends javax.xml.parsers.SAXParser
         Object getProperty0(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
             return super.getProperty(name);
+        }
+
+        Locale getLocale() {
+            return fConfiguration.getLocale();
         }
 
         private void setSchemaValidatorFeature(String name, boolean value)

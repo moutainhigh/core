@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XPATHErrorResources_fr.java,v 1.2.4.1 2005/09/15 00:39:21 jeffsuttor Exp $
- */
 package com.sun.org.apache.xpath.internal.res;
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -462,7 +456,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "Caract\u00E8re ',' trouv\u00E9 sans argument le suivant."},
 
   { ER_PREDICATE_ILLEGAL_SYNTAX,
-      "Syntaxe '..[predicate]' ou '.[predicate]' non admise. Utilisez ''self::node()[predicate]'' \u00E0 la place."},
+      "Syntaxe '..[predicate]' ou '.[predicate]' non admise. Utilisez 'self::node()[predicate]' \u00E0 la place."},
 
   { ER_ILLEGAL_AXIS_NAME,
      "nom d''axe non admis : {0}"},
@@ -646,7 +640,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // The message indicates that such an expression was expected following the
   // characters '/' or '//', but was not found.
   { ER_EXPECTED_REL_LOC_PATH,
-      "Un chemin d'acc\u00E8s relatif \u00E9tait attendu apr\u00E8s le jeton ''/'' ou ''//''."},
+      "Un chemin d'acc\u00E8s relatif \u00E9tait attendu apr\u00E8s le jeton '/' ou '//'."},
 
   // Note to translators:  A location path is a form of XPath expression.
   // The message indicates that syntactically such an expression was expected,but
@@ -664,7 +658,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // The message indicates that syntactically such an expression was expected
   // following the specified characters.
   { ER_EXPECTED_LOC_STEP,
-       "Une \u00E9tape d'emplacement \u00E9tait attendue apr\u00E8s le jeton ''/'' ou ''//''."},
+       "Une \u00E9tape d'emplacement \u00E9tait attendue apr\u00E8s le jeton '/' ou '//'."},
 
   // Note to translators:  A node test is part of an XPath expression that is
   // used to test for particular kinds of nodes.  In this case, a node test that
@@ -677,7 +671,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // The message indicates that syntactically such an expression was expected,
   // but the specified character was found in the expression instead.
   { ER_EXPECTED_STEP_PATTERN,
-       "Un mod\u00E8le d'\u00E9tape \u00E9tait attendu, mais ''/'' a \u00E9t\u00E9 d\u00E9tect\u00E9."},
+       "Un mod\u00E8le d'\u00E9tape \u00E9tait attendu, mais '/' a \u00E9t\u00E9 d\u00E9tect\u00E9."},
 
   // Note to translators: A relative path pattern is part of an XPath expression.
   // The message indicates that syntactically such an expression was expected,
@@ -938,69 +932,5 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
 
   /** Field QUERY_HEADER          */
   public static final String QUERY_HEADER = "PATTERN ";
-
-
-  /**
-   * Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   * of ResourceBundle.getBundle().
-   *
-   * @param className Name of local-specific subclass.
-   * @return the ResourceBundle
-   * @throws MissingResourceException
-   */
-  public static final XPATHErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XPATHErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XPATHErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

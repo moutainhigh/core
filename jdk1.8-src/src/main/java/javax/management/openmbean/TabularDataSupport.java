@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -671,7 +671,7 @@ public class TabularDataSupport
             return c;
         }
         catch (CloneNotSupportedException e) {
-            throw new InternalError(e.toString());
+            throw new InternalError(e.toString(), e);
         }
     }
 

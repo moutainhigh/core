@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,6 +46,11 @@ import java.security.spec.RSAOtherPrimeInfo;
 
 public interface RSAMultiPrimePrivateCrtKey extends RSAPrivateKey {
 
+    /**
+     * The type fingerprint that is set to indicate
+     * serialization compatibility with a previous
+     * version of the type.
+     */
     static final long serialVersionUID = 618058533534628008L;
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2015, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,7 +46,7 @@ import sun.awt.shell.ShellFolder;
 import sun.swing.*;
 
 /**
- * Metal L&F implementation of a FileChooser.
+ * Metal L&amp;F implementation of a FileChooser.
  *
  * @author Jeff Dinkins
  */
@@ -92,8 +92,6 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
 
     private static int MIN_WIDTH = 500;
     private static int MIN_HEIGHT = 326;
-    private static Dimension MIN_SIZE = new Dimension(MIN_WIDTH, MIN_HEIGHT);
-
     private static int LIST_PREF_WIDTH = 405;
     private static int LIST_PREF_HEIGHT = 135;
     private static Dimension LIST_PREF_SIZE = new Dimension(LIST_PREF_WIDTH, LIST_PREF_HEIGHT);
@@ -461,16 +459,16 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
 
         Locale l = fc.getLocale();
 
-        lookInLabelMnemonic = UIManager.getInt("FileChooser.lookInLabelMnemonic");
+        lookInLabelMnemonic = getMnemonic("FileChooser.lookInLabelMnemonic", l);
         lookInLabelText = UIManager.getString("FileChooser.lookInLabelText",l);
         saveInLabelText = UIManager.getString("FileChooser.saveInLabelText",l);
 
-        fileNameLabelMnemonic = UIManager.getInt("FileChooser.fileNameLabelMnemonic");
+        fileNameLabelMnemonic = getMnemonic("FileChooser.fileNameLabelMnemonic", l);
         fileNameLabelText = UIManager.getString("FileChooser.fileNameLabelText",l);
-        folderNameLabelMnemonic = UIManager.getInt("FileChooser.folderNameLabelMnemonic");
+        folderNameLabelMnemonic = getMnemonic("FileChooser.folderNameLabelMnemonic", l);
         folderNameLabelText = UIManager.getString("FileChooser.folderNameLabelText",l);
 
-        filesOfTypeLabelMnemonic = UIManager.getInt("FileChooser.filesOfTypeLabelMnemonic");
+        filesOfTypeLabelMnemonic = getMnemonic("FileChooser.filesOfTypeLabelMnemonic", l);
         filesOfTypeLabelText = UIManager.getString("FileChooser.filesOfTypeLabelText",l);
 
         upFolderToolTipText =  UIManager.getString("FileChooser.upFolderToolTipText",l);
@@ -487,6 +485,10 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
 
         detailsViewButtonToolTipText = UIManager.getString("FileChooser.detailsViewButtonToolTipText",l);
         detailsViewButtonAccessibleName = UIManager.getString("FileChooser.detailsViewButtonAccessibleName",l);
+    }
+
+    private Integer getMnemonic(String key, Locale l) {
+        return SwingUtilities2.getUIDefaultsInt(key, l);
     }
 
     protected void installListeners(JFileChooser fc) {
@@ -561,6 +563,7 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
      * @return   a <code>Dimension</code> specifying the preferred
      *           width and height of the file chooser
      */
+    @Override
     public Dimension getPreferredSize(JComponent c) {
         int prefWidth = PREF_SIZE.width;
         Dimension d = c.getLayout().preferredLayoutSize(c);
@@ -579,8 +582,9 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
      * @return   a <code>Dimension</code> specifying the minimum
      *           width and height of the file chooser
      */
+    @Override
     public Dimension getMinimumSize(JComponent c) {
-        return MIN_SIZE;
+        return new Dimension(MIN_WIDTH, MIN_HEIGHT);
     }
 
     /**
@@ -590,6 +594,7 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
      * @return   a <code>Dimension</code> specifying the maximum
      *           width and height of the file chooser
      */
+    @Override
     public Dimension getMaximumSize(JComponent c) {
         return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
     }
@@ -600,7 +605,8 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
         } else {
             JFileChooser fc = getFileChooser();
             if ((fc.isDirectorySelectionEnabled() && !fc.isFileSelectionEnabled()) ||
-                (fc.isDirectorySelectionEnabled() && fc.isFileSelectionEnabled() && fc.getFileSystemView().isFileSystemRoot(file))) {
+                (fc.isDirectorySelectionEnabled() && fc.isFileSelectionEnabled()
+                 && fc.getFileSystemView().isFileSystemRoot(file))) {
                 return file.getPath();
             } else {
                 return file.getName();
@@ -937,16 +943,9 @@ public class MetalFileChooserUI extends BasicFileChooserUI {
 
             directories.clear();
 
-            File[] baseFolders;
-            if (useShellFolder) {
-                baseFolders = AccessController.doPrivileged(new PrivilegedAction<File[]>() {
-                    public File[] run() {
-                        return (File[]) ShellFolder.get("fileChooserComboBoxFolders");
-                    }
-                });
-            } else {
-                baseFolders = fsv.getRoots();
-            }
+            File[] baseFolders = (useShellFolder)
+                    ? (File[]) ShellFolder.get("fileChooserComboBoxFolders")
+                    : fsv.getRoots();
             directories.addAll(Arrays.asList(baseFolders));
 
             // Get the canonical (full) path. This has the side

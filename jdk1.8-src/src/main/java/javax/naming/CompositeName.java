@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,8 +41,8 @@ import java.util.Properties;
  * This range may be written as [0,N).
  * The most significant component is at index 0.
  * An empty composite name has no components.
- *<p>
- * <h4>JNDI Composite Name Syntax</h4>
+ *
+ * <h1>JNDI Composite Name Syntax</h1>
  * JNDI defines a standard string representation for composite names. This
  * representation is the concatenation of the components of a composite name
  * from left to right using the component separator (a forward
@@ -72,13 +72,13 @@ import java.util.Properties;
  * A trailing component separator (the composite name string ends with
  * a separator) denotes a trailing empty component.
  * Adjacent component separators denote an empty component.
- *<p>
- *<h4>Composite Name Examples</h4>
+ *
+ *<h1>Composite Name Examples</h1>
  *This table shows examples of some composite names. Each row shows
  *the string form of a composite name and its corresponding structural form
  *(<tt>CompositeName</tt>).
- *<p>
-<table border="1" cellpadding=3 width="70%" summary="examples showing string form of composite name and its corresponding structural form (CompositeName)">
+ *
+<table border="1" cellpadding=3 summary="examples showing string form of composite name and its corresponding structural form (CompositeName)">
 
 <tr>
 <th>String Name</th>
@@ -136,15 +136,15 @@ import java.util.Properties;
 <td>{"x", "", "y"}</td>
 </tr>
 </table>
- * <p>
- *<h4>Composition Examples</h4>
+ *
+ *<h1>Composition Examples</h1>
  * Here are some composition examples.  The right column shows composing
  * string composite names while the left column shows composing the
  * corresponding <tt>CompositeName</tt>s.  Notice that composing the
  * string forms of two composite names simply involves concatenating
  * their string forms together.
 
-<p> <table border="1" cellpadding=3 width="70%" summary="composition examples showing string names and composite names">
+<table border="1" cellpadding=3 summary="composition examples showing string names and composite names">
 
 <tr>
 <th>String Names</th>
@@ -188,8 +188,8 @@ import java.util.Properties;
 </tr>
 
 </table>
- *<p>
- *<h4>Multithreaded Access</h4>
+ *
+ *<h1>Multithreaded Access</h1>
  * A <tt>CompositeName</tt> instance is not synchronized against concurrent
  * multithreaded access. Multiple threads trying to access and modify a
  * <tt>CompositeName</tt> should lock the object.
@@ -394,7 +394,7 @@ public class CompositeName implements Name {
       *         If posn is outside the specified range.
       */
     public Name getPrefix(int posn) {
-        Enumeration comps = impl.getPrefix(posn);
+        Enumeration<String> comps = impl.getPrefix(posn);
         return (new CompositeName(comps));
     }
 
@@ -412,7 +412,7 @@ public class CompositeName implements Name {
       *         If posn is outside the specified range.
       */
     public Name getSuffix(int posn) {
-        Enumeration comps = impl.getSuffix(posn);
+        Enumeration<String> comps = impl.getSuffix(posn);
         return (new CompositeName(comps));
     }
 
@@ -563,7 +563,7 @@ public class CompositeName implements Name {
     private void writeObject(java.io.ObjectOutputStream s)
             throws java.io.IOException {
         s.writeInt(size());
-        Enumeration comps = getAll();
+        Enumeration<String> comps = getAll();
         while (comps.hasMoreElements()) {
             s.writeObject(comps.nextElement());
         }

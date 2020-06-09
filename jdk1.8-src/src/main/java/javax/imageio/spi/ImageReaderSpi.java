@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -78,7 +78,7 @@ public abstract class ImageReaderSpi extends ImageReaderWriterSpi {
      * <code>ImageInputStream.class</code>, to be returned from
      * <code>getInputTypes</code>.
      * @deprecated Instead of using this field, directly create
-     * the equivalent array <code>{ ImageInputStream.class }<code>.
+     * the equivalent array <code>{ ImageInputStream.class }</code>.
      */
     @Deprecated
     public static final Class[] STANDARD_INPUT_TYPE =
@@ -341,7 +341,7 @@ public abstract class ImageReaderSpi extends ImageReaderWriterSpi {
      * @exception IOException if the attempt to instantiate
      * the reader fails.
      * @exception IllegalArgumentException if the
-     * <code>ImageReader</code>'s contructor throws an
+     * <code>ImageReader</code>'s constructor throws an
      * <code>IllegalArgumentException</code> to indicate that the
      * extension object is unsuitable.
      */

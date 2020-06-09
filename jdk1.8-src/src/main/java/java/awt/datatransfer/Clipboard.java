@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,6 @@ import java.util.Arrays;
 import java.io.IOException;
 
 import sun.awt.EventListenerAggregate;
-
 
 /**
  * A class that implements a mechanism to transfer data using
@@ -72,7 +71,7 @@ public class Clipboard {
      *
      * @since 1.5
      */
-    private Set currentDataFlavors;
+    private Set<DataFlavor> currentDataFlavors;
 
     /**
      * Creates a clipboard object.
@@ -314,7 +313,7 @@ public class Clipboard {
         if (flavorListeners == null) {
             return;
         }
-        Set prevDataFlavors = currentDataFlavors;
+        Set<DataFlavor> prevDataFlavors = currentDataFlavors;
         currentDataFlavors = getAvailableDataFlavorSet();
         if (prevDataFlavors.equals(currentDataFlavors)) {
             return;
@@ -340,8 +339,8 @@ public class Clipboard {
      *
      * @since 1.5
      */
-    private Set getAvailableDataFlavorSet() {
-        Set set = new HashSet();
+    private Set<DataFlavor> getAvailableDataFlavorSet() {
+        Set<DataFlavor> set = new HashSet<>();
         Transferable contents = getContents(null);
         if (contents != null) {
             DataFlavor[] flavors = contents.getTransferDataFlavors();

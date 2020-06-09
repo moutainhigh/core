@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,7 +46,7 @@ import  javax.xml.namespace.QName;
 public abstract class JAXBIntrospector {
 
     /**
-     * <p>Return true iff <code>object</code> represents a JAXB element.</p>
+     * <p>Return true if <code>object</code> represents a JAXB element.</p>
      * <p>Parameter <code>object</code> is a JAXB element for following cases:
      * <ol>
      *   <li>It is an instance of <code>javax.xml.bind.JAXBElement</code>.</li>

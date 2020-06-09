@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,7 +50,7 @@ public interface SnmpMibRequest {
      * @return The element of the enumeration are instances of
      *         {@link com.sun.jmx.snmp.SnmpVarBind}
      */
-    public Enumeration getElements();
+    public Enumeration<SnmpVarBind> getElements();
 
     /**
      * Returns the vector of varbind to be handled by the SNMP mib node.

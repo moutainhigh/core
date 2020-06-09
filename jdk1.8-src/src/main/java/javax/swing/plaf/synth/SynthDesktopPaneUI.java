@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import java.awt.event.*;
 import java.awt.*;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JDesktopPane}.
  *
  * @author Joshua Outwater
@@ -58,7 +58,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -73,7 +73,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -123,7 +123,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -136,7 +136,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -164,7 +164,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDesktopManager() {
@@ -180,7 +180,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDesktopManager() {
@@ -422,7 +422,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -430,8 +430,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                     SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -489,7 +488,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -498,7 +497,7 @@ public class SynthDesktopPaneUI extends BasicDesktopPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {

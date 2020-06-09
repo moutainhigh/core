@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -94,6 +94,7 @@ public class BasicColorChooserUI extends ColorChooserUI
         tabbedPane = new JTabbedPane();
         tabbedPane.setName("ColorChooser.tabPane");
         tabbedPane.setInheritsPopupMenu(true);
+        tabbedPane.getAccessibleContext().setAccessibleDescription(tabbedPane.getName());
         singlePanel = new JPanel(new CenterLayout());
         singlePanel.setName("ColorChooser.panel");
         singlePanel.setInheritsPopupMenu(true);

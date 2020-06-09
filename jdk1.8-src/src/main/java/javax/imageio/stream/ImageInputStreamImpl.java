@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -88,7 +88,7 @@ public abstract class ImageInputStreamImpl implements ImageInputStream {
     /**
      * The position prior to which data may be discarded.  Seeking
      * to a smaller position is not allowed.  <code>flushedPos</code>
-     * will always be >= 0.
+     * will always be {@literal >= 0}.
      */
     protected long flushedPos = 0;
 
@@ -225,7 +225,7 @@ public abstract class ImageInputStreamImpl implements ImageInputStream {
     }
 
     public short readShort() throws IOException {
-        if (read(byteBuf, 0, 2) < 0) {
+        if (read(byteBuf, 0, 2) != 2) {
             throw new EOFException();
         }
 
@@ -247,7 +247,7 @@ public abstract class ImageInputStreamImpl implements ImageInputStream {
     }
 
     public int readInt() throws IOException {
-        if (read(byteBuf, 0, 4) < 0) {
+        if (read(byteBuf, 0, 4) !=  4) {
             throw new EOFException();
         }
 

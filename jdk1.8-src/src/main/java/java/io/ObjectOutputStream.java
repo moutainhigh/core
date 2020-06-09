@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import static java.io.ObjectStreamClass.processQueue;
 import java.io.SerialCallbackContext;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * An ObjectOutputStream writes primitive data types and graphs of Java objects
@@ -264,6 +265,7 @@ public class ObjectOutputStream
      * @throws  SecurityException if a security manager exists and its
      *          <code>checkPermission</code> method denies enabling
      *          subclassing.
+     * @throws  IOException if an I/O error occurs while creating this stream
      * @see SecurityManager#checkPermission
      * @see java.io.SerializablePermission
      */
@@ -429,11 +431,12 @@ public class ObjectOutputStream
      *          <code>OutputStream</code>
      */
     public void defaultWriteObject() throws IOException {
-        if ( curContext == null ) {
+        SerialCallbackContext ctx = curContext;
+        if (ctx == null) {
             throw new NotActiveException("not in call to writeObject");
         }
-        Object curObj = curContext.getObj();
-        ObjectStreamClass curDesc = curContext.getDesc();
+        Object curObj = ctx.getObj();
+        ObjectStreamClass curDesc = ctx.getDesc();
         bout.setBlockDataMode(false);
         defaultWriteFields(curObj, curDesc);
         bout.setBlockDataMode(true);
@@ -451,11 +454,12 @@ public class ObjectOutputStream
      */
     public ObjectOutputStream.PutField putFields() throws IOException {
         if (curPut == null) {
-            if (curContext == null) {
+            SerialCallbackContext ctx = curContext;
+            if (ctx == null) {
                 throw new NotActiveException("not in call to writeObject");
             }
-            Object curObj = curContext.getObj();
-            ObjectStreamClass curDesc = curContext.getDesc();
+            Object curObj = ctx.getObj();
+            ObjectStreamClass curDesc = ctx.getDesc();
             curPut = new PutFieldImpl(curDesc);
         }
         return curPut;
@@ -484,7 +488,7 @@ public class ObjectOutputStream
      * stream.  The state is reset to be the same as a new ObjectOutputStream.
      * The current point in the stream is marked as reset so the corresponding
      * ObjectInputStream will be reset at the same point.  Objects previously
-     * written to the stream will not be refered to as already being in the
+     * written to the stream will not be referred to as already being in the
      * stream.  They will be written to the stream again.
      *
      * @throws  IOException if reset() is invoked while serializing an object.
@@ -1034,7 +1038,7 @@ public class ObjectOutputStream
      * "enableSubclassImplementation" SerializablePermission is checked.
      */
     private void verifySubclass() {
-        Class cl = getClass();
+        Class<?> cl = getClass();
         if (cl == ObjectOutputStream.class) {
             return;
         }
@@ -1060,22 +1064,22 @@ public class ObjectOutputStream
      * override security-sensitive non-final methods.  Returns true if subclass
      * is "safe", false otherwise.
      */
-    private static boolean auditSubclass(final Class subcl) {
+    private static boolean auditSubclass(final Class<?> subcl) {
         Boolean result = AccessController.doPrivileged(
             new PrivilegedAction<Boolean>() {
                 public Boolean run() {
-                    for (Class cl = subcl;
+                    for (Class<?> cl = subcl;
                          cl != ObjectOutputStream.class;
                          cl = cl.getSuperclass())
                     {
                         try {
                             cl.getDeclaredMethod(
-                                "writeUnshared", new Class[] { Object.class });
+                                "writeUnshared", new Class<?>[] { Object.class });
                             return Boolean.FALSE;
                         } catch (NoSuchMethodException ex) {
                         }
                         try {
-                            cl.getDeclaredMethod("putFields", (Class[]) null);
+                            cl.getDeclaredMethod("putFields", (Class<?>[]) null);
                             return Boolean.FALSE;
                         } catch (NoSuchMethodException ex) {
                         }
@@ -1122,11 +1126,11 @@ public class ObjectOutputStream
 
             // check for replacement object
             Object orig = obj;
-            Class cl = obj.getClass();
+            Class<?> cl = obj.getClass();
             ObjectStreamClass desc;
             for (;;) {
                 // REMIND: skip this check for strings/arrays?
-                Class repCl;
+                Class<?> repCl;
                 desc = ObjectStreamClass.lookup(cl, true);
                 if (!desc.hasWriteReplaceMethod() ||
                     (obj = desc.invokeWriteReplace(obj)) == null ||
@@ -1169,7 +1173,7 @@ public class ObjectOutputStream
             } else if (cl.isArray()) {
                 writeArray(obj, desc, unshared);
             } else if (obj instanceof Enum) {
-                writeEnum((Enum) obj, desc, unshared);
+                writeEnum((Enum<?>) obj, desc, unshared);
             } else if (obj instanceof Serializable) {
                 writeOrdinaryObject(obj, desc, unshared);
             } else {
@@ -1204,7 +1208,7 @@ public class ObjectOutputStream
     /**
      * Writes representation of given class to stream.
      */
-    private void writeClass(Class cl, boolean unshared) throws IOException {
+    private void writeClass(Class<?> cl, boolean unshared) throws IOException {
         bout.writeByte(TC_CLASS);
         writeClassDesc(ObjectStreamClass.lookup(cl, true), false);
         handles.assign(unshared ? null : cl);
@@ -1228,6 +1232,12 @@ public class ObjectOutputStream
         }
     }
 
+    private boolean isCustomSubclass() {
+        // Return true if this class is a custom subclass of ObjectOutputStream
+        return getClass().getClassLoader()
+                   != ObjectOutputStream.class.getClassLoader();
+    }
+
     /**
      * Writes class descriptor representing a dynamic proxy class to stream.
      */
@@ -1237,14 +1247,17 @@ public class ObjectOutputStream
         bout.writeByte(TC_PROXYCLASSDESC);
         handles.assign(unshared ? null : desc);
 
-        Class cl = desc.forClass();
-        Class[] ifaces = cl.getInterfaces();
+        Class<?> cl = desc.forClass();
+        Class<?>[] ifaces = cl.getInterfaces();
         bout.writeInt(ifaces.length);
         for (int i = 0; i < ifaces.length; i++) {
             bout.writeUTF(ifaces[i].getName());
         }
 
         bout.setBlockDataMode(true);
+        if (cl != null && isCustomSubclass()) {
+            ReflectUtil.checkPackageAccess(cl);
+        }
         annotateProxyClass(cl);
         bout.setBlockDataMode(false);
         bout.writeByte(TC_ENDBLOCKDATA);
@@ -1269,8 +1282,11 @@ public class ObjectOutputStream
             writeClassDescriptor(desc);
         }
 
-        Class cl = desc.forClass();
+        Class<?> cl = desc.forClass();
         bout.setBlockDataMode(true);
+        if (cl != null && isCustomSubclass()) {
+            ReflectUtil.checkPackageAccess(cl);
+        }
         annotateClass(cl);
         bout.setBlockDataMode(false);
         bout.writeByte(TC_ENDBLOCKDATA);
@@ -1306,7 +1322,7 @@ public class ObjectOutputStream
         writeClassDesc(desc, false);
         handles.assign(unshared ? null : array);
 
-        Class ccl = desc.forClass().getComponentType();
+        Class<?> ccl = desc.forClass().getComponentType();
         if (ccl.isPrimitive()) {
             if (ccl == Integer.TYPE) {
                 int[] ia = (int[]) array;
@@ -1377,7 +1393,7 @@ public class ObjectOutputStream
     /**
      * Writes given enum constant to stream.
      */
-    private void writeEnum(Enum en,
+    private void writeEnum(Enum<?> en,
                            ObjectStreamClass desc,
                            boolean unshared)
         throws IOException
@@ -1503,7 +1519,11 @@ public class ObjectOutputStream
     private void defaultWriteFields(Object obj, ObjectStreamClass desc)
         throws IOException
     {
-        // REMIND: perform conservative isInstance check here?
+        Class<?> cl = desc.forClass();
+        if (cl != null && obj != null && !cl.isInstance(obj)) {
+            throw new ClassCastException();
+        }
+
         desc.checkDefaultSerialize();
 
         int primDataSize = desc.getPrimDataSize();
@@ -1700,7 +1720,7 @@ public class ObjectOutputStream
          * types, and any other non-null type matches assignable types only.
          * Throws IllegalArgumentException if no matching field found.
          */
-        private int getFieldOffset(String name, Class type) {
+        private int getFieldOffset(String name, Class<?> type) {
             ObjectStreamField field = desc.getField(name, type);
             if (field == null) {
                 throw new IllegalArgumentException("no such field " + name +

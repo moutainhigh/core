@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,6 +37,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.peer.DragSourceContextPeer;
 
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -63,7 +64,7 @@ import java.util.TooManyListenersException;
  * itself between the platform and the
  * listeners provided by the initiator of the drag operation.
  * <p>
- * <a name="defaultCursor" />
+ * <a name="defaultCursor"></a>
  * By default, {@code DragSourceContext} sets the cursor as appropriate
  * for the current state of the drag and drop operation. For example, if
  * the user has chosen {@linkplain DnDConstants#ACTION_MOVE the move action},
@@ -474,7 +475,7 @@ public class DragSourceContext
 
     protected synchronized void updateCurrentCursor(int sourceAct, int targetAct, int status) {
 
-        // if the cursor has been previously set then dont do any defaults
+        // if the cursor has been previously set then don't do any defaults
         // processing.
 
         if (useCustomCursor) {
@@ -562,7 +563,35 @@ public class DragSourceContext
     private void readObject(ObjectInputStream s)
         throws ClassNotFoundException, IOException
     {
-        s.defaultReadObject();
+        ObjectInputStream.GetField f = s.readFields();
+
+        DragGestureEvent newTrigger = (DragGestureEvent)f.get("trigger", null);
+        if (newTrigger == null) {
+            throw new InvalidObjectException("Null trigger");
+        }
+        if (newTrigger.getDragSource() == null) {
+            throw new InvalidObjectException("Null DragSource");
+        }
+        if (newTrigger.getComponent() == null) {
+            throw new InvalidObjectException("Null trigger component");
+        }
+
+        int newSourceActions = f.get("sourceActions", 0)
+                & (DnDConstants.ACTION_COPY_OR_MOVE | DnDConstants.ACTION_LINK);
+        if (newSourceActions == DnDConstants.ACTION_NONE) {
+            throw new InvalidObjectException("Invalid source actions");
+        }
+        int triggerActions = newTrigger.getDragAction();
+        if (triggerActions != DnDConstants.ACTION_COPY &&
+                triggerActions != DnDConstants.ACTION_MOVE &&
+                triggerActions != DnDConstants.ACTION_LINK) {
+            throw new InvalidObjectException("No drag action");
+        }
+        trigger = newTrigger;
+
+        cursor = (Cursor)f.get("cursor", null);
+        useCustomCursor = f.get("useCustomCursor", false);
+        sourceActions = newSourceActions;
 
         transferable = (Transferable)s.readObject();
         listener = (DragSourceListener)s.readObject();
@@ -630,5 +659,5 @@ public class DragSourceContext
      *
      * @serial
      */
-    private final int sourceActions;
+    private int sourceActions;
 }

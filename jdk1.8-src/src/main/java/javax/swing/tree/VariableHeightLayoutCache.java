@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,13 +26,14 @@
 package javax.swing.tree;
 
 import javax.swing.event.TreeModelEvent;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.NoSuchElementException;
 import java.util.Stack;
 import java.util.Vector;
+
+import sun.swing.SwingUtilities2;
 
 /**
  * NOTE: This will become more open in a future release.
@@ -42,7 +43,7 @@ import java.util.Vector;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -413,7 +414,7 @@ public class VariableHeightLayoutCache extends AbstractLayoutCache {
             TreeStateNode     changedNode;
 
             changedIndexs = e.getChildIndices();
-            changedNode = getNodeForPath(e.getTreePath(), false, false);
+            changedNode = getNodeForPath(SwingUtilities2.getTreePath(e, getModel()), false, false);
             if(changedNode != null) {
                 Object            changedValue = changedNode.getValue();
 
@@ -466,7 +467,7 @@ public class VariableHeightLayoutCache extends AbstractLayoutCache {
             TreeStateNode     changedParentNode;
 
             changedIndexs = e.getChildIndices();
-            changedParentNode = getNodeForPath(e.getTreePath(), false, false);
+            changedParentNode = getNodeForPath(SwingUtilities2.getTreePath(e, getModel()), false, false);
             /* Only need to update the children if the node has been
                expanded once. */
             // PENDING(scott): make sure childIndexs is sorted!
@@ -540,7 +541,7 @@ public class VariableHeightLayoutCache extends AbstractLayoutCache {
             TreeStateNode     changedParentNode;
 
             changedIndexs = e.getChildIndices();
-            changedParentNode = getNodeForPath(e.getTreePath(), false, false);
+            changedParentNode = getNodeForPath(SwingUtilities2.getTreePath(e, getModel()), false, false);
             // PENDING(scott): make sure that changedIndexs are sorted in
             // ascending order.
             if(changedParentNode != null && changedIndexs != null &&
@@ -628,7 +629,7 @@ public class VariableHeightLayoutCache extends AbstractLayoutCache {
     public void treeStructureChanged(TreeModelEvent e) {
         if(e != null)
         {
-            TreePath          changedPath = e.getTreePath();
+            TreePath          changedPath = SwingUtilities2.getTreePath(e, getModel());
             TreeStateNode     changedNode;
 
             changedNode = getNodeForPath(changedPath, false, false);
@@ -1314,7 +1315,7 @@ public class VariableHeightLayoutCache extends AbstractLayoutCache {
         //
 
         /**
-         * Recreates the receivers path, and all its childrens paths.
+         * Recreates the receivers path, and all its children's paths.
          */
         protected void resetChildrenPaths(TreePath parentPath) {
             removeMapping(this);

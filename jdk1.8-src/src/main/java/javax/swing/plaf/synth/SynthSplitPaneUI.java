@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,7 +36,7 @@ import javax.swing.plaf.basic.*;
 
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JSplitPane}.
  *
  * @author Scott Violet
@@ -201,7 +201,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -209,8 +209,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     SynthContext getContext(JComponent c, Region region) {
@@ -219,11 +218,9 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
 
     private SynthContext getContext(JComponent c, Region region, int state) {
         if (region == Region.SPLIT_PANE_DIVIDER) {
-            return SynthContext.getContext(SynthContext.class, c, region,
-                                           dividerStyle, state);
+            return SynthContext.getContext(c, region, dividerStyle, state);
         }
-        return SynthContext.getContext(SynthContext.class, c, region,
-                                       style, state);
+        return SynthContext.getContext(c, region, style, state);
     }
 
     private int getComponentState(JComponent c, Region subregion) {
@@ -236,7 +233,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {
@@ -257,7 +254,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Component createDefaultNonContinuousLayoutDivider() {
@@ -322,7 +319,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -343,7 +340,7 @@ public class SynthSplitPaneUI extends BasicSplitPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void finishedPaintingChildren(JSplitPane jc, Graphics g) {

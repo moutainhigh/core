@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -600,7 +600,7 @@ public class DragSource implements Serializable {
      * @since    1.4
      */
     public DragSourceListener[] getDragSourceListeners() {
-        return (DragSourceListener[])getListeners(DragSourceListener.class);
+        return getListeners(DragSourceListener.class);
     }
 
     /**
@@ -660,8 +660,7 @@ public class DragSource implements Serializable {
      * @since    1.4
      */
     public DragSourceMotionListener[] getDragSourceMotionListeners() {
-        return (DragSourceMotionListener[])
-            getListeners(DragSourceMotionListener.class);
+        return getListeners(DragSourceMotionListener.class);
     }
 
     /**
@@ -677,7 +676,7 @@ public class DragSource implements Serializable {
      *          <code><em>Foo</em>Listener</code>s on this
      *          <code>DragSource</code>, or an empty array if no such listeners
      *          have been added
-     * @exception <code>ClassCastException</code> if <code>listenerType</code>
+     * @exception ClassCastException if <code>listenerType</code>
      *          doesn't specify a class or interface that implements
      *          <code>java.util.EventListener</code>
      *
@@ -896,8 +895,8 @@ public class DragSource implements Serializable {
      * @since 1.5
      */
     public static int getDragThreshold() {
-        int ts = ((Integer)AccessController.doPrivileged(
-                new GetIntegerAction("awt.dnd.drag.threshold", 0))).intValue();
+        int ts = AccessController.doPrivileged(
+                new GetIntegerAction("awt.dnd.drag.threshold", 0)).intValue();
         if (ts > 0) {
             return ts;
         } else {

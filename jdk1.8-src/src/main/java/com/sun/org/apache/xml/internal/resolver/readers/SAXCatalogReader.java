@@ -1,18 +1,15 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2005, 2015, Oracle and/or its affiliates. All rights reserved.
  */
-// SAXCatalogReader.java - Read XML Catalog files
-
 /*
- * Copyright 2001-2004 The Apache Software Foundation or its licensors,
- * as applicable.
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,22 +17,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// SAXCatalogReader.java - Read XML Catalog files
 
 package com.sun.org.apache.xml.internal.resolver.readers;
 
-import java.util.Hashtable;
-import java.io.IOException;
+import com.sun.org.apache.xml.internal.resolver.Catalog;
+import com.sun.org.apache.xml.internal.resolver.CatalogException;
+import com.sun.org.apache.xml.internal.resolver.CatalogManager;
+import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.MalformedURLException;
 import java.net.UnknownHostException;
-
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.parsers.SAXParser;
-
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.AttributeList;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -45,12 +46,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.Parser;
 import org.xml.sax.SAXException;
-
-import com.sun.org.apache.xml.internal.resolver.Catalog;
-import com.sun.org.apache.xml.internal.resolver.CatalogManager;
-import com.sun.org.apache.xml.internal.resolver.CatalogException;
-import com.sun.org.apache.xml.internal.resolver.readers.CatalogReader;
-import com.sun.org.apache.xml.internal.resolver.helpers.Debug;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * A SAX-based CatalogReader.
@@ -93,7 +89,7 @@ public class SAXCatalogReader implements CatalogReader, ContentHandler, Document
      * or "{namespaceuri}elementname". The former is used if the
      * namespace URI is null.</p>
      */
-  protected Hashtable namespaceMap = new Hashtable();
+  protected Map<String, String> namespaceMap = new HashMap<>();
 
   /** The parser in use for the current catalog. */
   private SAXCatalogParser saxParser = null;
@@ -174,9 +170,9 @@ public class SAXCatalogReader implements CatalogReader, ContentHandler, Document
   public String getCatalogParser(String namespaceURI,
                                  String rootElement) {
     if (namespaceURI == null) {
-      return (String) namespaceMap.get(rootElement);
+      return namespaceMap.get(rootElement);
     } else {
-      return (String) namespaceMap.get("{"+namespaceURI+"}"+rootElement);
+      return namespaceMap.get("{"+namespaceURI+"}"+rootElement);
     }
   }
 
@@ -246,7 +242,7 @@ public class SAXCatalogReader implements CatalogReader, ContentHandler, Document
         }
         parser.parse(new InputSource(is), spHandler);
       } else {
-        Parser parser = (Parser) Class.forName(parserClass).newInstance();
+        Parser parser = (Parser) ReflectUtil.forName(parserClass).newInstance();
         parser.setDocumentHandler(this);
         if (bResolver != null) {
           parser.setEntityResolver(bResolver);
@@ -352,7 +348,7 @@ public class SAXCatalogReader implements CatalogReader, ContentHandler, Document
 
       try {
         saxParser = (SAXCatalogParser)
-          Class.forName(saxParserClass).newInstance();
+          ReflectUtil.forName(saxParserClass).newInstance();
 
         saxParser.setCatalog(catalog);
         saxParser.startDocument();
@@ -413,7 +409,7 @@ public class SAXCatalogReader implements CatalogReader, ContentHandler, Document
 
       try {
         saxParser = (SAXCatalogParser)
-          Class.forName(saxParserClass).newInstance();
+          ReflectUtil.forName(saxParserClass).newInstance();
 
         saxParser.setCatalog(catalog);
         saxParser.startDocument();

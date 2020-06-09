@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,7 +26,6 @@
 package javax.tools;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Iterator;
 import java.util.Set;
 import javax.tools.JavaFileObject.Kind;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,13 +40,12 @@ import java.util.StringTokenizer;
  * convention follows the  hierarchical property naming convention.
  * Also, an asterisk
  * may appear at the end of the name, following a ".", or by itself, to
- * signify a wildcard match. For example: "foo.*" or "*" is valid,
- * "*foo" or "a*b" is not valid.
+ * signify a wildcard match. For example: "foo.*" and "*" signify a wildcard
+ * match, while "*foo" and "a*b" do not.
  * <P>
  * The following table lists all the possible NetPermission target names,
  * and for each provides a description of what the permission allows
  * and a discussion of the risks of granting code the permission.
- * <P>
  *
  * <table border=1 cellpadding=5 summary="Permission target name, what the permission allows, and associated risks">
  * <tr>
@@ -177,8 +176,8 @@ public final class NetPermission extends BasicPermission {
      *
      * @param name the name of the NetPermission.
      *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
-     * @throws IllegalArgumentException if <code>name</code> is empty.
+     * @throws NullPointerException if {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code name} is empty.
      */
 
     public NetPermission(String name)
@@ -194,8 +193,8 @@ public final class NetPermission extends BasicPermission {
      * @param name the name of the NetPermission.
      * @param actions should be null.
      *
-     * @throws NullPointerException if <code>name</code> is <code>null</code>.
-     * @throws IllegalArgumentException if <code>name</code> is empty.
+     * @throws NullPointerException if {@code name} is {@code null}.
+     * @throws IllegalArgumentException if {@code name} is empty.
      */
 
     public NetPermission(String name, String actions)

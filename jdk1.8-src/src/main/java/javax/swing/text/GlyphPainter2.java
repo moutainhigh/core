@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -239,10 +239,10 @@ class GlyphPainter2 extends GlyphView.GlyphPainter {
                                              Position.Bias[] biasRet)
             throws BadLocationException {
 
+            Document doc = v.getDocument();
             int startOffset = v.getStartOffset();
             int endOffset = v.getEndOffset();
             Segment text;
-            AbstractDocument doc;
             boolean viewIsLeftToRight;
             TextHitInfo currentHit, nextHit;
 
@@ -252,8 +252,7 @@ class GlyphPainter2 extends GlyphView.GlyphPainter {
             case View.SOUTH:
                 break;
             case View.EAST:
-                doc = (AbstractDocument)v.getDocument();
-                viewIsLeftToRight = doc.isLeftToRight(startOffset, endOffset);
+                viewIsLeftToRight = AbstractDocument.isLeftToRight(doc, startOffset, endOffset);
 
                 if(startOffset == doc.getLength()) {
                     if(pos == -1) {
@@ -313,8 +312,7 @@ class GlyphPainter2 extends GlyphView.GlyphPainter {
                 }
                 return pos;
             case View.WEST:
-                doc = (AbstractDocument)v.getDocument();
-                viewIsLeftToRight = doc.isLeftToRight(startOffset, endOffset);
+                viewIsLeftToRight = AbstractDocument.isLeftToRight(doc, startOffset, endOffset);
 
                 if(startOffset == doc.getLength()) {
                     if(pos == -1) {

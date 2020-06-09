@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,7 +29,7 @@ package javax.security.auth.login;
  * Signals that user authentication failed.
  *
  * <p> This exception is thrown by LoginModules if authentication failed.
- * For example, a <code>LoginModule</code> throws this exception if
+ * For example, a {@code LoginModule} throws this exception if
  * the user entered an incorrect password.
  *
  */

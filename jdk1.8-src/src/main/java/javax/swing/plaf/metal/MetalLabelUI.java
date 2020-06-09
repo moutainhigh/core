@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,7 +37,7 @@ import java.awt.*;
 
 
 /**
- * A Windows L&F implementation of LabelUI.  This implementation
+ * A Windows L&amp;F implementation of LabelUI.  This implementation
  * is completely static, i.e. there's only one UIView implementation
  * that's shared by all JLabel objects.
  *

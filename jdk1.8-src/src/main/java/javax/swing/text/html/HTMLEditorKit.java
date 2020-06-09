@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,7 +26,6 @@ package javax.swing.text.html;
 
 import sun.awt.AppContext;
 
-import java.lang.reflect.Method;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -34,12 +33,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.text.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.plaf.TextUI;
 import java.util.*;
 import javax.accessibility.*;
 import java.lang.ref.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
  * The Swing JEditorPane text component supports different kinds
@@ -55,7 +55,6 @@ import java.lang.ref.*;
  * an effect upon the way that HTML is modeled.  These
  * have influenced its design in a substantial way.
  * <dl>
- * <p>
  * <dt>
  * Support editing
  * <dd>
@@ -70,9 +69,9 @@ import java.lang.ref.*;
  * exactly as defined in the HTML document.
  * <p>
  * The modeling of HTML is provided by the class <code>HTMLDocument</code>.
- * Its documention describes the details of how the HTML is modeled.
+ * Its documentation describes the details of how the HTML is modeled.
  * The editing support leverages heavily off of the text package.
- * <p>
+ *
  * <dt>
  * Extendable/Scalable
  * <dd>
@@ -81,7 +80,7 @@ import java.lang.ref.*;
  * features.
  * <ol>
  *   <li>
- *   The parser is replacable.  The default parser is the Hot Java
+ *   The parser is replaceable.  The default parser is the Hot Java
  *   parser which is DTD based.  A different DTD can be used, or an
  *   entirely different parser can be used.  To change the parser,
  *   reimplement the getParser method.  The default parser is
@@ -115,7 +114,7 @@ import java.lang.ref.*;
  *   attributes for display.  This helps make the View implementations
  *   more general purpose
  * </ol>
- * <p>
+ *
  * <dt>
  * Asynchronous Loading
  * <dd>
@@ -128,7 +127,7 @@ import java.lang.ref.*;
  * by the <code>HTMLDocument.HTMLReader</code> class.  The actual
  * work is done by the <code>DefaultStyledDocument</code> and
  * <code>AbstractDocument</code> classes in the text package.
- * <p>
+ *
  * <dt>
  * Customization from current LAF
  * <dd>
@@ -142,7 +141,7 @@ import java.lang.ref.*;
  * The support for this is provided by the <code>StyleSheet</code>
  * class.  The presentation of the HTML can be heavily influenced
  * by the setting of the StyleSheet property on the EditorKit.
- * <p>
+ *
  * <dt>
  * Not lossy
  * <dd>
@@ -415,14 +414,13 @@ public class HTMLEditorKit extends StyledEditorKit implements Accessible {
      *  HTMLEditorKit class
      * @return a stream representing the resource
      */
-    static InputStream getResourceAsStream(String name) {
-        try {
-            return ResourceLoader.getResourceAsStream(name);
-        } catch (Throwable e) {
-            // If the class doesn't exist or we have some other
-            // problem we just try to call getResourceAsStream directly.
-            return HTMLEditorKit.class.getResourceAsStream(name);
-        }
+    static InputStream getResourceAsStream(final String name) {
+        return AccessController.doPrivileged(
+                new PrivilegedAction<InputStream>() {
+                    public InputStream run() {
+                        return HTMLEditorKit.class.getResourceAsStream(name);
+                    }
+                });
     }
 
     /**
@@ -840,7 +838,7 @@ public class HTMLEditorKit extends StyledEditorKit implements Accessible {
          * if the given position represents a link. If this was the result
          * of a mouse click, <code>x</code> and
          * <code>y</code> will give the location of the mouse, otherwise
-         * they will be < 0.
+         * they will be {@literal <} 0.
          *
          * @param pos the position
          * @param html the editor pane
@@ -2028,8 +2026,8 @@ public class HTMLEditorKit extends StyledEditorKit implements Accessible {
              * Paints a portion of a highlight.
              *
              * @param g the graphics context
-             * @param offs0 the starting model offset >= 0
-             * @param offs1 the ending model offset >= offs1
+             * @param offs0 the starting model offset &ge; 0
+             * @param offs1 the ending model offset &ge; offs1
              * @param bounds the bounding box of the view, which is not
              *        necessarily the region to paint.
              * @param c the editor

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,6 +27,7 @@ package java.awt.event;
 
 import java.awt.AWTEvent;
 import java.awt.Event;
+import java.lang.annotation.Native;
 
 /**
  * A semantic event which indicates that a component-defined action occurred.
@@ -51,7 +52,7 @@ import java.awt.Event;
  * in the range from {@code ACTION_FIRST} to {@code ACTION_LAST}.
  *
  * @see ActionListener
- * @see <a href="http://java.sun.com/docs/books/tutorial/uiswing/events/actionlistener.html">Tutorial: How to Write an Action Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/actionlistener.html">Tutorial: How to Write an Action Listener</a>
  *
  * @author Carl Quinn
  * @since 1.1
@@ -94,9 +95,9 @@ public class ActionEvent extends AWTEvent {
     public static final int ACTION_LAST                 = 1001;
 
     /**
-     * This event id indicates that a meaningful action occured.
+     * This event id indicates that a meaningful action occurred.
      */
-    public static final int ACTION_PERFORMED    = ACTION_FIRST; //Event.ACTION_EVENT
+    @Native public static final int ACTION_PERFORMED    = ACTION_FIRST; //Event.ACTION_EVENT
 
     /**
      * The nonlocalized string that gives more details

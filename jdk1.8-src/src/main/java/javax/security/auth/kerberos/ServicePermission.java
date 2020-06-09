@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,7 +50,7 @@ import java.io.IOException;
  * used within.
  * <p>
  * The service principal name is the canonical name of the
- * <code>KereberosPrincipal</code> supplying the service, that is
+ * {@code KerberosPrincipal} supplying the service, that is
  * the KerberosPrincipal represents a Kerberos service
  * principal. This name is treated in a case sensitive manner.
  * An asterisk may appear by itself, to signify any service principal.
@@ -62,7 +62,7 @@ import java.io.IOException;
  * Authentication Service exchange.
  * <p>
  * The possible actions are:
- * <p>
+ *
  * <pre>
  *    initiate -              allow the caller to use the credential to
  *                            initiate a security context with a service
@@ -75,7 +75,7 @@ import java.io.IOException;
  *
  * For example, to specify the permission to access to the TGT to
  * initiate a security context the permission is constructed as follows:
- * <p>
+ *
  * <pre>
  *     ServicePermission("krbtgt/EXAMPLE.COM@EXAMPLE.COM", "initiate");
  * </pre>
@@ -89,7 +89,7 @@ import java.io.IOException;
  * For a Kerberized server the action is "accept". For example, the permission
  * necessary to access and use the secret key of the  Kerberized "host"
  * service (telnet and the likes)  would be constructed as follows:
- * <p>
+ *
  * <pre>
  *     ServicePermission("host/foo.example.com@EXAMPLE.COM", "accept");
  * </pre>
@@ -135,9 +135,9 @@ public final class ServicePermission extends Permission
                             // created and re-used in the getAction function.
 
     /**
-     * Create a new <code>ServicePermission</code>
-     * with the specified <code>servicePrincipal</code>
-     * and <code>action</code>.
+     * Create a new {@code ServicePermission}
+     * with the specified {@code servicePrincipal}
+     * and {@code action}.
      *
      * @param servicePrincipal the name of the service principal.
      * An asterisk may appear by itself, to signify any service principal.
@@ -145,6 +145,9 @@ public final class ServicePermission extends Permission
      * @param action the action string
      */
     public ServicePermission(String servicePrincipal, String action) {
+        // Note: servicePrincipal can be "@REALM" which means any principal in
+        // this realm implies it. action can be "-" which means any
+        // action implies it.
         super(servicePrincipal);
         init(servicePrincipal, getMask(action));
     }
@@ -169,7 +172,7 @@ public final class ServicePermission extends Permission
      * Checks if this Kerberos service permission object "implies" the
      * specified permission.
      * <P>
-     * If none of the above are true, <code>implies</code> returns false.
+     * If none of the above are true, {@code implies} returns false.
      * @param p the permission to check against.
      *
      * @return true if the specified permission is implied by this object,
@@ -188,7 +191,9 @@ public final class ServicePermission extends Permission
 
     boolean impliesIgnoreMask(ServicePermission p) {
         return ((this.getName().equals("*")) ||
-                this.getName().equals(p.getName()));
+                this.getName().equals(p.getName()) ||
+                (p.getName().startsWith("@") &&
+                        this.getName().endsWith(p.getName())));
     }
 
     /**
@@ -259,7 +264,6 @@ public final class ServicePermission extends Permission
      * Always returns present actions in the following order:
      * initiate, accept.
      */
-
     public String getActions() {
         if (actions == null)
             actions = getActions(this.mask);
@@ -280,7 +284,6 @@ public final class ServicePermission extends Permission
      * @return a new PermissionCollection object suitable for storing
      * ServicePermissions.
      */
-
     public PermissionCollection newPermissionCollection() {
         return new KrbServicePermissionCollection();
     }
@@ -290,7 +293,6 @@ public final class ServicePermission extends Permission
      *
      * @return the actions mask.
      */
-
     int getMask() {
         return mask;
     }
@@ -298,10 +300,12 @@ public final class ServicePermission extends Permission
     /**
      * Convert an action string to an integer actions mask.
      *
-     * @param action the action string
+     * Note: if action is "-", action will be NONE, which means any
+     * action implies it.
+     *
+     * @param action the action string.
      * @return the action mask
      */
-
     private static int getMask(String action) {
 
         if (action == null) {
@@ -316,9 +320,11 @@ public final class ServicePermission extends Permission
 
         char[] a = action.toCharArray();
 
-        int i = a.length - 1;
-        if (i < 0)
+        if (a.length == 1 && a[0] == '-') {
             return mask;
+        }
+
+        int i = a.length - 1;
 
         while (i != -1) {
             char c;
@@ -369,7 +375,7 @@ public final class ServicePermission extends Permission
                 switch(a[i-matchlen]) {
                 case ',':
                     seencomma = true;
-                    /*FALLTHROUGH*/
+                    break;
                 case ' ': case '\r': case '\n':
                 case '\f': case '\t':
                     break;
@@ -468,18 +474,28 @@ final class KrbServicePermissionCollection extends PermissionCollection
      * Check and see if this collection of permissions implies the permissions
      * expressed in "permission".
      *
-     * @param p the Permission object to compare
+     * @param permission the Permission object to compare
      *
      * @return true if "permission" is a proper subset of a permission in
      * the collection, false if not.
      */
-
     public boolean implies(Permission permission) {
         if (! (permission instanceof ServicePermission))
                 return false;
 
         ServicePermission np = (ServicePermission) permission;
         int desired = np.getMask();
+
+        if (desired == 0) {
+            for (Permission p: perms) {
+                ServicePermission sp = (ServicePermission)p;
+                if (sp.impliesIgnoreMask(np)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         int effective = 0;
         int needed = desired;
 
@@ -517,7 +533,6 @@ final class KrbServicePermissionCollection extends PermissionCollection
      * @exception SecurityException - if this PermissionCollection object
      *                                has been marked readonly
      */
-
     public void add(Permission permission) {
         if (! (permission instanceof ServicePermission))
             throw new IllegalArgumentException("invalid permission: "+
@@ -583,8 +598,10 @@ final class KrbServicePermissionCollection extends PermissionCollection
     /*
      * Reads in a Vector of ServicePermissions and saves them in the perms field.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    @SuppressWarnings("unchecked")
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException
+    {
         // Don't call defaultReadObject()
 
         // Read in serialized fields

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,8 +50,8 @@ import java.util.EventListener;
     /**
      * This method is invoked by the {@code DragGestureRecognizer}
      * when the {@code DragGestureRecognizer} detects a platform-dependent
-     * drag initiating gesture. To intiate the drag and drop operation,
-     * if approtiate, {@link DragGestureEvent#startDrag startDrag()} method on
+     * drag initiating gesture. To initiate the drag and drop operation,
+     * if appropriate, {@link DragGestureEvent#startDrag startDrag()} method on
      * the {@code DragGestureEvent} has to be invoked.
      * <P>
      * @see java.awt.dnd.DragGestureRecognizer

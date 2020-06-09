@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,7 +38,7 @@ class SocketException extends IOException {
     private static final long serialVersionUID = -5935874303556886934L;
 
     /**
-     * Constructs a new <code>SocketException</code> with the
+     * Constructs a new {@code SocketException} with the
      * specified detail message.
      *
      * @param msg the detail message.
@@ -48,7 +48,7 @@ class SocketException extends IOException {
     }
 
     /**
-     * Constructs a new <code>SocketException</code> with no detail message.
+     * Constructs a new {@code SocketException} with no detail message.
      */
     public SocketException() {
     }

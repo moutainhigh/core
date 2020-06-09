@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -30,7 +30,7 @@ package java.awt;
  * <code>GridBagLayout</code> class.
  *
  * @author Doug Stein
- * @author Bill Spitzak (orignial NeWS & OLIT implementation)
+ * @author Bill Spitzak (orignial NeWS &amp; OLIT implementation)
  * @see java.awt.GridBagLayout
  * @since JDK1.0
  */
@@ -457,7 +457,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
      * resize the component, and if so, how.
      * <p>
      * The following values are valid for <code>fill</code>:
-     * <p>
+     *
      * <ul>
      * <li>
      * <code>NONE</code>: Do not resize the component.
@@ -653,7 +653,7 @@ public class GridBagConstraints implements Cloneable, java.io.Serializable {
             return c;
         } catch (CloneNotSupportedException e) {
             // this shouldn't happen, since we are Cloneable
-            throw new InternalError();
+            throw new InternalError(e);
         }
     }
 

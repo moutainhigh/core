@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -61,6 +61,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
+import sun.corba.EncapsInputStreamFactory;
+
 public final class TypeCodeOutputStream extends EncapsOutputStream
 {
     private OutputStream enclosure = null;
@@ -77,9 +79,9 @@ public final class TypeCodeOutputStream extends EncapsOutputStream
 
     public org.omg.CORBA.portable.InputStream create_input_stream()
     {
-        //return new TypeCodeInputStream((ORB)orb(), getByteBuffer(), getIndex(), isLittleEndian());
-        TypeCodeInputStream tcis
-            = new TypeCodeInputStream((ORB)orb(), getByteBuffer(), getIndex(), isLittleEndian(), getGIOPVersion());
+        TypeCodeInputStream tcis = EncapsInputStreamFactory
+                .newTypeCodeInputStream((ORB) orb(), getByteBuffer(),
+                        getIndex(), isLittleEndian(), getGIOPVersion());
         //if (TypeCodeImpl.debug) {
             //System.out.println("Created TypeCodeInputStream " + tcis + " with no parent");
             //tcis.printBuffer();
@@ -196,7 +198,8 @@ public final class TypeCodeOutputStream extends EncapsOutputStream
     }
 
     public TypeCodeOutputStream createEncapsulation(org.omg.CORBA.ORB _orb) {
-        TypeCodeOutputStream encap = new TypeCodeOutputStream((ORB)_orb, isLittleEndian());
+        TypeCodeOutputStream encap =
+            sun.corba.OutputStreamFactory.newTypeCodeOutputStream((ORB)_orb, isLittleEndian());
         encap.setEnclosingOutputStream(this);
         encap.makeEncapsulation();
         //if (TypeCodeImpl.debug) System.out.println("Created TypeCodeOutputStream " + encap + " with parent " + this);
@@ -211,7 +214,8 @@ public final class TypeCodeOutputStream extends EncapsOutputStream
 
     public static TypeCodeOutputStream wrapOutputStream(OutputStream os) {
         boolean littleEndian = ((os instanceof CDROutputStream) ? ((CDROutputStream)os).isLittleEndian() : false);
-        TypeCodeOutputStream tos = new TypeCodeOutputStream((ORB)os.orb(), littleEndian);
+        TypeCodeOutputStream tos =
+            sun.corba.OutputStreamFactory.newTypeCodeOutputStream((ORB)os.orb(), littleEndian);
         tos.setEnclosingOutputStream(os);
         //if (TypeCodeImpl.debug) System.out.println("Created TypeCodeOutputStream " + tos + " with parent " + os);
         return tos;

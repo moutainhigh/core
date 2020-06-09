@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -28,10 +28,11 @@ package javax.swing.text.html.parser;
 import java.util.Hashtable;
 import java.util.BitSet;
 import java.io.*;
+import sun.awt.AppContext;
 
 /**
  * An element as described in a DTD using the ELEMENT construct.
- * This is essentiall the description of a tag. It describes the
+ * This is essential the description of a tag. It describes the
  * type, content model, attributes, attribute types etc. It is used
  * to correctly parse a document by the Parser.
  *
@@ -51,8 +52,6 @@ class Element implements DTDConstants, Serializable {
     public ContentModel content;
     public AttributeList atts;
 
-    static int maxIndex = 0;
-
     /**
      * A field to store user data. Mostly used to store
      * style sheets.
@@ -68,7 +67,18 @@ class Element implements DTDConstants, Serializable {
     Element(String name, int index) {
         this.name = name;
         this.index = index;
-        maxIndex = Math.max(maxIndex, index);
+        if (index > getMaxIndex()) {
+            AppContext.getAppContext().put(MAX_INDEX_KEY, index);
+        }
+    }
+
+    private static final Object MAX_INDEX_KEY = new Object();
+
+    static int getMaxIndex() {
+        Integer value = (Integer) AppContext.getAppContext().get(MAX_INDEX_KEY);
+        return (value != null)
+                ? value.intValue()
+                : 0;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,7 +54,7 @@ public interface AccessibleAction {
      * @since 1.5
      */
     public static final String TOGGLE_EXPAND =
-        new String ("toggle expand");
+        new String ("toggleexpand");
 
     /**
      * An action which increments a value.

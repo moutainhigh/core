@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -253,6 +253,13 @@ public class SocketOrChannelAcceptorImpl
             // registered with the selector.  Otherwise if the bytes
             // are read on the connection it will attempt a time stamp
             // but the cache will be null, resulting in NPE.
+
+            // A connection needs to be timestamped before putting to the cache.
+            // Otherwise the newly created connection (with 0 timestamp) could be
+            // incorrectly reclaimed by concurrent reclaim() call OR if there
+            // will be no events on this connection then it could be reclaimed
+            // by upcoming reclaim() call.
+            getConnectionCache().stampTime(connection);
             getConnectionCache().put(this, connection);
 
             if (connection.shouldRegisterServerReadEvent()) {
@@ -534,9 +541,9 @@ public class SocketOrChannelAcceptorImpl
     {
         CorbaMessageMediator corbaMessageMediator = (CorbaMessageMediator)
             messageMediator;
-        return new CDROutputObject((ORB) broker, corbaMessageMediator,
-                                   corbaMessageMediator.getReplyHeader(),
-                                   corbaMessageMediator.getStreamFormatVersion());
+        return sun.corba.OutputStreamFactory.newCDROutputObject((ORB) broker,
+                       corbaMessageMediator, corbaMessageMediator.getReplyHeader(),
+                       corbaMessageMediator.getStreamFormatVersion());
     }
 
     ////////////////////////////////////////////////////

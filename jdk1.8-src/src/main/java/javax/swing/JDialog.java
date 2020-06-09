@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -35,7 +35,7 @@ import javax.accessibility.*;
  * For information about creating dialogs, see
  * <em>The Java Tutorial</em> section
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/dialog.html">How
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html">How
  * to Make Dialogs</a>.
  *
  * <p>
@@ -44,9 +44,10 @@ import javax.accessibility.*;
  * as its only child.
  * The {@code contentPane} should be the parent of any children of the
  * {@code JDialog}.
- * As a convenience {@code add} and its variants, {@code remove} and
- * {@code setLayout} have been overridden to forward to the
- * {@code contentPane} as necessary. This means you can write:
+ * As a convenience, the {@code add}, {@code remove}, and {@code setLayout}
+ * methods of this class are overridden, so that they delegate calls
+ * to the corresponding methods of the {@code ContentPane}.
+ * For example, you can add a child component to a dialog as follows:
  * <pre>
  *       dialog.add(child);
  * </pre>
@@ -77,7 +78,7 @@ import javax.accessibility.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the {@code java.beans} package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -645,6 +646,7 @@ public class JDialog extends Dialog implements WindowConstants,
         enableEvents(AWTEvent.KEY_EVENT_MASK | AWTEvent.WINDOW_EVENT_MASK);
         setLocale( JComponent.getDefaultLocale() );
         setRootPane(createRootPane());
+        setBackground(UIManager.getColor("control"));
         setRootPaneCheckingEnabled(true);
         if (JDialog.isDefaultLookAndFeelDecorated()) {
             boolean supportsWindowDecorations =
@@ -700,7 +702,7 @@ public class JDialog extends Dialog implements WindowConstants,
      * Sets the operation that will happen by default when
      * the user initiates a "close" on this dialog.
      * You must specify one of the following choices:
-     * <p>
+     * <br><br>
      * <ul>
      * <li>{@code DO_NOTHING_ON_CLOSE}
      * (defined in {@code WindowConstants}):
@@ -786,7 +788,7 @@ public class JDialog extends Dialog implements WindowConstants,
      * are currently typed to {@code JComponent}.
      * <p>
      * Please see
-     * <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">
+     * <a href="https://docs.oracle.com/javase/tutorial/uiswing/dnd/index.html">
      * How to Use Drag and Drop and Data Transfer</a>, a section in
      * <em>The Java Tutorial</em>, for more information.
      *
@@ -862,7 +864,7 @@ public class JDialog extends Dialog implements WindowConstants,
      * {@code setLayout} are forwarded to the {@code contentPane}.
      *
      * @return true if {@code add} and {@code setLayout}
-     *         are fowarded; false otherwise
+     *         are forwarded; false otherwise
      *
      * @see #addImpl
      * @see #setLayout
@@ -1024,7 +1026,7 @@ public class JDialog extends Dialog implements WindowConstants,
      * This method is called by the constructor.
      * <p>
      * Swing's painting architecture requires an opaque {@code JComponent}
-     * in the containment hiearchy. This is typically provided by the
+     * in the containment hierarchy. This is typically provided by the
      * content pane. If you replace the content pane it is recommended you
      * replace it with an opaque {@code JComponent}.
      * @see JRootPane

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -35,9 +35,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 import javax.accessibility.*;
 
-
 import java.io.Serializable;
-
 
 /**
  * The "viewport" or "porthole" through which you see the underlying
@@ -92,7 +90,7 @@ import java.io.Serializable;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -283,7 +281,7 @@ public class JViewport extends JComponent implements Accessible
 
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      *
      * @return a <code>ViewportUI</code> object
      * @since 1.3
@@ -294,9 +292,9 @@ public class JViewport extends JComponent implements Accessible
 
 
     /**
-     * Sets the L&F object that renders this component.
+     * Sets the L&amp;F object that renders this component.
      *
-     * @param ui  the <code>ViewportUI</code> L&F object
+     * @param ui  the <code>ViewportUI</code> L&amp;F object
      * @see UIDefaults#getUI
      * @beaninfo
      *        bound: true
@@ -321,7 +319,7 @@ public class JViewport extends JComponent implements Accessible
 
 
     /**
-     * Returns a string that specifies the name of the L&F class
+     * Returns a string that specifies the name of the L&amp;F class
      * that renders this component.
      *
      * @return the string "ViewportUI"
@@ -360,7 +358,6 @@ public class JViewport extends JComponent implements Accessible
         child.removeComponentListener(viewListener);
         super.remove(child);
     }
-
 
     /**
      * Scrolls the view so that <code>Rectangle</code>
@@ -450,7 +447,7 @@ public class JViewport extends JComponent implements Accessible
                     // and paint is received another repaint is queued
                     // indicating part of the view is invalid. There
                     // is no way for JViewport to notice another
-                    // repaint has occured and it ends up blitting
+                    // repaint has occurred and it ends up blitting
                     // what is now a dirty region and the repaint is
                     // never delivered.
                     // It just so happens JTable encounters this
@@ -572,7 +569,7 @@ public class JViewport extends JComponent implements Accessible
      * Returns the insets (border) dimensions as (0,0,0,0), since borders
      * are not supported on a <code>JViewport</code>.
      *
-     * @return a <code>Rectange</code> of zero dimension and zero origin
+     * @return a <code>Rectangle</code> of zero dimension and zero origin
      * @see #setBorder
      */
     public final Insets getInsets() {
@@ -1095,13 +1092,15 @@ public class JViewport extends JComponent implements Accessible
                         Graphics g = JComponent.safelyGetGraphics(this);
                         flushViewDirtyRegion(g, dirty);
                         view.setLocation(newX, newY);
-                        g.setClip(0,0,getWidth(), Math.min(getHeight(),
-                                                           jview.getHeight()));
+                        Rectangle r = new Rectangle(
+                            0, 0, getWidth(), Math.min(getHeight(), jview.getHeight()));
+                        g.setClip(r);
                         // Repaint the complete component if the blit succeeded
                         // and needsRepaintAfterBlit returns true.
                         repaintAll = (windowBlitPaint(g) &&
                                       needsRepaintAfterBlit());
                         g.dispose();
+                        rm.notifyRepaintPerformed(this, r.x, r.y, r.width, r.height);
                         rm.markCompletelyClean((JComponent)getParent());
                         rm.markCompletelyClean(this);
                         rm.markCompletelyClean(jview);
@@ -1279,7 +1278,7 @@ public class JViewport extends JComponent implements Accessible
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
@@ -1586,10 +1585,18 @@ public class JViewport extends JComponent implements Accessible
         int bdx = blitToX - blitFromX;
         int bdy = blitToY - blitFromY;
 
+        Composite oldComposite = null;
         // Shift the scrolled region
+        if (g instanceof Graphics2D) {
+            Graphics2D g2d = (Graphics2D) g;
+            oldComposite = g2d.getComposite();
+            g2d.setComposite(AlphaComposite.Src);
+        }
         rm.copyArea(this, g, blitFromX, blitFromY, blitW, blitH, bdx, bdy,
                     false);
-
+        if (oldComposite != null) {
+            ((Graphics2D) g).setComposite(oldComposite);
+        }
         // Paint the newly exposed region.
         int x = view.getX();
         int y = view.getY();
@@ -1740,7 +1747,7 @@ public class JViewport extends JComponent implements Accessible
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */

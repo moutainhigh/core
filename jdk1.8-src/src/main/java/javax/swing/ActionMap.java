@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,6 +55,7 @@ import java.util.Set;
  * @author Scott Violet
  * @since 1.3
  */
+@SuppressWarnings("serial")
 public class ActionMap implements Serializable {
     /** Handles the mapping between Action name and Action. */
     private transient ArrayTable     arrayTable;

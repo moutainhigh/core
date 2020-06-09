@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,12 +25,29 @@
 
 package java.awt.datatransfer;
 
-import java.awt.Toolkit;
-import java.io.*;
-import java.nio.*;
-import java.util.*;
-
 import sun.awt.datatransfer.DataTransferer;
+import sun.reflect.misc.ReflectUtil;
+
+import java.io.ByteArrayInputStream;
+import java.io.CharArrayReader;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.OptionalDataException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Objects;
+
+import static sun.security.util.SecurityConstants.GET_CLASSLOADER_PERMISSION;
 
 /**
  * A {@code DataFlavor} provides meta information about data. {@code DataFlavor}
@@ -91,7 +108,7 @@ import sun.awt.datatransfer.DataTransferer;
  * the same results.
  * <p>
  * For more information on the using data transfer with Swing see
- * the <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">
+ * the <a href="https://docs.oracle.com/javase/tutorial/uiswing/dnd/index.html">
  * How to Use Drag and Drop and Data Transfer</a>,
  * section in <em>Java Tutorial</em>.
  *
@@ -102,7 +119,7 @@ import sun.awt.datatransfer.DataTransferer;
 public class DataFlavor implements Externalizable, Cloneable {
 
     private static final long serialVersionUID = 8367026044764648243L;
-    private static final Class ioInputStreamClass = java.io.InputStream.class;
+    private static final Class<InputStream> ioInputStreamClass = InputStream.class;
 
     /**
      * Tries to load a class from: the bootstrap loader, the system loader,
@@ -117,33 +134,39 @@ public class DataFlavor implements Externalizable, Cloneable {
                                                    ClassLoader fallback)
         throws ClassNotFoundException
     {
-        ClassLoader systemClassLoader = (ClassLoader)
-            java.security.AccessController.doPrivileged(
-                new java.security.PrivilegedAction() {
-                    public Object run() {
-                        ClassLoader cl = Thread.currentThread().
-                            getContextClassLoader();
-                        return (cl != null)
-                            ? cl
-                            : ClassLoader.getSystemClassLoader();
-                    }
-                    });
-
+        ReflectUtil.checkPackageAccess(className);
         try {
-            return Class.forName(className, true, systemClassLoader);
-        } catch (ClassNotFoundException e2) {
-            if (fallback != null) {
-                return Class.forName(className, true, fallback);
-            } else {
-                throw new ClassNotFoundException(className);
+            SecurityManager sm = System.getSecurityManager();
+            if (sm != null) {
+                sm.checkPermission(GET_CLASSLOADER_PERMISSION);
             }
+            ClassLoader loader = ClassLoader.getSystemClassLoader();
+            try {
+                // bootstrap class loader and system class loader if present
+                return Class.forName(className, true, loader);
+            }
+            catch (ClassNotFoundException exception) {
+                // thread context class loader if and only if present
+                loader = Thread.currentThread().getContextClassLoader();
+                if (loader != null) {
+                    try {
+                        return Class.forName(className, true, loader);
+                    }
+                    catch (ClassNotFoundException e) {
+                        // fallback to user's class loader
+                    }
+                }
+            }
+        } catch (SecurityException exception) {
+            // ignore secured class loaders
         }
+        return Class.forName(className, true, fallback);
     }
 
     /*
      * private initializer
      */
-    static private DataFlavor createConstant(Class rc, String prn) {
+    static private DataFlavor createConstant(Class<?> rc, String prn) {
         try {
             return new DataFlavor(rc, prn);
         } catch (Exception e) {
@@ -157,6 +180,18 @@ public class DataFlavor implements Externalizable, Cloneable {
     static private DataFlavor createConstant(String mt, String prn) {
         try {
             return new DataFlavor(mt, prn);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /*
+     * private initializer
+     */
+    static private DataFlavor initHtmlDataFlavor(String htmlFlavorType) {
+        try {
+            return new DataFlavor ("text/html; class=java.lang.String;document=" +
+                                       htmlFlavorType + ";charset=Unicode");
         } catch (Exception e) {
             return null;
         }
@@ -246,6 +281,46 @@ public class DataFlavor implements Externalizable, Cloneable {
     public static final String javaRemoteObjectMimeType = "application/x-java-remote-object";
 
     /**
+     * Represents a piece of an HTML markup. The markup consists of the part
+     * selected on the source side. Therefore some tags in the markup may be
+     * unpaired. If the flavor is used to represent the data in
+     * a {@link Transferable} instance, no additional changes will be made.
+     * This DataFlavor instance represents the same HTML markup as DataFlavor
+     * instances which content MIME type does not contain document parameter
+     * and representation class is the String class.
+     * <pre>
+     *     representationClass = String
+     *     mimeType           = "text/html"
+     * </pre>
+     */
+    public static DataFlavor selectionHtmlFlavor = initHtmlDataFlavor("selection");
+
+    /**
+     * Represents a piece of an HTML markup. If possible, the markup received
+     * from a native system is supplemented with pair tags to be
+     * a well-formed HTML markup. If the flavor is used to represent the data in
+     * a {@link Transferable} instance, no additional changes will be made.
+     * <pre>
+     *     representationClass = String
+     *     mimeType           = "text/html"
+     * </pre>
+     */
+    public static DataFlavor fragmentHtmlFlavor = initHtmlDataFlavor("fragment");
+
+    /**
+     * Represents a piece of an HTML markup. If possible, the markup
+     * received from a native system is supplemented with additional
+     * tags to make up a well-formed HTML document. If the flavor is used to
+     * represent the data in a {@link Transferable} instance,
+     * no additional changes will be made.
+     * <pre>
+     *     representationClass = String
+     *     mimeType           = "text/html"
+     * </pre>
+     */
+    public static  DataFlavor allHtmlFlavor = initHtmlDataFlavor("all");
+
+    /**
      * Constructs a new <code>DataFlavor</code>.  This constructor is
      * provided only for the purpose of supporting the
      * <code>Externalizable</code> interface.  It is not
@@ -263,7 +338,7 @@ public class DataFlavor implements Externalizable, Cloneable {
      * @exception NullPointerException if either <code>primaryType</code>,
      *            <code>subType</code> or <code>representationClass</code> is null
      */
-    private DataFlavor(String primaryType, String subType, MimeTypeParameterList params, Class representationClass, String humanPresentableName) {
+    private DataFlavor(String primaryType, String subType, MimeTypeParameterList params, Class<?> representationClass, String humanPresentableName) {
         super();
         if (primaryType == null) {
             throw new NullPointerException("primaryType");
@@ -280,7 +355,7 @@ public class DataFlavor implements Externalizable, Cloneable {
         params.set("class", representationClass.getName());
 
         if (humanPresentableName == null) {
-            humanPresentableName = (String)params.get("humanPresentableName");
+            humanPresentableName = params.get("humanPresentableName");
 
             if (humanPresentableName == null)
                 humanPresentableName = primaryType + "/" + subType;
@@ -403,7 +478,7 @@ public class DataFlavor implements Externalizable, Cloneable {
 
     /**
      * Constructs a <code>DataFlavor</code> from a <code>mimeType</code> string.
-     * The string can specify a "class=<fully specified Java class name>"
+     * The string can specify a "class=&lt;fully specified Java class name&gt;"
      * parameter to create a <code>DataFlavor</code> with the desired
      * representation class. If the string does not contain "class=" parameter,
      * <code>java.io.InputStream</code> is used as default.
@@ -441,7 +516,7 @@ public class DataFlavor implements Externalizable, Cloneable {
     * @throws ClassNotFoundException
     * @throws  NullPointerException if <code>mimeType</code> is null
     *
-    * @see tryToLoadClass
+    * @see #tryToLoadClass
     */
     private void initialize(String mimeType, String humanPresentableName, ClassLoader classLoader) throws MimeTypeParseException, ClassNotFoundException {
         if (mimeType == null) {
@@ -510,7 +585,7 @@ public class DataFlavor implements Externalizable, Cloneable {
         if (DataTransferer.isFlavorCharsetTextType(this) &&
             (isRepresentationClassInputStream() ||
              isRepresentationClassByteBuffer() ||
-             DataTransferer.byteArrayClass.equals(representationClass)))
+             byte[].class.equals(representationClass)))
         {
             params += ";charset=" + DataTransferer.getTextCharset(this);
         }
@@ -681,7 +756,7 @@ public class DataFlavor implements Externalizable, Cloneable {
         return bestFlavor;
     }
 
-    private static Comparator textFlavorComparator;
+    private static Comparator<DataFlavor> textFlavorComparator;
 
     static class TextFlavorComparator
         extends DataTransferer.DataFlavorComparator {
@@ -930,14 +1005,8 @@ public class DataFlavor implements Externalizable, Cloneable {
             return true;
         }
 
-        if (representationClass == null) {
-            if (that.getRepresentationClass() != null) {
-                return false;
-            }
-        } else {
-            if (!representationClass.equals(that.getRepresentationClass())) {
-                return false;
-            }
+        if (!Objects.equals(this.getRepresentationClass(), that.getRepresentationClass())) {
+            return false;
         }
 
         if (mimeType == null) {
@@ -949,24 +1018,23 @@ public class DataFlavor implements Externalizable, Cloneable {
                 return false;
             }
 
-            if ("text".equals(getPrimaryType()) &&
-                DataTransferer.doesSubtypeSupportCharset(this) &&
-                representationClass != null &&
-                !(isRepresentationClassReader() ||
-                  String.class.equals(representationClass) ||
-                  isRepresentationClassCharBuffer() ||
-                  DataTransferer.charArrayClass.equals(representationClass)))
-            {
-                String thisCharset =
-                    DataTransferer.canonicalName(getParameter("charset"));
-                String thatCharset =
-                    DataTransferer.canonicalName(that.getParameter("charset"));
-                if (thisCharset == null) {
-                    if (thatCharset != null) {
+            if ("text".equals(getPrimaryType())) {
+                if (DataTransferer.doesSubtypeSupportCharset(this)
+                        && representationClass != null
+                        && !isStandardTextRepresentationClass()) {
+                    String thisCharset =
+                            DataTransferer.canonicalName(this.getParameter("charset"));
+                    String thatCharset =
+                            DataTransferer.canonicalName(that.getParameter("charset"));
+                    if (!Objects.equals(thisCharset, thatCharset)) {
                         return false;
                     }
-                } else {
-                    if (!thisCharset.equals(thatCharset)) {
+                }
+
+                if ("html".equals(getSubType())) {
+                    String thisDocument = this.getParameter("document");
+                    String thatDocument = that.getParameter("document");
+                    if (!Objects.equals(thisDocument, thatDocument)) {
                         return false;
                     }
                 }
@@ -1023,19 +1091,21 @@ public class DataFlavor implements Externalizable, Cloneable {
             // MimeType.match which reports a match if one or both of the
             // subTypes is '*', regardless of the other subType.
 
-            if ("text".equals(primaryType) &&
-                DataTransferer.doesSubtypeSupportCharset(this) &&
-                representationClass != null &&
-                !(isRepresentationClassReader() ||
-                  String.class.equals(representationClass) ||
-                  isRepresentationClassCharBuffer() ||
-                  DataTransferer.charArrayClass.equals
-                  (representationClass)))
-            {
-                String charset =
-                    DataTransferer.canonicalName(getParameter("charset"));
-                if (charset != null) {
-                    total += charset.hashCode();
+            if ("text".equals(primaryType)) {
+                if (DataTransferer.doesSubtypeSupportCharset(this)
+                        && representationClass != null
+                        && !isStandardTextRepresentationClass()) {
+                    String charset = DataTransferer.canonicalName(getParameter("charset"));
+                    if (charset != null) {
+                        total += charset.hashCode();
+                    }
+                }
+
+                if ("html".equals(getSubType())) {
+                    String document = this.getParameter("document");
+                    if (document != null) {
+                        total += document.hashCode();
+                    }
                 }
             }
         }
@@ -1109,6 +1179,20 @@ public class DataFlavor implements Externalizable, Cloneable {
             return (mtype == null);
         }
         return mimeType.match(mtype);
+    }
+
+    /**
+     * Checks if the representation class is one of the standard text
+     * representation classes.
+     *
+     * @return true if the representation class is one of the standard text
+     *              representation classes, otherwise false
+     */
+    private boolean isStandardTextRepresentationClass() {
+        return isRepresentationClassReader()
+                || String.class.equals(representationClass)
+                || isRepresentationClassCharBuffer()
+                || char[].class.equals(representationClass);
     }
 
    /**
@@ -1376,6 +1460,6 @@ public class DataFlavor implements Externalizable, Cloneable {
 
     /** Java class of objects this DataFlavor represents **/
 
-    private Class       representationClass;
+    private Class<?>       representationClass;
 
 } // class DataFlavor

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import java.io.IOException;
  * <p> Where dynamic access to file attributes is required, the attributes
  * supported by this attribute view have the following names and types:
  * <blockquote>
- *  <table border="1" cellpadding="8">
+ *  <table border="1" cellpadding="8" summary="Supported attributes">
  *   <tr>
  *     <th> Name </th>
  *     <th> Type </th>
@@ -147,11 +147,11 @@ public interface BasicFileAttributeView
      * this method has no effect.
      *
      * <p> <b>Usage Example:</b>
-     * Suppose we want to change a file's creation time.
+     * Suppose we want to change a file's last access time.
      * <pre>
      *    Path path = ...
      *    FileTime time = ...
-     *    Files.getFileAttributeView(path, BasicFileAttributeView.class).setTimes(null, null, time);
+     *    Files.getFileAttributeView(path, BasicFileAttributeView.class).setTimes(null, time, null);
      * </pre>
      *
      * @param   lastModifiedTime

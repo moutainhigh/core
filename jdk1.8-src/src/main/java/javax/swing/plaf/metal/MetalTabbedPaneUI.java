@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -776,7 +776,7 @@ public class MetalTabbedPaneUI extends BasicTabbedPaneUI {
     }
 
     /**
-     * Overridden to do nothing for the Java L&F.
+     * Overridden to do nothing for the Java L&amp;F.
      */
     protected int getTabLabelShiftX( int tabPlacement, int tabIndex, boolean isSelected ) {
         return 0;
@@ -784,7 +784,7 @@ public class MetalTabbedPaneUI extends BasicTabbedPaneUI {
 
 
     /**
-     * Overridden to do nothing for the Java L&F.
+     * Overridden to do nothing for the Java L&amp;F.
      */
     protected int getTabLabelShiftY( int tabPlacement, int tabIndex, boolean isSelected ) {
         return 0;
@@ -806,9 +806,8 @@ public class MetalTabbedPaneUI extends BasicTabbedPaneUI {
 
         // Paint the background for the tab area
         if ( tabPane.isOpaque() ) {
-            Color bg = UIManager.getColor("TabbedPane.tabAreaBackground");
-            if (bg != null) {
-                g.setColor(bg);
+            if (!c.isBackgroundSet() && (tabAreaBackground != null)) {
+                g.setColor(tabAreaBackground);
             }
             else {
                 g.setColor( c.getBackground() );

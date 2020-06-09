@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ import javax.swing.plaf.basic.*;
 
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JScrollBar}.
  *
  * @author Scott Violet
@@ -53,10 +53,11 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
+        super.installDefaults();
         trackHighlight = NO_HIGHLIGHT;
         if (scrollbar.getLayout() == null ||
                      (scrollbar.getLayout() instanceof UIResource)) {
@@ -67,7 +68,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void configureScrollBarColors() {
@@ -135,7 +136,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -144,7 +145,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -153,7 +154,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults(){
@@ -176,7 +177,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -184,8 +185,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private SynthContext getContext(JComponent c, Region region) {
@@ -198,8 +198,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
         if (region == Region.SCROLL_BAR_THUMB) {
             style = thumbStyle;
         }
-        return SynthContext.getContext(SynthContext.class, c, region, style,
-                                       state);
+        return SynthContext.getContext(c, region, style, state);
     }
 
     private int getComponentState(JComponent c, Region region) {
@@ -211,7 +210,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public boolean getSupportsAbsolutePositioning() {
@@ -282,7 +281,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -353,7 +352,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Dimension getMinimumThumbSize() {
@@ -370,7 +369,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected JButton createDecreaseButton(int orientation)  {
@@ -399,7 +398,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected JButton createIncreaseButton(int orientation)  {
@@ -430,7 +429,7 @@ public class SynthScrollBarUI extends BasicScrollBarUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void setThumbRollover(boolean active) {

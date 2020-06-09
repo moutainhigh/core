@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,7 +50,7 @@ import javax.swing.event.TableModelEvent;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -182,7 +182,7 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      *  each a single row of values.  In other words, to get to the cell
      *  at row 1, column 5: <p>
      *
-     *  <code>((Vector)getDataVector().elementAt(1)).elementAt(5);</code><p>
+     *  <code>((Vector)getDataVector().elementAt(1)).elementAt(5);</code>
      *
      * @return  the vector of vectors containing the tables data values
      *
@@ -306,7 +306,7 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      *  Sets the number of rows in the model.  If the new size is greater
      *  than the current size, new rows are added to the end of the model
      *  If the new size is less than the current size, all
-     *  rows at index <code>rowCount</code> and greater are discarded. <p>
+     *  rows at index <code>rowCount</code> and greater are discarded.
      *
      * @param   rowCount   the new number of rows
      * @see #setRowCount
@@ -330,7 +330,7 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      *  Sets the number of rows in the model.  If the new size is greater
      *  than the current size, new rows are added to the end of the model
      *  If the new size is less than the current size, all
-     *  rows at index <code>rowCount</code> and greater are discarded. <p>
+     *  rows at index <code>rowCount</code> and greater are discarded.
      *
      *  @see #setColumnCount
      * @since 1.3
@@ -414,19 +414,18 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      *  After the move, the row that was at index <code>start</code>
      *  will be at index <code>to</code>.
      *  This method will send a <code>tableChanged</code> notification
-     *  message to all the listeners. <p>
+       message to all the listeners.
      *
      *  <pre>
      *  Examples of moves:
-     *  <p>
+     *
      *  1. moveRow(1,3,5);
      *          a|B|C|D|e|f|g|h|i|j|k   - before
      *          a|e|f|g|h|B|C|D|i|j|k   - after
-     *  <p>
+     *
      *  2. moveRow(6,7,1);
      *          a|b|c|d|e|f|G|H|i|j|k   - before
      *          a|G|H|b|c|d|e|f|i|j|k   - after
-     *  <p>
      *  </pre>
      *
      * @param   start       the starting row index to be moved
@@ -474,7 +473,7 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      * of columns, new columns are added to the end of each row in the model.
      * If the number of <code>newIdentifier</code>s is less than the current
      * number of columns, all the extra columns at the end of a row are
-     * discarded. <p>
+     * discarded.
      *
      * @param   columnIdentifiers  vector of column identifiers.  If
      *                          <code>null</code>, set the model
@@ -491,7 +490,7 @@ public class DefaultTableModel extends AbstractTableModel implements Serializabl
      * of columns, new columns are added to the end of each row in the model.
      * If the number of <code>newIdentifier</code>s is less than the current
      * number of columns, all the extra columns at the end of a row are
-     * discarded. <p>
+     * discarded.
      *
      * @param   newIdentifiers  array of column identifiers.
      *                          If <code>null</code>, set

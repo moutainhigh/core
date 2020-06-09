@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,7 +50,7 @@ import javax.print.attribute.Attribute;
  * object to the Print Service's
  * {@link PrinterStateReasons PrinterStateReasons} attribute when the
  * corresponding condition becomes true of the printer, and the printer
- * removesthe PrinterStateReason object again when the corresponding
+ * removes the PrinterStateReason object again when the corresponding
  * condition becomes false, regardless of whether the Print Service's overall
  * {@link PrinterState PrinterState} also changed.
  * <P>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -112,7 +112,7 @@ class NumericValueExp extends QueryEval implements ValueExp {
     public NumericValueExp() {
     }
 
-    /** Creates a new NumericValue representing the numeric literal <val>.*/
+    /** Creates a new NumericValue representing the numeric literal @{code val}.*/
     NumericValueExp(Number val)
     {
       this.val = val;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -436,7 +436,7 @@ public abstract class RemoteObject implements Remote, java.io.Serializable {
              */
             String internalRefClassName =
                 RemoteRef.packagePrefix + "." + refClassName;
-            Class refClass = Class.forName(internalRefClassName);
+            Class<?> refClass = Class.forName(internalRefClassName);
             try {
                 ref = (RemoteRef) refClass.newInstance();
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -129,14 +129,15 @@ public class AccessibleObject implements AnnotatedElement {
         setAccessible0(this, flag);
     }
 
-    /* Check that you aren't exposing java.lang.Class.<init>. */
+    /* Check that you aren't exposing java.lang.Class.<init> or sensitive
+       fields in java.lang.Class. */
     private static void setAccessible0(AccessibleObject obj, boolean flag)
         throws SecurityException
     {
         if (obj instanceof Constructor && flag == true) {
             Constructor<?> c = (Constructor<?>)obj;
             if (c.getDeclaringClass() == Class.class) {
-                throw new SecurityException("Can not make a java.lang.Class" +
+                throw new SecurityException("Cannot make a java.lang.Class" +
                                             " constructor accessible");
             }
         }
@@ -181,12 +182,22 @@ public class AccessibleObject implements AnnotatedElement {
     }
 
     /**
+     * {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      * @since 1.5
      */
-    public boolean isAnnotationPresent(
-        Class<? extends Annotation> annotationClass) {
-        return getAnnotation(annotationClass) != null;
+    @Override
+    public boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
+        return AnnotatedElement.super.isAnnotationPresent(annotationClass);
+    }
+
+   /**
+     * @throws NullPointerException {@inheritDoc}
+     * @since 1.8
+     */
+    @Override
+    public <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
+        throw new AssertionError("All subclasses should override this method");
     }
 
     /**
@@ -194,6 +205,30 @@ public class AccessibleObject implements AnnotatedElement {
      */
     public Annotation[] getAnnotations() {
         return getDeclaredAnnotations();
+    }
+
+    /**
+     * @throws NullPointerException {@inheritDoc}
+     * @since 1.8
+     */
+    @Override
+    public <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
+        // Only annotations on classes are inherited, for all other
+        // objects getDeclaredAnnotation is the same as
+        // getAnnotation.
+        return getAnnotation(annotationClass);
+    }
+
+    /**
+     * @throws NullPointerException {@inheritDoc}
+     * @since 1.8
+     */
+    @Override
+    public <T extends Annotation> T[] getDeclaredAnnotationsByType(Class<T> annotationClass) {
+        // Only annotations on classes are inherited, for all other
+        // objects getDeclaredAnnotationsByType is the same as
+        // getAnnotationsByType.
+        return getAnnotationsByType(annotationClass);
     }
 
     /**

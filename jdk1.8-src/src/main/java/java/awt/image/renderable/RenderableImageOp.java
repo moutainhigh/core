@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -236,7 +236,7 @@ public class RenderableImageOp implements RenderableImage {
      *
      * @param w the width of rendered image in pixels, or 0.
      * @param h the height of rendered image in pixels, or 0.
-     * @param hints a RenderingHints object containg hints.
+     * @param hints a RenderingHints object containing hints.
      * @return a RenderedImage containing the rendered data.
      */
     public RenderedImage createScaledRendering(int w, int h,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -124,7 +124,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override public UIDefaults getDefaults() {
         if (uiDefaults == null){
@@ -159,7 +159,12 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
 
             // Store Table ScrollPane Corner Component
             uiDefaults.put("Table.scrollPaneCornerComponent",
-                    TableScrollPaneCorner.class);
+                    new UIDefaults.ActiveValue() {
+                        @Override
+                        public Object createValue(UIDefaults table) {
+                            return new TableScrollPaneCorner();
+                        }
+                    });
 
             // Setup the settings for ToolBarSeparator which is custom
             // installed for Nimbus
@@ -256,7 +261,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      * @return {@code true}
      */
     @Override public boolean shouldUpdateStyleOnAncestorChanged() {
@@ -264,7 +269,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      *
      * <p>Overridden to return {@code true} when one of the following
      * properties change:

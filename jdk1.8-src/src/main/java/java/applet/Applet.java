@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -117,7 +117,7 @@ public class Applet extends Panel {
                 s.checkPermission(new AWTPermission("setAppletStub"));
             }
         }
-        this.stub = (AppletStub)stub;
+        this.stub = stub;
     }
 
     /**
@@ -143,11 +143,11 @@ public class Applet extends Panel {
      * For example, suppose an applet is contained
      * within the document:
      * <blockquote><pre>
-     *    http://java.sun.com/products/jdk/1.2/index.html
+     *    http://www.oracle.com/technetwork/java/index.html
      * </pre></blockquote>
      * The document base is:
      * <blockquote><pre>
-     *    http://java.sun.com/products/jdk/1.2/index.html
+     *    http://www.oracle.com/technetwork/java/index.html
      * </pre></blockquote>
      *
      * @return  the {@link java.net.URL} of the document that contains this
@@ -210,6 +210,7 @@ public class Applet extends Panel {
      * @param   width    the new requested width for the applet.
      * @param   height   the new requested height for the applet.
      */
+    @SuppressWarnings("deprecation")
     public void resize(int width, int height) {
         Dimension d = size();
         if ((d.width != width) || (d.height != height)) {
@@ -225,6 +226,7 @@ public class Applet extends Panel {
      *
      * @param   d   an object giving the new width and height.
      */
+    @SuppressWarnings("deprecation")
     public void resize(Dimension d) {
         resize(d.width, d.height);
     }
@@ -390,7 +392,7 @@ public class Applet extends Panel {
      * Each element of the array should be a set of three
      * <code>Strings</code> containing the name, the type, and a
      * description. For example:
-     * <p><blockquote><pre>
+     * <blockquote><pre>
      * String pinfo[][] = {
      *   {"fps",    "1-10",    "frames per second"},
      *   {"repeat", "boolean", "repeat image loop"},

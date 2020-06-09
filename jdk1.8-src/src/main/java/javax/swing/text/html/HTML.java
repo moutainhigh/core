@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -303,7 +303,7 @@ public class HTML {
         }
 
         /**
-         * Compares this object to the specifed object.
+         * Compares this object to the specified object.
          * The result is <code>true</code> if and only if the argument is not
          * <code>null</code> and is an <code>UnknownTag</code> object
          * with the same name.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,10 +42,10 @@ import javax.accessibility.*;
  * The following image shows the appearance of a text area:
  * <p>
  * <img src="doc-files/TextArea-1.gif" alt="A TextArea showing the word 'Hello!'"
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * This text area could be created by the following line of code:
- * <p>
+ *
  * <hr><blockquote><pre>
  * new TextArea("Hello", 5, 40);
  * </pre></blockquote><hr>
@@ -123,7 +123,7 @@ public class TextArea extends TextComponent {
      * Cache the Sets of forward and backward traversal keys so we need not
      * look them up each time.
      */
-    private static Set forwardTraversalKeys, backwardTraversalKeys;
+    private static Set<AWTKeyStroke> forwardTraversalKeys, backwardTraversalKeys;
 
     /*
      * JDK 1.1 serialVersionUID
@@ -143,10 +143,10 @@ public class TextArea extends TextComponent {
         }
         forwardTraversalKeys = KeyboardFocusManager.initFocusTraversalKeysSet(
             "ctrl TAB",
-            new HashSet());
+            new HashSet<AWTKeyStroke>());
         backwardTraversalKeys = KeyboardFocusManager.initFocusTraversalKeysSet(
             "ctrl shift TAB",
-            new HashSet());
+            new HashSet<AWTKeyStroke>());
     }
 
     /**

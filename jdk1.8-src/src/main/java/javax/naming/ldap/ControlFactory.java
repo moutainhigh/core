@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -51,7 +51,7 @@ import com.sun.naming.internal.ResourceManager;
   */
 
 public abstract class ControlFactory {
-    /*
+    /**
      * Creates a new instance of a control factory.
      */
     protected ControlFactory() {

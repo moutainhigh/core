@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import javax.accessibility.*;
  * <p>
  * The following code example creates a set of check boxes in
  * a grid layout:
- * <p>
+ *
  * <hr><blockquote><pre>
  * setLayout(new GridLayout(3, 1));
  * add(new Checkbox("one", null, true));
@@ -53,7 +53,7 @@ import javax.accessibility.*;
  * created by this code example:
  * <p>
  * <img src="doc-files/Checkbox-1.gif" alt="The following context describes the graphic."
- * ALIGN=center HSPACE=10 VSPACE=7>
+ * style="float:center; margin: 7px 10px;">
  * <p>
  * The button labeled <code>one</code> is in the "on" state, and the
  * other two are in the "off" state. In this example, which uses the
@@ -470,7 +470,7 @@ public class Checkbox extends Component implements ItemSelectable, Accessible {
      * @since 1.4
      */
     public synchronized ItemListener[] getItemListeners() {
-        return (ItemListener[]) (getListeners(ItemListener.class));
+        return getListeners(ItemListener.class);
     }
 
     /**
@@ -558,7 +558,7 @@ public class Checkbox extends Component implements ItemSelectable, Accessible {
      * This method is not called unless item events are
      * enabled for this component. Item events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>ItemListener</code> object is registered
      * via <code>addItemListener</code>.
      * <li>Item events are enabled via <code>enableEvents</code>.

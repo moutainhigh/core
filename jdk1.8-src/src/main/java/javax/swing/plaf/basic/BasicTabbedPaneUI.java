@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -43,7 +43,7 @@ import sun.swing.DefaultLookup;
 import sun.swing.UIAction;
 
 /**
- * A Basic L&F implementation of TabbedPaneUI.
+ * A Basic L&amp;F implementation of TabbedPaneUI.
  *
  * @author Amy Fowler
  * @author Philip Milne
@@ -669,7 +669,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
      *
      * @param tab index of tab to get baseline for
      * @exception IndexOutOfBoundsException if index is out of range
-     *            (index < 0 || index >= tab count)
+     *            (index &lt; 0 || index &gt;= tab count)
      * @return baseline or a value &lt; 0 indicating there is no reasonable
      *                  baseline
      * @since 1.6
@@ -875,6 +875,8 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
                 int availTextWidth = tabScroller.croppedEdge.getCropline() -
                         (textRect.x - tabRect.x) - tabScroller.croppedEdge.getCroppedSideWidth();
                 clippedTitle = SwingUtilities2.clipStringIfNecessary(null, metrics, title, availTextWidth);
+            } else if (!scrollableTabLayoutEnabled() && isHorizontalTabPlacement()) {
+                clippedTitle = SwingUtilities2.clipStringIfNecessary(null, metrics, title, textRect.width);
             }
 
             paintText(g, tabPlacement, font, metrics,
@@ -2618,7 +2620,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
                     // Never move a TAB down a run if it is in the first column.
                     // Even if there isn't enough room, moving it to a fresh
                     // line won't help.
-                    if (rect.x != 2 + insets.left && rect.x + rect.width > returnAt) {
+                    if (rect.x != x && rect.x + rect.width > returnAt) {
                         if (runCount > tabRuns.length - 1) {
                             expandTabRunsArray();
                         }
@@ -2646,7 +2648,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
                     // Never move a TAB over a run if it is in the first run.
                     // Even if there isn't enough room, moving it to a fresh
                     // column won't help.
-                    if (rect.y != 2 + insets.top && rect.y + rect.height > returnAt) {
+                    if (rect.y != y && rect.y + rect.height > returnAt) {
                         if (runCount > tabRuns.length - 1) {
                             expandTabRunsArray();
                         }
@@ -3237,6 +3239,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
                 }
             }
             tabScroller.tabPanel.setPreferredSize(new Dimension(totalWidth, totalHeight));
+            tabScroller.tabPanel.invalidate();
         }
     }
 
@@ -3348,6 +3351,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
         private void updateView() {
             int tabPlacement = tabPane.getTabPlacement();
             int tabCount = tabPane.getTabCount();
+            assureRectsCreated(tabCount);
             Rectangle vpRect = viewport.getBounds();
             Dimension viewSize = viewport.getViewSize();
             Rectangle viewRect = viewport.getViewRect();
@@ -3603,6 +3607,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
             setFocusIndex(tabPane.getSelectedIndex(), false);
 
             if (scrollableTabLayoutEnabled()) {
+                ensureCurrentLayout();
                 int index = tabPane.getSelectedIndex();
                 if (index < rects.length && index != -1) {
                     tabScroller.tabPanel.scrollRectToVisible(
@@ -3745,7 +3750,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
      * Instantiate it only within subclasses of BasicTabbedPaneUI.
      */
     public class PropertyChangeHandler implements PropertyChangeListener {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -3759,7 +3764,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
      * Instantiate it only within subclasses of BasicTabbedPaneUI.
      */
     public class TabSelectionHandler implements ChangeListener {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -3773,7 +3778,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
      * Instantiate it only within subclasses of BasicTabbedPaneUI.
      */
     public class MouseHandler extends MouseAdapter {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.
@@ -3787,7 +3792,7 @@ public class BasicTabbedPaneUI extends TabbedPaneUI implements SwingConstants {
      * Instantiate it only within subclasses of BasicTabbedPaneUI.
      */
     public class FocusHandler extends FocusAdapter {
-        // NOTE: This class exists only for backward compatability. All
+        // NOTE: This class exists only for backward compatibility. All
         // its functionality has been moved into Handler. If you need to add
         // new functionality add it to the Handler, but make sure this
         // class calls into the Handler.

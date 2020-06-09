@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import sun.swing.UIAction;
 /**
  * Basic UI implementation for JComboBox.
  * <p>
- * The combo box is a compound component which means that it is an agregate of
+ * The combo box is a compound component which means that it is an aggregate of
  * many simpler components. This class creates and manages the listeners
  * on the combo box and the combo box model. These listeners update the user
  * interface in response to changes in the properties and state of the combo box.
@@ -54,8 +54,7 @@ import sun.swing.UIAction;
  * <p>
  * For adding specific actions,
  * overide <code>installKeyboardActions</code> to add actions in response to
- * KeyStroke bindings. See the article <a href="http://java.sun.com/products/jfc/tsc/special_report/kestrel/keybindings.html">Keyboard Bindings in Swing</a>
- * at <a href="http://java.sun.com/products/jfc/tsc"><em>The Swing Connection</em></a>.
+ * KeyStroke bindings. See the article <a href="https://docs.oracle.com/javase/tutorial/uiswing/misc/keybinding.html">How to Use Key Bindings</a>
  *
  * @author Arnaud Weber
  * @author Tom Santos
@@ -125,6 +124,8 @@ public class BasicComboBoxUI extends ComboBoxUI {
     protected MouseListener popupMouseListener;
     protected MouseMotionListener popupMouseMotionListener;
     protected KeyListener popupKeyListener;
+
+    private MouseWheelListener mouseWheelListener;
 
     // This is used for knowing when to cache the minimum preferred size.
     // If the data in the list changes, the cached value get marked for recalc.
@@ -376,6 +377,10 @@ public class BasicComboBoxUI extends ComboBoxUI {
                 comboBox.getModel().addListDataListener( listDataListener );
             }
         }
+
+        if ((mouseWheelListener = createMouseWheelListener()) != null) {
+            comboBox.addMouseWheelListener(mouseWheelListener);
+        }
     }
 
     /**
@@ -421,6 +426,9 @@ public class BasicComboBoxUI extends ComboBoxUI {
             if ( listDataListener != null ) {
                 comboBox.getModel().removeListDataListener( listDataListener );
             }
+        }
+        if (mouseWheelListener != null) {
+            comboBox.removeMouseWheelListener(mouseWheelListener);
         }
     }
 
@@ -533,6 +541,10 @@ public class BasicComboBoxUI extends ComboBoxUI {
             handler = new Handler();
         }
         return handler;
+    }
+
+    private MouseWheelListener createMouseWheelListener() {
+        return getHandler();
     }
 
     //
@@ -692,9 +704,9 @@ public class BasicComboBoxUI extends ComboBoxUI {
      */
     protected void installComponents() {
         arrowButton = createArrowButton();
-        comboBox.add( arrowButton );
 
         if (arrowButton != null)  {
+            comboBox.add(arrowButton);
             configureArrowButton();
         }
 
@@ -706,7 +718,7 @@ public class BasicComboBoxUI extends ComboBoxUI {
     }
 
     /**
-     * The aggregate components which compise the combo box are
+     * The aggregate components which comprise the combo box are
      * unregistered and uninitialized. This method is called as part of the
      * UI uninstallation process.
      */
@@ -912,7 +924,7 @@ public class BasicComboBoxUI extends ComboBoxUI {
     }
 
     /**
-     * The minumum size is the size of the display area plus insets plus the button.
+     * The minimum size is the size of the display area plus insets plus the button.
      */
     @Override
     public Dimension getMinimumSize( JComponent c ) {
@@ -971,14 +983,16 @@ public class BasicComboBoxUI extends ComboBoxUI {
                     // cells, if not, this needs to loop through all.
                     value = comboBox.getModel().getElementAt(0);
                 }
-                if (value == null) {
-                    value = " ";
-                } else if (value instanceof String && "".equals(value)) {
-                    value = " ";
-                }
                 Component component = renderer.
                         getListCellRendererComponent(listBox, value, -1,
                                                      false, false);
+                if (component instanceof JLabel) {
+                    JLabel label = (JLabel) component;
+                    String text = label.getText();
+                    if ((text == null) || text.isEmpty()) {
+                        label.setText(" ");
+                    }
+                }
                 if (component instanceof JComponent) {
                     component.setFont(comboBox.getFont());
                 }
@@ -1120,7 +1134,9 @@ public class BasicComboBoxUI extends ComboBoxUI {
             listBox.setSelectedIndex( si + 1 );
             listBox.ensureIndexIsVisible( si + 1 );
             if ( !isTableCellEditor ) {
-                comboBox.setSelectedIndex(si+1);
+                if (!(UIManager.getBoolean("ComboBox.noActionOnKeyNavigation") && comboBox.isPopupVisible())) {
+                    comboBox.setSelectedIndex(si+1);
+                }
             }
             comboBox.repaint();
         }
@@ -1144,7 +1160,9 @@ public class BasicComboBoxUI extends ComboBoxUI {
             listBox.setSelectedIndex( si - 1 );
             listBox.ensureIndexIsVisible( si - 1 );
             if ( !isTableCellEditor ) {
-                comboBox.setSelectedIndex(si-1);
+                if (!(UIManager.getBoolean("ComboBox.noActionOnKeyNavigation") && comboBox.isPopupVisible())) {
+                    comboBox.setSelectedIndex(si-1);
+                }
             }
             comboBox.repaint();
         }
@@ -1490,7 +1508,13 @@ public class BasicComboBoxUI extends ComboBoxUI {
                      key == HOME || key == END) {
                 int index = getNextIndex(comboBox, key);
                 if (index >= 0 && index < comboBox.getItemCount()) {
-                    comboBox.setSelectedIndex(index);
+                    if (UIManager.getBoolean("ComboBox.noActionOnKeyNavigation") && comboBox.isPopupVisible()) {
+                        ui.listBox.setSelectedIndex(index);
+                        ui.listBox.ensureIndexIsVisible(index);
+                        comboBox.repaint();
+                    } else {
+                        comboBox.setSelectedIndex(index);
+                    }
                 }
             }
             else if (key == DOWN) {
@@ -1558,22 +1582,33 @@ public class BasicComboBoxUI extends ComboBoxUI {
 
             else if (key == ENTER) {
                 if (comboBox.isPopupVisible()) {
-                    // Forces the selection of the list item
-                    boolean isEnterSelectablePopup =
-                            UIManager.getBoolean("ComboBox.isEnterSelectablePopup");
-                    if (!comboBox.isEditable() || isEnterSelectablePopup
-                            || ui.isTableCellEditor) {
+                    // If ComboBox.noActionOnKeyNavigation is set,
+                    // forse selection of list item
+                    if (UIManager.getBoolean("ComboBox.noActionOnKeyNavigation")) {
                         Object listItem = ui.popup.getList().getSelectedValue();
                         if (listItem != null) {
-                            // Use the selected value from popup
-                            // to set the selected item in combo box,
-                            // but ensure before that JComboBox.actionPerformed()
-                            // won't use editor's value to set the selected item
                             comboBox.getEditor().setItem(listItem);
                             comboBox.setSelectedItem(listItem);
                         }
+                        comboBox.setPopupVisible(false);
+                    } else {
+                        // Forces the selection of the list item
+                        boolean isEnterSelectablePopup =
+                                UIManager.getBoolean("ComboBox.isEnterSelectablePopup");
+                        if (!comboBox.isEditable() || isEnterSelectablePopup
+                                || ui.isTableCellEditor) {
+                            Object listItem = ui.popup.getList().getSelectedValue();
+                            if (listItem != null) {
+                                // Use the selected value from popup
+                                // to set the selected item in combo box,
+                                // but ensure before that JComboBox.actionPerformed()
+                                // won't use editor's value to set the selected item
+                                comboBox.getEditor().setItem(listItem);
+                                comboBox.setSelectedItem(listItem);
+                            }
+                        }
+                        comboBox.setPopupVisible(false);
                     }
-                    comboBox.setPopupVisible(false);
                 }
                 else {
                     // Hide combo box if it is a table cell editor
@@ -1604,14 +1639,20 @@ public class BasicComboBoxUI extends ComboBoxUI {
         }
 
         private int getNextIndex(JComboBox comboBox, String key) {
+            int listHeight = comboBox.getMaximumRowCount();
+
+            int selectedIndex = comboBox.getSelectedIndex();
+            if (UIManager.getBoolean("ComboBox.noActionOnKeyNavigation")
+                    && (comboBox.getUI() instanceof BasicComboBoxUI)) {
+                selectedIndex = ((BasicComboBoxUI) comboBox.getUI()).listBox.getSelectedIndex();
+            }
+
             if (key == PAGE_UP) {
-                int listHeight = comboBox.getMaximumRowCount();
-                int index = comboBox.getSelectedIndex() - listHeight;
+                int index = selectedIndex - listHeight;
                 return (index < 0 ? 0: index);
             }
             else if (key == PAGE_DOWN) {
-                int listHeight = comboBox.getMaximumRowCount();
-                int index = comboBox.getSelectedIndex() + listHeight;
+                int index = selectedIndex + listHeight;
                 int max = comboBox.getItemCount();
                 return (index < max ? index: max-1);
             }
@@ -1641,7 +1682,8 @@ public class BasicComboBoxUI extends ComboBoxUI {
     //
     private class Handler implements ActionListener, FocusListener,
                                      KeyListener, LayoutManager,
-                                     ListDataListener, PropertyChangeListener {
+                                     ListDataListener, PropertyChangeListener,
+                                     MouseWheelListener {
         //
         // PropertyChangeListener
         //
@@ -1911,21 +1953,25 @@ public class BasicComboBoxUI extends ComboBoxUI {
         public void actionPerformed(ActionEvent evt) {
             Object item = comboBox.getEditor().getItem();
             if (item != null) {
-             if(!comboBox.isPopupVisible() && !item.equals(comboBox.getSelectedItem())) {
-              comboBox.setSelectedItem(comboBox.getEditor().getItem());
-             }
-             ActionMap am = comboBox.getActionMap();
-             if (am != null) {
-                Action action = am.get("enterPressed");
-                if (action != null) {
-                    action.actionPerformed(new ActionEvent(comboBox, evt.getID(),
-                                           evt.getActionCommand(),
-                                           evt.getModifiers()));
+                if (!comboBox.isPopupVisible() && !item.equals(comboBox.getSelectedItem())) {
+                    comboBox.setSelectedItem(comboBox.getEditor().getItem());
+                }
+                ActionMap am = comboBox.getActionMap();
+                if (am != null) {
+                    Action action = am.get("enterPressed");
+                    if (action != null) {
+                        action.actionPerformed(new ActionEvent(comboBox, evt.getID(),
+                                evt.getActionCommand(),
+                                evt.getModifiers()));
+                    }
                 }
             }
-       }
+        }
+
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            e.consume();
+        }
    }
-  }
 
     class DefaultKeySelectionManager implements JComboBox.KeySelectionManager, UIResource {
         private String prefix = "";

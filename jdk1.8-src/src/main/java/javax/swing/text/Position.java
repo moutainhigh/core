@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -51,7 +51,7 @@ public interface Position {
     /**
      * Fetches the current offset within the document.
      *
-     * @return the offset >= 0
+     * @return the offset &gt;= 0
      */
     public int getOffset();
 

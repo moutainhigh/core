@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -37,6 +37,7 @@ import com.sun.org.apache.xerces.internal.xni.XMLDocumentHandler;
 import com.sun.org.apache.xerces.internal.xni.XMLAttributes;
 import com.sun.org.apache.xerces.internal.xni.parser.XMLDocumentSource;
 import com.sun.org.apache.xerces.internal.util.XMLAttributesImpl;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -58,6 +59,7 @@ import javax.xml.stream.events.XMLEvent;
  * @author Neeraj Bajaj, Sun Microsystems
  * @author Venugopal Rao K, Sun Microsystems
  * @author Elena Litani, IBM
+ * @version $Id: XMLNSDocumentScannerImpl.java,v 1.11 2010-11-01 04:39:41 joehw Exp $
  */
 public class XMLNSDocumentScannerImpl
         extends XMLDocumentScannerImpl {
@@ -219,6 +221,7 @@ public class XMLNSDocumentScannerImpl
         fCurrentElement = fElementQName;
 
         String rawname = fElementQName.rawname;
+        checkDepth(rawname);
         if (fBindNamespaces) {
             fNamespaceContext.pushContext();
             if (fScannerState == SCANNER_STATE_ROOT_ELEMENT) {
@@ -251,10 +254,11 @@ public class XMLNSDocumentScannerImpl
 
             do {
                 scanAttribute(fAttributes);
-                if (fSecurityManager != null && fAttributes.getLength() > fElementAttributeLimit){
+                if (fSecurityManager != null && (!fSecurityManager.isNoLimit(fElementAttributeLimit)) &&
+                        fAttributes.getLength() > fElementAttributeLimit){
                     fErrorReporter.reportError(XMLMessageFormatter.XML_DOMAIN,
                                                  "ElementAttributeLimit",
-                                                 new Object[]{rawname, new Integer(fAttributes.getLength()) },
+                                                 new Object[]{rawname, fElementAttributeLimit },
                                                  XMLErrorReporter.SEVERITY_FATAL_ERROR );
                 }
 
@@ -435,7 +439,7 @@ public class XMLNSDocumentScannerImpl
         XMLString tmpStr = getString();
         scanAttributeValue(tmpStr, fTempString2,
                 fAttributeQName.rawname, attributes,
-                attrIndex, isVC);
+                attrIndex, isVC, fCurrentElement.rawname);
 
         String value = null;
         //fTempString.toString();
@@ -450,7 +454,15 @@ public class XMLNSDocumentScannerImpl
             // it's a namespace declaration. but prefix:xmlns="..." isn't.
             if (prefix == XMLSymbols.PREFIX_XMLNS ||
                     prefix == XMLSymbols.EMPTY_STRING && localpart == XMLSymbols.PREFIX_XMLNS) {
-
+                //check the length of URI
+                if (tmpStr.length > fXMLNameLimit) {
+                    fErrorReporter.reportError(XMLMessageFormatter.XML_DOMAIN,
+                            "MaxXMLNameLimit",
+                            new Object[]{new String(tmpStr.ch,tmpStr.offset,tmpStr.length),
+                            tmpStr.length, fXMLNameLimit,
+                            fSecurityManager.getStateLiteral(XMLSecurityManager.Limit.MAX_NAME_LIMIT)},
+                            XMLErrorReporter.SEVERITY_FATAL_ERROR);
+                }
                 // get the internalized value of this attribute
                 String uri = fSymbolTable.addSymbol(tmpStr.ch,tmpStr.offset,tmpStr.length);
                 value = uri;

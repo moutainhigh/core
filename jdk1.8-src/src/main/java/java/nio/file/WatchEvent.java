@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,11 +55,16 @@ public interface WatchEvent<T> {
     public static interface Kind<T> {
         /**
          * Returns the name of the event kind.
+         *
+         * @return the name of the event kind
          */
         String name();
 
         /**
          * Returns the type of the {@link WatchEvent#context context} value.
+         *
+         *
+         * @return the type of the context value
          */
         Class<T> type();
     }
@@ -76,6 +81,8 @@ public interface WatchEvent<T> {
     public static interface Modifier {
         /**
          * Returns the name of the modifier.
+         *
+         * @return the name of the modifier
          */
         String name();
     }

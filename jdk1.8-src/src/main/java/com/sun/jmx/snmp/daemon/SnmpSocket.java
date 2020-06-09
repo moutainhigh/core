@@ -173,6 +173,7 @@ final class SnmpSocket implements java.lang.Runnable {
      * Dispatcher method for this socket thread. This is the dispatcher method
      * which goes in an endless-loop and waits for receiving datagram packets on the socket.
      */
+    @Override
     public void run() {
         Thread.currentThread().setPriority(8);
 
@@ -258,7 +259,8 @@ final class SnmpSocket implements java.lang.Runnable {
      * when garbage collection determines that there are no more references to the object.
      * <P>Closes the datagram socket and stops the socket thread associated to this SNMP socket.
      */
-    public synchronized void finalize() {
+    @Override
+    protected synchronized void finalize() {
         close();
     }
 
@@ -274,7 +276,7 @@ final class SnmpSocket implements java.lang.Runnable {
                 SNMP_ADAPTOR_LOGGER.logp(Level.FINEST, SnmpSocket.class.getName(),
                     "handleJavaError", "OutOfMemory error", thr);
             }
-            Thread.currentThread().yield();
+            Thread.yield();
             return ;
         }
         if (_socket != null) {
@@ -286,7 +288,7 @@ final class SnmpSocket implements java.lang.Runnable {
             SNMP_ADAPTOR_LOGGER.logp(Level.FINEST, SnmpSocket.class.getName(),
                 "handleJavaError",  "Global Internal error");
         }
-        Thread.currentThread().yield();
+        Thread.yield();
     }
 
     private synchronized void handleDatagram(DatagramPacket dgrmpkt) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,15 +41,15 @@ import javax.accessibility.*;
  * container, where higher-numbered components sit &quot;on top&quot; of other
  * components.
  * For task-oriented documentation and examples of using layered panes see
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/layeredpane.html">How to Use a Layered Pane</a>,
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/layeredpane.html">How to Use a Layered Pane</a>,
  * a section in <em>The Java Tutorial</em>.
- * <P>
- * <TABLE ALIGN="RIGHT" BORDER="0" SUMMARY="layout">
+ *
+ * <TABLE STYLE="FLOAT:RIGHT" BORDER="0" SUMMARY="layout">
  * <TR>
  *   <TD ALIGN="CENTER">
- *     <P ALIGN="CENTER"><IMG SRC="doc-files/JLayeredPane-1.gif"
+ *     <P STYLE="TEXT-ALIGN:CENTER"><IMG SRC="doc-files/JLayeredPane-1.gif"
  *     alt="The following text describes this image."
- *     WIDTH="269" HEIGHT="264" ALIGN="BOTTOM" BORDER="0">
+ *     WIDTH="269" HEIGHT="264" STYLE="FLOAT:BOTTOM; BORDER=0">
  *   </TD>
  * </TR>
  * </TABLE>
@@ -148,12 +148,13 @@ import javax.accessibility.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
  * @author David Kloba
  */
+@SuppressWarnings("serial")
 public class JLayeredPane extends JComponent implements Accessible {
     /// Watch the values in getObjectForLayer()
     /** Convenience object defining the Default layer. Equivalent to new Integer(0).*/
@@ -167,7 +168,7 @@ public class JLayeredPane extends JComponent implements Accessible {
     /** Convenience object defining the Drag layer. Equivalent to new Integer(400).*/
     public final static Integer DRAG_LAYER = new Integer(400);
     /** Convenience object defining the Frame Content layer.
-      * This layer is normally only use to positon the contentPane and menuBar
+      * This layer is normally only use to position the contentPane and menuBar
       * components of JFrame.
       * Equivalent to new Integer(-30000).
       * @see JFrame
@@ -256,7 +257,7 @@ public class JLayeredPane extends JComponent implements Accessible {
      */
     public void removeAll() {
         Component[] children = getComponents();
-        Hashtable cToL = getComponentToLayer();
+        Hashtable<Component, Integer> cToL = getComponentToLayer();
         for (int counter = children.length - 1; counter >= 0; counter--) {
             Component c = children[counter];
             if (c != null && !(c instanceof JComponent)) {
@@ -647,7 +648,7 @@ public class JLayeredPane extends JComponent implements Accessible {
     /**
      * This method is an extended version of insertIndexForLayer()
      * to support setLayer which uses Container.setZOrder which does
-     * not remove the component from the containment heirarchy though
+     * not remove the component from the containment hierarchy though
      * we need to ignore it when calculating the insertion index.
      *
      * @param comp      component to ignore when determining index
@@ -764,10 +765,11 @@ public class JLayeredPane extends JComponent implements Accessible {
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class AccessibleJLayeredPane extends AccessibleJComponent {
 
         /**

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XPATHErrorResources_zh_CN.java,v 1.2.4.1 2005/09/15 00:39:21 jeffsuttor Exp $
- */
 package com.sun.org.apache.xpath.internal.res;
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -858,7 +852,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "\u65E0\u6CD5\u6839\u636E{0}\u751F\u6210 URL"},
 
   { WG_EXPAND_ENTITIES_NOT_SUPPORTED,
-      "DTM \u8BED\u6CD5\u5206\u6790\u5668\u4E0D\u652F\u6301 -E \u9009\u9879"},
+      "DTM \u89E3\u6790\u5668\u4E0D\u652F\u6301 -E \u9009\u9879"},
 
   { WG_ILLEGAL_VARIABLE_REFERENCE,
       "\u4E3A\u53D8\u91CF\u7ED9\u5B9A\u7684 VariableReference \u8131\u79BB\u4E0A\u4E0B\u6587\u6216\u6CA1\u6709\u5B9A\u4E49! \u540D\u79F0 = {0}"},
@@ -886,7 +880,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   { "optionMatch", "   [-match match pattern (for match diagnostics)]"},
   { "optionAnyExpr", "\u6216\u8005\u4EC5 xpath \u8868\u8FBE\u5F0F\u6267\u884C\u8BCA\u65AD\u8F6C\u50A8"},
   { "noParsermsg1", "XSL \u8FDB\u7A0B\u672A\u6210\u529F\u3002"},
-  { "noParsermsg2", "** \u627E\u4E0D\u5230\u8BED\u6CD5\u5206\u6790\u5668 **"},
+  { "noParsermsg2", "** \u627E\u4E0D\u5230\u89E3\u6790\u5668 **"},
   { "noParsermsg3", "\u8BF7\u68C0\u67E5\u60A8\u7684\u7C7B\u8DEF\u5F84\u3002"},
   { "noParsermsg4", "\u5982\u679C\u6CA1\u6709 IBM \u63D0\u4F9B\u7684 XML Parser for Java, \u5219\u53EF\u4EE5\u4ECE"},
   { "noParsermsg5", "IBM AlphaWorks \u8FDB\u884C\u4E0B\u8F7D, \u7F51\u5740\u4E3A: http://www.alphaworks.ibm.com/formula/xml"},
@@ -938,69 +932,5 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
 
   /** Field QUERY_HEADER          */
   public static final String QUERY_HEADER = "PATTERN ";
-
-
-  /**
-   * Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   * of ResourceBundle.getBundle().
-   *
-   * @param className Name of local-specific subclass.
-   * @return the ResourceBundle
-   * @throws MissingResourceException
-   */
-  public static final XPATHErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XPATHErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XPATHErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

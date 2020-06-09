@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,7 +55,7 @@ public class SQLInvalidAuthorizationSpecException extends SQLNonTransientExcepti
         /**
          * Constructs a <code>SQLInvalidAuthorizationSpecException</code> object
          *  with a given <code>reason</code>. The <code>SQLState</code>
-         * is initialized to <code>null</code> and the vender code is initialized
+         * is initialized to <code>null</code> and the vendor code is initialized
          * to 0.
          *
          * The <code>cause</code> is not initialized, and may subsequently be

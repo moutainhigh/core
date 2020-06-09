@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,7 +57,7 @@ class JavaUtilJarAccessImpl implements JavaUtilJarAccess {
         jar.setEagerValidation(eager);
     }
 
-    public List getManifestDigests(JarFile jar) {
+    public List<Object> getManifestDigests(JarFile jar) {
         return jar.getManifestDigests();
     }
 }

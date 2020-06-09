@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,24 +37,24 @@ package javax.security.auth;
 public interface Refreshable {
 
     /**
-     * Determine if this <code>Object</code> is current.
+     * Determine if this {@code Object} is current.
      *
      * <p>
      *
-     * @return true if this <code>Object</code> is currently current,
+     * @return true if this {@code Object} is currently current,
      *          false otherwise.
      */
     boolean isCurrent();
 
     /**
      * Update or extend the validity period for this
-     * <code>Object</code>.
+     * {@code Object}.
      *
      * <p>
      *
      * @exception SecurityException if the caller does not have permission
      *          to update or extend the validity period for this
-     *          <code>Object</code>. <p>
+     *          {@code Object}. <p>
      *
      * @exception RefreshFailedException if the refresh attempt failed.
      */

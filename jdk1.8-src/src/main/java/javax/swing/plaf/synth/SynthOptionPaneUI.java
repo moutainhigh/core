@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ import javax.swing.plaf.basic.*;
 import sun.swing.DefaultLookup;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JOptionPane}.
  *
  * @author James Gosling
@@ -56,7 +56,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -64,7 +64,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -92,7 +92,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -104,7 +104,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -113,7 +113,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installComponents() {
@@ -132,7 +132,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -140,8 +140,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -199,7 +198,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -208,7 +207,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {
@@ -218,7 +217,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected boolean getSizeButtonsToSameWidth() {
@@ -273,7 +272,7 @@ public class SynthOptionPaneUI extends BasicOptionPaneUI implements
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Container createSeparator() {

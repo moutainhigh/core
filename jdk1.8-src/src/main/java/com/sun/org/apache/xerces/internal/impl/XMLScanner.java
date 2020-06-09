@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -32,6 +32,8 @@ import com.sun.org.apache.xerces.internal.util.SymbolTable;
 import com.sun.org.apache.xerces.internal.util.XMLChar;
 import com.sun.org.apache.xerces.internal.util.XMLResourceIdentifierImpl;
 import com.sun.org.apache.xerces.internal.util.XMLStringBuffer;
+import com.sun.org.apache.xerces.internal.utils.XMLLimitAnalyzer;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
 import com.sun.org.apache.xerces.internal.xni.Augmentations;
 import com.sun.org.apache.xerces.internal.xni.XMLAttributes;
 import com.sun.org.apache.xerces.internal.xni.XMLResourceIdentifier;
@@ -106,6 +108,9 @@ public abstract class XMLScanner
     protected static final String ENTITY_MANAGER =
             Constants.XERCES_PROPERTY_PREFIX + Constants.ENTITY_MANAGER_PROPERTY;
 
+    /** Property identifier: Security manager. */
+    private static final String SECURITY_MANAGER = Constants.SECURITY_MANAGER;
+
     // debugging
 
     /** Debug attribute normalization. */
@@ -158,6 +163,12 @@ public abstract class XMLScanner
 
     /** xxx this should be available from EntityManager Entity storage */
     protected XMLEntityStorage fEntityStore = null ;
+
+    /** Security manager. */
+    protected XMLSecurityManager fSecurityManager = null;
+
+    /** Limit analyzer. */
+    protected XMLLimitAnalyzer fLimitAnalyzer = null;
 
     // protected data
 
@@ -256,6 +267,7 @@ public abstract class XMLScanner
         fSymbolTable = (SymbolTable)componentManager.getProperty(SYMBOL_TABLE);
         fErrorReporter = (XMLErrorReporter)componentManager.getProperty(ERROR_REPORTER);
         fEntityManager = (XMLEntityManager)componentManager.getProperty(ENTITY_MANAGER);
+        fSecurityManager = (XMLSecurityManager)componentManager.getProperty(SECURITY_MANAGER);
 
         //this step is extra because we have separated the storage of entity
         fEntityStore = fEntityManager.getEntityStore() ;
@@ -292,6 +304,10 @@ public abstract class XMLScanner
             } else if (property.equals(Constants.ENTITY_MANAGER_PROPERTY)) {
                 fEntityManager = (XMLEntityManager)value;
             }
+        }
+
+        if (propertyId.equals(SECURITY_MANAGER)) {
+            fSecurityManager = (XMLSecurityManager)value;
         }
                 /*else if(propertyId.equals(Constants.STAX_PROPERTIES)){
             fStaxProperties = (HashMap)value;
@@ -352,6 +368,8 @@ public abstract class XMLScanner
         fEntityManager = (XMLEntityManager)propertyManager.getProperty(ENTITY_MANAGER);
         fEntityStore = fEntityManager.getEntityStore() ;
         fEntityScanner = (XMLEntityScanner)fEntityManager.getEntityScanner() ;
+        fSecurityManager = (XMLSecurityManager)propertyManager.getProperty(SECURITY_MANAGER);
+
         //fEntityManager.reset();
         // DTD preparsing defaults:
         fValidation = false;
@@ -499,7 +517,7 @@ public abstract class XMLScanner
                             reportFatalError("SDDeclInvalid",  new Object[] {standalone});
                         }
                     } else {
-                        reportFatalError("EncodingDeclRequired", null);
+                        reportFatalError("SDDeclNameInvalid", null);
                     }
                     break;
                 }
@@ -510,8 +528,9 @@ public abstract class XMLScanner
             sawSpace = fEntityScanner.skipSpaces();
         }
         // restore original literal value
-        if(currLiteral)
+        if(currLiteral) {
             currEnt.literal = true;
+        }
         // REVISIT: should we remove this error reporting?
         if (scanningTextDecl && state != STATE_DONE) {
             reportFatalError("MorePseudoAttributes", null);
@@ -564,7 +583,7 @@ public abstract class XMLScanner
             XMLString value)
             throws IOException, XNIException {
 
-        String name = fEntityScanner.scanName();
+        String name = scanPseudoAttributeName();
         // XMLEntityManager.print(fEntityManager.getCurrentEntity());
 
         if (name == null) {
@@ -615,6 +634,35 @@ public abstract class XMLScanner
         return name;
 
     } // scanPseudoAttribute(XMLString):String
+
+    /**
+     * Scans the name of a pseudo attribute. The only legal names
+     * in XML 1.0/1.1 documents are 'version', 'encoding' and 'standalone'.
+     *
+     * @return the name of the pseudo attribute or <code>null</code>
+     * if a legal pseudo attribute name could not be scanned.
+     */
+    private String scanPseudoAttributeName() throws IOException, XNIException {
+        final int ch = fEntityScanner.peekChar();
+        switch (ch) {
+            case 'v':
+                if (fEntityScanner.skipString(fVersionSymbol)) {
+                    return fVersionSymbol;
+                }
+                break;
+            case 'e':
+                if (fEntityScanner.skipString(fEncodingSymbol)) {
+                    return fEncodingSymbol;
+                }
+                break;
+            case 's':
+                if (fEntityScanner.skipString(fStandaloneSymbol)) {
+                    return fStandaloneSymbol;
+                }
+                break;
+        }
+        return null;
+    } // scanPseudoAttributeName()
 
     /**
      * Scans a processing instruction.
@@ -764,6 +812,7 @@ public abstract class XMLScanner
      * @param attrIndex The index of the attribute to use from the list.
      * @param checkEntities true if undeclared entities should be reported as VC violation,
      *                      false if undeclared entities should be reported as WFC violation.
+     * @param eleName The name of element to which this attribute belongs.
      *
      * <strong>Note:</strong> This method uses fStringBuffer2, anything in it
      * at the time of calling is lost.
@@ -772,13 +821,13 @@ public abstract class XMLScanner
             XMLString nonNormalizedValue,
             String atName,
             XMLAttributes attributes, int attrIndex,
-            boolean checkEntities)
+            boolean checkEntities, String eleName)
             throws IOException, XNIException {
         XMLStringBuffer stringBuffer = null;
         // quote
         int quote = fEntityScanner.peekChar();
         if (quote != '\'' && quote != '"') {
-            reportFatalError("OpenQuoteExpected", new Object[]{atName});
+            reportFatalError("OpenQuoteExpected", new Object[]{eleName, atName});
         }
 
         fEntityScanner.scanChar();
@@ -898,13 +947,13 @@ public abstract class XMLScanner
                                                 new Object[]{entityName});
                                     }
                                 }
-                                fEntityManager.startEntity(entityName, true);
+                                fEntityManager.startEntity(true, entityName, true);
                             }
                         }
                     }
                 } else if (c == '<') {
                     reportFatalError("LessthanInAttValue",
-                            new Object[] { null, atName });
+                            new Object[] { eleName, atName });
                             fEntityScanner.scanChar();
                             if (entityDepth == fEntityDepth && fNeedNonNormalizedValue) {
                                 fStringBuffer2.append((char)c);
@@ -939,7 +988,7 @@ public abstract class XMLScanner
                     }
                 } else if (c != -1 && isInvalidLiteral(c)) {
                     reportFatalError("InvalidCharInAttValue",
-                            new Object[] {Integer.toString(c, 16)});
+                            new Object[] {eleName, atName, Integer.toString(c, 16)});
                             fEntityScanner.scanChar();
                             if (entityDepth == fEntityDepth && fNeedNonNormalizedValue) {
                                 fStringBuffer2.append((char)c);
@@ -968,7 +1017,7 @@ public abstract class XMLScanner
         // quote
         int cquote = fEntityScanner.scanChar();
         if (cquote != quote) {
-            reportFatalError("CloseQuoteExpected", new Object[]{atName});
+            reportFatalError("CloseQuoteExpected", new Object[]{eleName, atName});
         }
     } // scanAttributeValue()
 

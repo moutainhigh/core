@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -48,14 +48,13 @@ import sun.security.util.SecurityConstants;
  * convention follows the  hierarchical property naming convention.
  * Also, an asterisk
  * may appear at the end of the name, following a ".", or by itself, to
- * signify a wildcard match. For example: "java.*" or "*" is valid,
- * "*java" or "a*b" is not valid.
- * <P>
+ * signify a wildcard match. For example: "java.*" and "*" signify a wildcard
+ * match, while "*java" and "a*b" do not.
  * <P>
  * The actions to be granted are passed to the constructor in a string containing
  * a list of one or more comma-separated keywords. The possible keywords are
  * "read" and "write". Their meaning is defined as follows:
- * <P>
+ *
  * <DL>
  *    <DT> read
  *    <DD> read permission. Allows <code>System.getProperty</code> to
@@ -130,18 +129,15 @@ public final class PropertyPermission extends BasicPermission {
      * @param mask the actions mask to use.
      *
      */
-
-    private void init(int mask)
-    {
-
+    private void init(int mask) {
         if ((mask & ALL) != mask)
-                throw new IllegalArgumentException("invalid actions mask");
+            throw new IllegalArgumentException("invalid actions mask");
 
         if (mask == NONE)
-                throw new IllegalArgumentException("invalid actions mask");
+            throw new IllegalArgumentException("invalid actions mask");
 
         if (getName() == null)
-                throw new NullPointerException("name can't be null");
+            throw new NullPointerException("name can't be null");
 
         this.mask = mask;
     }
@@ -160,9 +156,7 @@ public final class PropertyPermission extends BasicPermission {
      * @throws IllegalArgumentException if <code>name</code> is empty or if
      * <code>actions</code> is invalid.
      */
-
-    public PropertyPermission(String name, String actions)
-    {
+    public PropertyPermission(String name, String actions) {
         super(name,actions);
         init(getMask(actions));
     }
@@ -171,11 +165,11 @@ public final class PropertyPermission extends BasicPermission {
      * Checks if this PropertyPermission object "implies" the specified
      * permission.
      * <P>
-     * More specifically, this method returns true if:<p>
+     * More specifically, this method returns true if:
      * <ul>
-     * <li> <i>p</i> is an instanceof PropertyPermission,<p>
+     * <li> <i>p</i> is an instanceof PropertyPermission,
      * <li> <i>p</i>'s actions are a subset of this
-     * object's actions, and <p>
+     * object's actions, and
      * <li> <i>p</i>'s name is implied by this object's
      *      name. For example, "java.*" implies "java.home".
      * </ul>
@@ -195,7 +189,6 @@ public final class PropertyPermission extends BasicPermission {
 
         return ((this.mask & that.mask) == that.mask) && super.implies(that);
     }
-
 
     /**
      * Checks two PropertyPermission objects for equality. Checks that <i>obj</i> is
@@ -226,16 +219,14 @@ public final class PropertyPermission extends BasicPermission {
      *
      * @return a hash code value for this object.
      */
-
     public int hashCode() {
         return this.getName().hashCode();
     }
 
-
     /**
      * Converts an actions String to an actions mask.
      *
-     * @param action the action string.
+     * @param actions the action string.
      * @return the actions mask.
      */
     private static int getMask(String actions) {
@@ -246,7 +237,8 @@ public final class PropertyPermission extends BasicPermission {
             return mask;
         }
 
-        // Check against use of constants (used heavily within the JDK)
+        // Use object identity comparison against known-interned strings for
+        // performance benefit (these values are used heavily within the JDK).
         if (actions == SecurityConstants.PROPERTY_READ_ACTION) {
             return READ;
         } if (actions == SecurityConstants.PROPERTY_WRITE_ACTION) {
@@ -305,7 +297,7 @@ public final class PropertyPermission extends BasicPermission {
                 switch(a[i-matchlen]) {
                 case ',':
                     seencomma = true;
-                    /*FALLTHROUGH*/
+                    break;
                 case ' ': case '\r': case '\n':
                 case '\f': case '\t':
                     break;
@@ -331,8 +323,7 @@ public final class PropertyPermission extends BasicPermission {
      *
      * @return the canonical string representation of the actions.
      */
-    static String getActions(int mask)
-    {
+    static String getActions(int mask) {
         StringBuilder sb = new StringBuilder();
         boolean comma = false;
 
@@ -358,8 +349,7 @@ public final class PropertyPermission extends BasicPermission {
      *
      * @return the canonical string representation of the actions.
      */
-    public String getActions()
-    {
+    public String getActions() {
         if (actions == null)
             actions = getActions(this.mask);
 
@@ -372,7 +362,6 @@ public final class PropertyPermission extends BasicPermission {
      *
      * @return the actions mask.
      */
-
     int getMask() {
         return mask;
     }
@@ -385,7 +374,6 @@ public final class PropertyPermission extends BasicPermission {
      * @return a new PermissionCollection object suitable for storing
      * PropertyPermissions.
      */
-
     public PermissionCollection newPermissionCollection() {
         return new PropertyPermissionCollection();
     }
@@ -435,14 +423,14 @@ public final class PropertyPermission extends BasicPermission {
  * @serial include
  */
 final class PropertyPermissionCollection extends PermissionCollection
-implements Serializable
+    implements Serializable
 {
 
     /**
      * Key is property name; value is PropertyPermission.
      * Not serialized; see serialization section at end of class.
      */
-    private transient Map perms;
+    private transient Map<String, PropertyPermission> perms;
 
     /**
      * Boolean saying if "*" is in the collection.
@@ -453,12 +441,10 @@ implements Serializable
     private boolean all_allowed;
 
     /**
-     * Create an empty PropertyPermissions object.
-     *
+     * Create an empty PropertyPermissionCollection object.
      */
-
     public PropertyPermissionCollection() {
-        perms = new HashMap(32);     // Capacity for default policy
+        perms = new HashMap<>(32);     // Capacity for default policy
         all_allowed = false;
     }
 
@@ -474,9 +460,7 @@ implements Serializable
      * @exception SecurityException - if this PropertyPermissionCollection
      *                                object has been marked readonly
      */
-
-    public void add(Permission permission)
-    {
+    public void add(Permission permission) {
         if (! (permission instanceof PropertyPermission))
             throw new IllegalArgumentException("invalid permission: "+
                                                permission);
@@ -488,7 +472,7 @@ implements Serializable
         String propName = pp.getName();
 
         synchronized (this) {
-            PropertyPermission existing = (PropertyPermission) perms.get(propName);
+            PropertyPermission existing = perms.get(propName);
 
             if (existing != null) {
                 int oldMask = existing.getMask();
@@ -499,7 +483,7 @@ implements Serializable
                     perms.put(propName, new PropertyPermission(propName, actions));
                 }
             } else {
-                perms.put(propName, permission);
+                perms.put(propName, pp);
             }
         }
 
@@ -513,14 +497,12 @@ implements Serializable
      * Check and see if this set of permissions implies the permissions
      * expressed in "permission".
      *
-     * @param p the Permission object to compare
+     * @param permission the Permission object to compare
      *
      * @return true if "permission" is a proper subset of a permission in
      * the set, false if not.
      */
-
-    public boolean implies(Permission permission)
-    {
+    public boolean implies(Permission permission) {
         if (! (permission instanceof PropertyPermission))
                 return false;
 
@@ -533,7 +515,7 @@ implements Serializable
         // short circuit if the "*" Permission was added
         if (all_allowed) {
             synchronized (this) {
-                x = (PropertyPermission) perms.get("*");
+                x = perms.get("*");
             }
             if (x != null) {
                 effective |= x.getMask();
@@ -550,7 +532,7 @@ implements Serializable
         //System.out.println("check "+name);
 
         synchronized (this) {
-            x = (PropertyPermission) perms.get(name);
+            x = perms.get(name);
         }
 
         if (x != null) {
@@ -570,7 +552,7 @@ implements Serializable
             name = name.substring(0, last+1) + "*";
             //System.out.println("check "+name);
             synchronized (this) {
-                x = (PropertyPermission) perms.get(name);
+                x = perms.get(name);
             }
 
             if (x != null) {
@@ -592,11 +574,15 @@ implements Serializable
      *
      * @return an enumeration of all the PropertyPermission objects.
      */
-
-    public Enumeration elements() {
+    @SuppressWarnings("unchecked")
+    public Enumeration<Permission> elements() {
         // Convert Iterator of Map values into an Enumeration
         synchronized (this) {
-            return Collections.enumeration(perms.values());
+            /**
+             * Casting to rawtype since Enumeration<PropertyPermission>
+             * cannot be directly cast to Enumeration<Permission>
+             */
+            return (Enumeration)Collections.enumeration(perms.values());
         }
     }
 
@@ -633,7 +619,8 @@ implements Serializable
         // Don't call out.defaultWriteObject()
 
         // Copy perms into a Hashtable
-        Hashtable permissions = new Hashtable(perms.size()*2);
+        Hashtable<String, Permission> permissions =
+            new Hashtable<>(perms.size()*2);
         synchronized (this) {
             permissions.putAll(perms);
         }
@@ -649,8 +636,9 @@ implements Serializable
      * Reads in a Hashtable of PropertyPermissions and saves them in the
      * perms field. Reads in all_allowed.
      */
-    private void readObject(ObjectInputStream in) throws IOException,
-    ClassNotFoundException {
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException
+    {
         // Don't call defaultReadObject()
 
         // Read in serialized fields
@@ -660,8 +648,10 @@ implements Serializable
         all_allowed = gfields.get("all_allowed", false);
 
         // Get permissions
-        Hashtable permissions = (Hashtable)gfields.get("permissions", null);
-        perms = new HashMap(permissions.size()*2);
+        @SuppressWarnings("unchecked")
+        Hashtable<String, PropertyPermission> permissions =
+            (Hashtable<String, PropertyPermission>)gfields.get("permissions", null);
+        perms = new HashMap<>(permissions.size()*2);
         perms.putAll(permissions);
     }
 }

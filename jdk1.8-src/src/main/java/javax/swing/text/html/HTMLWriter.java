@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -527,17 +527,17 @@ public class HTMLWriter extends AbstractWriter {
         Object model = attr.getAttribute(StyleConstants.ModelAttribute);
         incrIndent();
         if (model instanceof OptionListModel) {
-            OptionListModel listModel = (OptionListModel)model;
+            OptionListModel<Option> listModel = (OptionListModel<Option>) model;
             int size = listModel.getSize();
             for (int i = 0; i < size; i++) {
-                Option option = (Option)listModel.getElementAt(i);
+                Option option = listModel.getElementAt(i);
                 writeOption(option);
             }
         } else if (model instanceof OptionComboBoxModel) {
-            OptionComboBoxModel comboBoxModel = (OptionComboBoxModel)model;
+            OptionComboBoxModel<Option> comboBoxModel = (OptionComboBoxModel<Option>) model;
             int size = comboBoxModel.getSize();
             for (int i = 0; i < size; i++) {
-                Option option = (Option)comboBoxModel.getElementAt(i);
+                Option option = comboBoxModel.getElementAt(i);
                 writeOption(option);
             }
         }
@@ -750,7 +750,7 @@ public class HTMLWriter extends AbstractWriter {
 
     /**
      * Searches the attribute set and for each tag
-     * that is stored in the tag vector.  If the tag isnt found,
+     * that is stored in the tag vector.  If the tag is not found,
      * then the tag is removed from the vector and a corresponding
      * end tag is written out.
      *

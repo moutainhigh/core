@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2000, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -47,7 +47,7 @@ import java.util.*;
  * either by clicking in it or by pressing TAB. However, if another string
  * is entered in the first text field, then the user will be unable to
  * transfer focus to the second text field.
- * <p>
+ *
  * <pre>
  * import java.awt.*;
  * import java.util.*;

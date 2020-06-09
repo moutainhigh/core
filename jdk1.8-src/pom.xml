@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.csf.sun</groupId>
     <artifactId>jdk1.8-src</artifactId>
-    <version>1.8.57</version>
-    <name>vip</name>
-    <description>openjdk8-src</description>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>src.zip</name>
+    <description>openjdk1.8-src</description>
 
    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,13 +16,12 @@
     </properties>
 
     <dependencies>
-      
+     
     </dependencies>
-	
-	<build>
-		 <finalName>jdk1.8-src</finalName>
-		 <plugins>
-			<plugin>
+
+    <build>
+        <plugins>
+           <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
@@ -32,7 +31,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-		 </plugins>
-	</build>
+        </plugins>
+    </build>
 
 </project>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -337,7 +337,8 @@ public class RMIConnectorServer extends JMXConnectorServer {
      * @exception IllegalStateException if the connector server has
      * not been attached to an MBean server.
      * @exception IOException if the connector server cannot be
-     * started.
+     * started, or in the case of the {@code iiop} protocol, that
+     * RMI/IIOP is not supported.
      */
     public synchronized void start() throws IOException {
         final boolean tracing = logger.traceOn();
@@ -819,7 +820,7 @@ public class RMIConnectorServer extends JMXConnectorServer {
 
     /**
      * Construct a new IOException with a nested exception.
-     * The nested exception is set only if JDK >= 1.4
+     * The nested exception is set only if JDK {@literal >= 1.4}
      */
     private static IOException newIOException(String message,
                                               Throwable cause) {

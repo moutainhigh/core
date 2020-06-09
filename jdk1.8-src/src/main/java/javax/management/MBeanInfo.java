@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Objects;
 
 import static javax.management.ImmutableDescriptor.nonNullDescriptor;
 
@@ -515,22 +516,13 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
         if (hashCode != 0)
             return hashCode;
 
-        hashCode =
-            getClassName().hashCode() ^
-            getDescriptor().hashCode() ^
-            arrayHashCode(fastGetAttributes()) ^
-            arrayHashCode(fastGetOperations()) ^
-            arrayHashCode(fastGetConstructors()) ^
-            arrayHashCode(fastGetNotifications());
+        hashCode = Objects.hash(getClassName(), getDescriptor())
+                ^ Arrays.hashCode(fastGetAttributes())
+                ^ Arrays.hashCode(fastGetOperations())
+                ^ Arrays.hashCode(fastGetConstructors())
+                ^ Arrays.hashCode(fastGetNotifications());
 
         return hashCode;
-    }
-
-    private static int arrayHashCode(Object[] array) {
-        int hash = 0;
-        for (int i = 0; i < array.length; i++)
-            hash ^= array[i].hashCode();
-        return hash;
     }
 
     /**
@@ -627,7 +619,7 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
      * Serializes an {@link MBeanInfo} to an {@link ObjectOutputStream}.
      * @serialData
      * For compatibility reasons, an object of this class is serialized as follows.
-     * <ul>
+     * <p>
      * The method {@link ObjectOutputStream#defaultWriteObject defaultWriteObject()}
      * is called first to serialize the object except the field {@code descriptor}
      * which is declared as transient. The field {@code descriptor} is serialized
@@ -645,7 +637,7 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
      *        {@link ObjectOutputStream#writeObject writeObject(Object obj)} is called
      *        to serialize the field {@code descriptor} directly.
      *     </ul>
-     * </ul>
+     *
      * @since 1.6
      */
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -669,7 +661,7 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
      * Deserializes an {@link MBeanInfo} from an {@link ObjectInputStream}.
      * @serialData
      * For compatibility reasons, an object of this class is deserialized as follows.
-     * <ul>
+     * <p>
      * The method {@link ObjectInputStream#defaultReadObject defaultReadObject()}
      * is called first to deserialize the object except the field
      * {@code descriptor}, which is not serialized in the default way. Then the method
@@ -691,7 +683,7 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
      *       {@link ImmutableDescriptor#EMPTY_DESCRIPTOR EMPTY_DESCRIPTOR}.</li>
      *    <li>Any other value. A {@link StreamCorruptedException} is thrown.</li>
      *    </ul>
-     * </ul>
+     *
      * @since 1.6
      */
 
@@ -704,12 +696,10 @@ public class MBeanInfo implements Cloneable, Serializable, DescriptorRead {
         case 1:
             final String[] names = (String[])in.readObject();
 
-            if (names.length == 0) {
-                descriptor = ImmutableDescriptor.EMPTY_DESCRIPTOR;
-            } else {
-                final Object[] values = (Object[])in.readObject();
-                descriptor = new ImmutableDescriptor(names, values);
-            }
+            final Object[] values = (Object[]) in.readObject();
+            descriptor = (names.length == 0) ?
+                ImmutableDescriptor.EMPTY_DESCRIPTOR :
+                new ImmutableDescriptor(names, values);
 
             break;
         case 0:

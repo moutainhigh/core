@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import java.beans.*;
 
 
 /**
- * Provides the Synth L&F UI delegate for a minimized internal frame on a desktop.
+ * Provides the Synth L&amp;F UI delegate for a minimized internal frame on a desktop.
  *
  * @author Joshua Outwater
  * @since 1.7
@@ -55,7 +55,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installComponents() {
@@ -82,7 +82,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners() {
@@ -96,7 +96,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners() {
@@ -109,7 +109,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults() {
@@ -123,7 +123,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults() {
@@ -134,7 +134,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -142,9 +142,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        Region region = SynthLookAndFeel.getRegion(c);
-        return SynthContext.getContext(SynthContext.class, c, region,
-                                       style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -202,7 +200,7 @@ public class SynthDesktopIconUI extends BasicDesktopIconUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,

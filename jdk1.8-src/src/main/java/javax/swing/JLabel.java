@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -80,7 +80,7 @@ import java.util.*;
  * should appear between the text and the image.
  * The default is 4 pixels.
  * <p>
- * See <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/label.html">How to Use Labels</a>
+ * See <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/label.html">How to Use Labels</a>
  * in <em>The Java Tutorial</em>
  * for further documentation.
  * <p>
@@ -94,7 +94,7 @@ import java.util.*;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -104,6 +104,7 @@ import java.util.*;
  *
  * @author Hans Muller
  */
+@SuppressWarnings("serial")
 public class JLabel extends JComponent implements SwingConstants, Accessible
 {
     /**
@@ -236,7 +237,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
 
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      *
      * @return LabelUI object
      */
@@ -246,9 +247,9 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
 
 
     /**
-     * Sets the L&F object that renders this component.
+     * Sets the L&amp;F object that renders this component.
      *
-     * @param ui  the LabelUI L&F object
+     * @param ui  the LabelUI L&amp;F object
      * @see UIDefaults#getUI
      * @beaninfo
      *        bound: true
@@ -276,7 +277,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
 
 
     /**
-     * Returns a string that specifies the name of the l&f class
+     * Returns a string that specifies the name of the l&amp;f class
      * that renders this component.
      *
      * @return String "LabelUI"
@@ -544,8 +545,8 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
      *
      * @since 1.4
      * @param index Index into the String to underline
-     * @exception IllegalArgumentException will be thrown if <code>index</code
-     *            is >= length of the text, or < -1
+     * @exception IllegalArgumentException will be thrown if <code>index</code>
+     *            is &gt;= length of the text, or &lt; -1
      *
      * @beaninfo
      *        bound: true
@@ -1063,10 +1064,11 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class AccessibleJLabel extends AccessibleJComponent
         implements AccessibleText, AccessibleExtendedComponent {
 
@@ -1183,14 +1185,13 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
         }
 
         /**
-         * Determine the bounding box of the character at the given
-         * index into the string.  The bounds are returned in local
-         * coordinates.  If the index is invalid an empty rectangle is
-         * returned.
+         * Returns the bounding box of the character at the given
+         * index in the string.  The bounds are returned in local
+         * coordinates. If the index is invalid, <code>null</code> is returned.
          *
          * @param i the index into the String
-         * @return the screen coordinates of the character's the bounding box,
-         * if index is invalid returns an empty rectangle.
+         * @return the screen coordinates of the character's bounding box.
+         * If the index is invalid, <code>null</code> is returned.
          * @since 1.3
          */
         public Rectangle getCharacterBounds(int i) {
@@ -1250,7 +1251,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          * or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence,
          *   null for an invalid index or part
          * @since 1.3
@@ -1297,7 +1298,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          * or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence, null for an invalid
          *  index or part
          * @since 1.3
@@ -1361,7 +1362,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
          *
          * @param part the AccessibleText.CHARACTER, AccessibleText.WORD,
          *   or AccessibleText.SENTENCE to retrieve
-         * @param index an index within the text >= 0
+         * @param index an index within the text &gt;= 0
          * @return the letter, word, or sentence, null for an invalid index
          *  or part
          * @since 1.3
@@ -1456,7 +1457,7 @@ public class JLabel extends JComponent implements SwingConstants, Accessible
          * If there is no selection, but there is
          * a caret, the start and end offsets will be the same.
          *
-         * @return the index into teh text of the end of the selection
+         * @return the index into the text of the end of the selection
          * @since 1.3
          */
         public int getSelectionEnd() {

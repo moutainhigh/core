@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -47,7 +47,7 @@ import java.io.IOException;
  *
  * For more information and examples see
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/menu.html">How to Use Menus</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/menu.html">How to Use Menus</a>,
  * a section in <em>The Java Tutorial.</em>
  * <p>
  * <strong>Warning:</strong> Swing is not thread safe. For more
@@ -60,7 +60,7 @@ import java.io.IOException;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -71,6 +71,7 @@ import java.io.IOException;
  * @author Georges Saab
  * @author Jeff Shapiro
  */
+@SuppressWarnings("serial")
 public class JSeparator extends JComponent implements SwingConstants, Accessible
 {
     /**
@@ -107,7 +108,7 @@ public class JSeparator extends JComponent implements SwingConstants, Accessible
     }
 
     /**
-     * Returns the L&F object that renders this component.
+     * Returns the L&amp;F object that renders this component.
      *
      * @return the SeparatorUI object that renders this component
      */
@@ -116,9 +117,9 @@ public class JSeparator extends JComponent implements SwingConstants, Accessible
     }
 
     /**
-     * Sets the L&F object that renders this component.
+     * Sets the L&amp;F object that renders this component.
      *
-     * @param ui  the SeparatorUI L&F object
+     * @param ui  the SeparatorUI L&amp;F object
      * @see UIDefaults#getUI
      * @beaninfo
      *        bound: true
@@ -141,7 +142,7 @@ public class JSeparator extends JComponent implements SwingConstants, Accessible
 
 
     /**
-     * Returns the name of the L&F class that renders this component.
+     * Returns the name of the L&amp;F class that renders this component.
      *
      * @return the string "SeparatorUI"
      * @see JComponent#getUIClassID
@@ -275,10 +276,11 @@ public class JSeparator extends JComponent implements SwingConstants, Accessible
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
+    @SuppressWarnings("serial")
     protected class AccessibleJSeparator extends AccessibleJComponent {
 
         /**

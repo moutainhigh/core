@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -133,7 +133,7 @@ import sun.awt.AWTAccessor;
  * WARNING: Aside from those keys that are defined by the Java language
  * (VK_ENTER, VK_BACK_SPACE, and VK_TAB), do not rely on the values of the VK_
  * constants.  Sun reserves the right to change these values as needed
- * to accomodate a wider range of keyboards in the future.
+ * to accommodate a wider range of keyboards in the future.
  * <p>
  * An unspecified behavior will be caused if the {@code id} parameter
  * of any particular {@code KeyEvent} instance is not
@@ -145,7 +145,7 @@ import sun.awt.AWTAccessor;
  *
  * @see KeyAdapter
  * @see KeyListener
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/keylistener.html">Tutorial: Writing a Key Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/keylistener.html">Tutorial: Writing a Key Listener</a>
  *
  * @since 1.1
  */
@@ -930,6 +930,10 @@ public class KeyEvent extends InputEvent {
                                                long extendedKeyCode) {
                     ev.extendedKeyCode = extendedKeyCode;
                 }
+
+                public Component getOriginalSource( KeyEvent ev ) {
+                    return ev.originalSource;
+                }
             });
     }
 
@@ -938,6 +942,14 @@ public class KeyEvent extends InputEvent {
      * accessed from C.
      */
     private static native void initIDs();
+
+    /**
+     * The original event source.
+     *
+     * Event source can be changed during processing, but in some cases
+     * we need to be able to obtain original source.
+     */
+    private Component originalSource;
 
     private KeyEvent(Component source, int id, long when, int modifiers,
                     int keyCode, char keyChar, int keyLocation, boolean isProxyActive) {
@@ -1023,6 +1035,7 @@ public class KeyEvent extends InputEvent {
         } else if ((getModifiers() == 0) && (getModifiersEx() != 0)) {
             setOldModifiers();
         }
+        originalSource = source;
     }
 
     /**

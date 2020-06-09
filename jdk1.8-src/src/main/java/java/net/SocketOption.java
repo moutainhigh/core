@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -45,11 +45,15 @@ public interface SocketOption<T> {
 
     /**
      * Returns the name of the socket option.
+     *
+     * @return the name of the socket option
      */
     String name();
 
     /**
      * Returns the type of the socket option value.
+     *
+     * @return the type of the socket option value
      */
     Class<T> type();
 }

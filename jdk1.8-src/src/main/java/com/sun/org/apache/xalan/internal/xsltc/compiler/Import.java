@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
+ * Copyright (c) 2007, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 /*
- * Copyright 2001-2004 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
  *     http://www.apache.org/licenses/LICENSE-2.0
  *
@@ -23,18 +23,16 @@
 
 package com.sun.org.apache.xalan.internal.xsltc.compiler;
 
-import java.io.File;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.Enumeration;
-
-import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
+import com.sun.org.apache.xalan.internal.XalanConstants;
+import com.sun.org.apache.xalan.internal.utils.SecuritySupport;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ClassGenerator;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.ErrorMsg;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MethodGenerator;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.util.TypeCheckError;
-
+import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
+import java.util.Iterator;
+import javax.xml.XMLConstants;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -84,6 +82,17 @@ final class Import extends TopLevelElement {
             // No SourceLoader or not resolved by SourceLoader
             if (input == null) {
                 docToLoad = SystemIDResolver.getAbsoluteURI(docToLoad, currLoadedDoc);
+                String accessError = SecuritySupport.checkAccess(docToLoad,
+                        (String)xsltc.getProperty(XMLConstants.ACCESS_EXTERNAL_STYLESHEET),
+                        XalanConstants.ACCESS_EXTERNAL_ALL);
+
+                if (accessError != null) {
+                    final ErrorMsg msg = new ErrorMsg(ErrorMsg.ACCESSING_XSLT_TARGET_ERR,
+                                        SecuritySupport.sanitizePath(docToLoad), accessError,
+                                        this);
+                    parser.reportError(Constants.FATAL, msg);
+                    return;
+                }
                 input = new InputSource(docToLoad);
             }
 
@@ -121,10 +130,10 @@ final class Import extends TopLevelElement {
             parser.setCurrentStylesheet(_imported);
             _imported.parseContents(parser);
 
-            final Enumeration elements = _imported.elements();
+            final Iterator<SyntaxTreeNode> elements = _imported.elements();
             final Stylesheet topStylesheet = parser.getTopLevelStylesheet();
-            while (elements.hasMoreElements()) {
-                final Object element = elements.nextElement();
+            while (elements.hasNext()) {
+                final SyntaxTreeNode element = elements.next();
                 if (element instanceof TopLevelElement) {
                     if (element instanceof Variable) {
                         topStylesheet.addVariable((Variable) element);

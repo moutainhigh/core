@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -186,7 +186,7 @@ public class XMLVersionDetector {
      * @throws IOException
      */
     public short determineDocVersion(XMLInputSource inputSource) throws IOException {
-        fEncoding = fEntityManager.setupCurrentEntity(fXMLSymbol, inputSource, false, true);
+        fEncoding = fEntityManager.setupCurrentEntity(false, fXMLSymbol, inputSource, false, true);
 
         // Must use XML 1.0 scanner to handle whitespace correctly
         // in the XML declaration.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -129,7 +129,7 @@ public class SnmpNull extends SnmpValue {
             newclone = (SnmpNull) super.clone() ;
             newclone.tag = tag ;
         } catch (CloneNotSupportedException e) {
-            throw new InternalError() ; // vm bug.
+            throw new InternalError(e) ; // vm bug.
         }
         return newclone ;
     }

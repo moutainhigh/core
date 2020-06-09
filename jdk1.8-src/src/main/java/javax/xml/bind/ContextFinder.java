@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,6 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import static javax.xml.bind.JAXBContext.JAXB_CONTEXT_FACTORY;
 
@@ -115,7 +114,7 @@ class ContextFinder {
         return new JAXBException(Messages.format(Messages.ILLEGAL_CAST,
                 // we don't care where the impl class is, we want to know where JAXBContext lives in the impl
                 // class' ClassLoader
-                originalType.getClassLoader().getResource("javax/xml/bind/JAXBContext.class"),
+                getClassClassLoader(originalType).getResource("javax/xml/bind/JAXBContext.class"),
                 targetTypeURL));
     }
 
@@ -219,7 +218,7 @@ class ContextFinder {
                               Class[] classes,
                               Map properties,
                               String className) throws JAXBException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getContextClassLoader();
         Class spi;
         try {
             spi = safeLoadClass(className,cl);
@@ -311,17 +310,16 @@ class ContextFinder {
             }
         }
 
-        if (Thread.currentThread().getContextClassLoader() == classLoader) {
-            Class factory = lookupUsingOSGiServiceLoader("javax.xml.bind.JAXBContext");
-            if (factory != null) {
-                logger.fine("OSGi environment detected");
-                return newInstance(contextPath, factory, classLoader, properties);
-            }
+        // OSGi search
+        Class jaxbContext = lookupJaxbContextUsingOsgiServiceLoader();
+        if (jaxbContext != null) {
+            logger.fine("OSGi environment detected");
+            return newInstance(contextPath, jaxbContext, classLoader, properties);
         }
 
         logger.fine("Searching META-INF/services");
         // search META-INF services next
-        BufferedReader r;
+        BufferedReader r = null;
         try {
             final StringBuilder resource = new StringBuilder().append("META-INF/services/").append(jaxbContextFQCN);
             final InputStream resourceStream =
@@ -329,7 +327,10 @@ class ContextFinder {
 
             if (resourceStream != null) {
                 r = new BufferedReader(new InputStreamReader(resourceStream, "UTF-8"));
-                factoryClassName = r.readLine().trim();
+                factoryClassName = r.readLine();
+                if (factoryClassName != null) {
+                    factoryClassName = factoryClassName.trim();
+                }
                 r.close();
                 return newInstance(contextPath, factoryClassName, classLoader, properties);
             } else {
@@ -340,6 +341,14 @@ class ContextFinder {
             throw new JAXBException(e);
         } catch (IOException e) {
             throw new JAXBException(e);
+        } finally {
+            try {
+                if (r != null) {
+                    r.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(ContextFinder.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         // else no provider found
@@ -355,11 +364,7 @@ class ContextFinder {
         // search for jaxb.properties in the class loader of each class first
         for (final Class c : classes) {
             // this classloader is used only to load jaxb.properties, so doing this should be safe.
-            ClassLoader classLoader = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                public ClassLoader run() {
-                    return c.getClassLoader();
-                }
-            });
+            ClassLoader classLoader = getClassClassLoader(c);
             Package pkg = c.getPackage();
             if(pkg==null)
                 continue;       // this is possible for primitives, arrays, and classes that are loaded by poorly implemented ClassLoaders
@@ -407,18 +412,19 @@ class ContextFinder {
             }
         }
 
-        Class factory = lookupUsingOSGiServiceLoader("javax.xml.bind.JAXBContext");
-        if (factory != null) {
+        // OSGi search
+        Class jaxbContext = lookupJaxbContextUsingOsgiServiceLoader();
+        if (jaxbContext != null) {
             logger.fine("OSGi environment detected");
-            return newInstance(classes, properties, factory);
+            return newInstance(classes, properties, jaxbContext);
         }
 
         // search META-INF services next
         logger.fine("Checking META-INF/services");
-        BufferedReader r;
+        BufferedReader r = null;
         try {
             final String resource = new StringBuilder("META-INF/services/").append(jaxbContextFQCN).toString();
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = getContextClassLoader();
             URL resourceURL;
             if(classLoader==null)
                 resourceURL = ClassLoader.getSystemResource(resource);
@@ -428,7 +434,10 @@ class ContextFinder {
             if (resourceURL != null) {
                 logger.log(Level.FINE, "Reading {0}", resourceURL);
                 r = new BufferedReader(new InputStreamReader(resourceURL.openStream(), "UTF-8"));
-                factoryClassName = r.readLine().trim();
+                factoryClassName = r.readLine();
+                if (factoryClassName != null) {
+                    factoryClassName = factoryClassName.trim();
+                }
                 return newInstance(classes, properties, factoryClassName);
             } else {
                 logger.log(Level.FINE, "Unable to find: {0}", resource);
@@ -438,6 +447,14 @@ class ContextFinder {
             throw new JAXBException(e);
         } catch (IOException e) {
             throw new JAXBException(e);
+        } finally {
+            if (r != null) {
+                try {
+                    r.close();
+                } catch (IOException ex) {
+                    logger.log(Level.FINE, "Unable to close stream", ex);
+                }
+            }
         }
 
         // else no provider found
@@ -445,16 +462,15 @@ class ContextFinder {
         return newInstance(classes, properties, PLATFORM_DEFAULT_FACTORY_CLASS);
     }
 
-    private static Class lookupUsingOSGiServiceLoader(String factoryId) {
+    private static Class lookupJaxbContextUsingOsgiServiceLoader() {
         try {
-            // Use reflection to avoid having any dependendcy on ServiceLoader class
-            Class serviceClass = Class.forName(factoryId);
+            // Use reflection to avoid having any dependency on ServiceLoader class
             Class target = Class.forName("com.sun.org.glassfish.hk2.osgiresourcelocator.ServiceLoader");
             Method m = target.getMethod("lookupProviderClasses", Class.class);
-            Iterator iter = ((Iterable) m.invoke(null, serviceClass)).iterator();
+            Iterator iter = ((Iterable) m.invoke(null, JAXBContext.class)).iterator();
             return iter.hasNext() ? (Class)iter.next() : null;
         } catch(Exception e) {
-            logger.log(Level.FINE, "Unable to find from OSGi: {0}", factoryId);
+            logger.log(Level.FINE, "Unable to find from OSGi: javax.xml.bind.JAXBContext");
             return null;
         }
     }
@@ -505,7 +521,7 @@ class ContextFinder {
         String classnameAsResource = clazz.getName().replace('.', '/') + ".class";
 
         if(loader == null) {
-            loader = ClassLoader.getSystemClassLoader();
+            loader = getSystemClassLoader();
         }
 
         return loader.getResource(classnameAsResource);
@@ -524,7 +540,7 @@ class ContextFinder {
      *          the URL for the class or null if it wasn't found
      */
     static URL which(Class clazz) {
-        return which(clazz, clazz.getClassLoader());
+        return which(clazz, getClassClassLoader(clazz));
     }
 
     /**
@@ -569,6 +585,45 @@ class ContextFinder {
            }
            throw se;
        }
+    }
+
+    private static ClassLoader getContextClassLoader() {
+        if (System.getSecurityManager() == null) {
+            return Thread.currentThread().getContextClassLoader();
+        } else {
+            return (ClassLoader) java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedAction() {
+                        public java.lang.Object run() {
+                            return Thread.currentThread().getContextClassLoader();
+                        }
+                    });
+        }
+    }
+
+    private static ClassLoader getClassClassLoader(final Class c) {
+        if (System.getSecurityManager() == null) {
+            return c.getClassLoader();
+        } else {
+            return (ClassLoader) java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedAction() {
+                        public java.lang.Object run() {
+                            return c.getClassLoader();
+                        }
+                    });
+        }
+    }
+
+    private static ClassLoader getSystemClassLoader() {
+        if (System.getSecurityManager() == null) {
+            return ClassLoader.getSystemClassLoader();
+        } else {
+            return (ClassLoader) java.security.AccessController.doPrivileged(
+                    new java.security.PrivilegedAction() {
+                        public java.lang.Object run() {
+                            return ClassLoader.getSystemClassLoader();
+                        }
+                    });
+        }
     }
 
 }

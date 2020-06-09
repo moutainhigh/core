@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -50,8 +50,8 @@ import sun.swing.AccumulativeRunnable;
  * When writing a multi-threaded application using Swing, there are
  * two constraints to keep in mind:
  * (refer to
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">
- *   How to Use Threads
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/concurrency/index.html">
+ *   Concurrency in Swing
  * </a> for more details):
  * <ul>
  *   <li> Time-consuming tasks should not be run on the <i>Event
@@ -62,7 +62,6 @@ import sun.swing.AccumulativeRunnable;
  *   </li>
  * </ul>
  *
- * <p>
  *
  * <p>
  * These constraints mean that a GUI application with time intensive
@@ -405,6 +404,7 @@ public abstract class SwingWorker<T, V> implements RunnableFuture<T> {
      *
      */
     @SafeVarargs
+    @SuppressWarnings("varargs") // Passing chunks to add is safe
     protected final void publish(V... chunks) {
         synchronized (this) {
             if (doProcess == null) {

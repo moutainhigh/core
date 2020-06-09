@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -55,8 +55,7 @@ public class DefaultComboBoxModel<E> extends AbstractListModel<E> implements Mut
      * @param items  an array of Object objects
      */
     public DefaultComboBoxModel(final E items[]) {
-        objects = new Vector<E>();
-        objects.ensureCapacity( items.length );
+        objects = new Vector<E>(items.length);
 
         int i,c;
         for ( i=0,c=items.length;i<c;i++ )
@@ -84,7 +83,7 @@ public class DefaultComboBoxModel<E> extends AbstractListModel<E> implements Mut
     // implements javax.swing.ComboBoxModel
     /**
      * Set the value of the selected item. The selected item may be null.
-     * <p>
+     *
      * @param anObject The combo box value or null for no selection.
      */
     public void setSelectedItem(Object anObject) {

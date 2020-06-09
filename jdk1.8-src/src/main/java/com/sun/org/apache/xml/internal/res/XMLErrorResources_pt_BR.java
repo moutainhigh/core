@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -9,7 +9,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +17,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*
- * $Id: XMLErrorResources_pt_BR.java 3023 2011-03-01 00:53:34Z joehw $
- */
 package com.sun.org.apache.xml.internal.res;
 
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -183,7 +176,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
   // Error messages...
 
   /** The lookup table for error messages.   */
-  public static final Object[][] contents = {
+  private static final Object[][] contents = {
 
   /** Error message ID that has a null message, but takes in a single object.    */
     {"ER0000" , "{0}" },
@@ -195,7 +188,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
       "N\u00E3o \u00E9 poss\u00EDvel substituir a causa"},
 
     { ER_NO_DEFAULT_IMPL,
-      "Nenhuma implementa\u00E7\u00E3o default encontrada "},
+      "Nenhuma implementa\u00E7\u00E3o padr\u00E3o encontrada "},
 
     { ER_CHUNKEDINTARRAY_NOT_SUPPORTED,
       "ChunkedIntArray({0}) n\u00E3o suportado atualmente"},
@@ -219,7 +212,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
       "\nINESPERADO: Parser doTerminate responde {0}"},
 
     { ER_NO_PARSE_CALL_WHILE_PARSING,
-      "o parse n\u00E3o pode ser chamado durante o parse"},
+      "o parsing n\u00E3o pode ser chamado durante o parsing"},
 
     { ER_TYPED_ITERATOR_AXIS_NOT_IMPLEMENTED,
       "Erro: iterador digitado para o eixo {0} n\u00E3o implementado"},
@@ -249,7 +242,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
       "N\u00E3o foi poss\u00EDvel resolver o n\u00F3 para um handle"},
 
     { ER_STARTPARSE_WHILE_PARSING,
-       "startParse n\u00E3o pode ser chamado durante o parse"},
+       "startParse n\u00E3o pode ser chamado durante o parsing"},
 
     { ER_STARTPARSE_NEEDS_SAXPARSER,
        "startParse requer um SAXParser n\u00E3o nulo"},
@@ -264,7 +257,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
        "O caminho cont\u00E9m uma sequ\u00EAncia inv\u00E1lida de caracteres de escape"},
 
     { ER_SCHEME_REQUIRED,
-       "\u00C9 necess\u00E1rio um esquema!"},
+       "O esquema \u00E9 obrigat\u00F3rio!"},
 
     { ER_NO_SCHEME_IN_URI,
        "Nenhum esquema encontrado no URI: {0}"},
@@ -303,7 +296,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
       "O parser j\u00E1 est\u00E1 sendo usado"},
 
     { ER_CANNOT_CHANGE_WHILE_PARSING,
-      "N\u00E3o \u00E9 poss\u00EDvel alterar {0} {1} durante o parse"},
+      "N\u00E3o \u00E9 poss\u00EDvel alterar {0} {1} durante o parsing"},
 
     { ER_SELF_CAUSATION_NOT_PERMITTED,
       "Autoaverigua\u00E7\u00E3o n\u00E3o permitida"},
@@ -433,7 +426,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
       "Declara\u00E7\u00E3o de namespace ''{0}''=''{1}'' fora do elemento." },
 
     {ER_COULD_NOT_LOAD_RESOURCE,
-      "N\u00E3o foi poss\u00EDvel carregar ''{0}'' (verificar CLASSPATH); usando agora apenas os defaults"},
+      "N\u00E3o foi poss\u00EDvel carregar ''{0}'' (verificar CLASSPATH); usando agora apenas os padr\u00F5es"},
 
     { ER_ILLEGAL_CHARACTER,
        "Tentativa de exibir um caractere de valor integral {0} que n\u00E3o est\u00E1 representado na codifica\u00E7\u00E3o de sa\u00EDda especificada de {1}."},
@@ -443,16 +436,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
 
 
   };
-  private static final Object[][] msgCopy = new Object[contents.length][2];
-    // return a copy of contents; in theory we want a deep clone
-    // of contents, but since it only contains (immutable) Strings,
-    // this shallow copy is sufficient
-  static {
-        for (int i = 0; i < contents.length; i++) {
-            msgCopy[i][0] = contents[i][0];
-            msgCopy[i][1] = contents[i][1];
-        }
-  }
+
   /**
    * Get the association list.
    *
@@ -460,70 +444,7 @@ public class XMLErrorResources_pt_BR extends ListResourceBundle
    */
 
     protected Object[][] getContents() {
-        return msgCopy;
+        return contents;
     }
-
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XMLErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XMLErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XMLErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

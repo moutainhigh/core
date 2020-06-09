@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,7 +57,7 @@ import java.lang.ref.WeakReference;
  * choose a file.
  * For information about using <code>JFileChooser</code>, see
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/filechooser.html">How to Use File Choosers</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html">How to Use File Choosers</a>,
  * a section in <em>The Java Tutorial</em>.
  *
  * <p>
@@ -67,7 +67,7 @@ import java.lang.ref.WeakReference;
  * <pre>
  *    JFileChooser chooser = new JFileChooser();
  *    FileNameExtensionFilter filter = new FileNameExtensionFilter(
- *        "JPG & GIF Images", "jpg", "gif");
+ *        "JPG &amp; GIF Images", "jpg", "gif");
  *    chooser.setFileFilter(filter);
  *    int returnVal = chooser.showOpenDialog(parent);
  *    if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -134,7 +134,7 @@ public class JFileChooser extends JComponent implements Accessible {
     public static final int APPROVE_OPTION = 0;
 
     /**
-     * Return value if an error occured.
+     * Return value if an error occurred.
      */
     public static final int ERROR_OPTION = -1;
 
@@ -362,6 +362,7 @@ public class JFileChooser extends JComponent implements Accessible {
      */
     protected void setup(FileSystemView view) {
         installShowFilesListener();
+        installHierarchyListener();
 
         if(view == null) {
             view = FileSystemView.getFileSystemView();
@@ -372,6 +373,22 @@ public class JFileChooser extends JComponent implements Accessible {
             setFileFilter(getAcceptAllFileFilter());
         }
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
+    }
+
+    private void installHierarchyListener() {
+        addHierarchyListener(new HierarchyListener() {
+            @Override
+            public void hierarchyChanged(HierarchyEvent e) {
+                if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED)
+                        == HierarchyEvent.PARENT_CHANGED) {
+                    JFileChooser fc = JFileChooser.this;
+                    JRootPane rootPane = SwingUtilities.getRootPane(fc);
+                    if (rootPane != null) {
+                        rootPane.setDefaultButton(fc.getUI().getDefaultButton(fc));
+                    }
+                }
+            }
+        });
     }
 
     private void installShowFilesListener() {
@@ -617,7 +634,7 @@ public class JFileChooser extends JComponent implements Accessible {
     /**
      * Pops up an "Open File" file chooser dialog. Note that the
      * text that appears in the approve button is determined by
-     * the L&F.
+     * the L&amp;F.
      *
      * @param    parent  the parent component of the dialog,
      *                  can be <code>null</code>;
@@ -642,7 +659,7 @@ public class JFileChooser extends JComponent implements Accessible {
     /**
      * Pops up a "Save File" file chooser dialog. Note that the
      * text that appears in the approve button is determined by
-     * the L&F.
+     * the L&amp;F.
      *
      * @param    parent  the parent component of the dialog,
      *                  can be <code>null</code>;
@@ -801,7 +818,6 @@ public class JFileChooser extends JComponent implements Accessible {
                 dialog.getRootPane().setWindowDecorationStyle(JRootPane.FILE_CHOOSER_DIALOG);
             }
         }
-        dialog.getRootPane().setDefaultButton(ui.getDefaultButton(this));
         dialog.pack();
         dialog.setLocationRelativeTo(parent);
 
@@ -845,7 +861,7 @@ public class JFileChooser extends JComponent implements Accessible {
      * @beaninfo
      *   preferred: true
      *       bound: true
-     * description: Sets whether the approve & cancel buttons are shown.
+     * description: Sets whether the approve &amp; cancel buttons are shown.
      *
      * @see #getControlButtonsAreShown
      * @see #CONTROL_BUTTONS_ARE_SHOWN_CHANGED_PROPERTY
@@ -1146,9 +1162,26 @@ public class JFileChooser extends JComponent implements Accessible {
      * @see #resetChoosableFileFilters
      */
     public boolean removeChoosableFileFilter(FileFilter f) {
-        if(filters.contains(f)) {
+        int index = filters.indexOf(f);
+        if (index >= 0) {
             if(getFileFilter() == f) {
-                setFileFilter(null);
+                FileFilter aaff = getAcceptAllFileFilter();
+                if (isAcceptAllFileFilterUsed() && (aaff != f)) {
+                    // choose default filter if it is used
+                    setFileFilter(aaff);
+                }
+                else if (index > 0) {
+                    // choose the first filter, because it is not removed
+                    setFileFilter(filters.get(0));
+                }
+                else if (filters.size() > 1) {
+                    // choose the second filter, because the first one is removed
+                    setFileFilter(filters.get(1));
+                }
+                else {
+                    // no more filters
+                    setFileFilter(null);
+                }
             }
             FileFilter[] oldValue = getChoosableFileFilters();
             filters.removeElement(f);
@@ -1808,7 +1841,7 @@ public class JFileChooser extends JComponent implements Accessible {
     }
 
     /**
-     * Returns a string that specifies the name of the L&F class
+     * Returns a string that specifies the name of the L&amp;F class
      * that renders this component.
      *
      * @return the string "FileChooserUI"
@@ -1816,16 +1849,16 @@ public class JFileChooser extends JComponent implements Accessible {
      * @see UIDefaults#getUI
      * @beaninfo
      *        expert: true
-     *   description: A string that specifies the name of the L&F class.
+     *   description: A string that specifies the name of the L&amp;F class.
      */
     public String getUIClassID() {
         return uiClassID;
     }
 
     /**
-     * Gets the UI object which implements the L&F for this component.
+     * Gets the UI object which implements the L&amp;F for this component.
      *
-     * @return the FileChooserUI object that implements the FileChooserUI L&F
+     * @return the FileChooserUI object that implements the FileChooserUI L&amp;F
      */
     public FileChooserUI getUI() {
         return (FileChooserUI) ui;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -212,7 +212,7 @@ public class MemoryNotificationInfo {
      * The given <tt>CompositeData</tt> must contain
      * the following attributes:
      * <blockquote>
-     * <table border>
+     * <table border summary="The attributes and the types the given CompositeData contains">
      * <tr>
      *   <th align=left>Attribute Name</th>
      *   <th align=left>Type</th>

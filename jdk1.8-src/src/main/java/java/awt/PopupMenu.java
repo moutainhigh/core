@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,6 +27,7 @@ package java.awt;
 
 import java.awt.peer.PopupMenuPeer;
 import javax.accessibility.*;
+
 
 import sun.awt.AWTAccessor;
 
@@ -149,7 +150,7 @@ public class PopupMenu extends Menu {
      * @exception IllegalArgumentException  if this <code>PopupMenu</code>
      *                has a non-<code>Component</code> parent
      * @exception IllegalArgumentException if the origin is not in the
-     *                parent's heirarchy
+     *                parent's hierarchy
      * @exception RuntimeException if the parent is not showing on screen
      */
     public void show(Component origin, int x, int y) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -28,7 +28,7 @@ package java.util;
 /**
  * Unchecked exception thrown when the format width is required.
  *
- * <p> Unless otherwise specified, passing a <tt>null</tt> argument to anyg
+ * <p> Unless otherwise specified, passing a <tt>null</tt> argument to any
  * method or constructor in this class will cause a {@link
  * NullPointerException} to be thrown.
  *

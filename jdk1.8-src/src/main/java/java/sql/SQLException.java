@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -107,7 +107,7 @@ public class SQLException extends java.lang.Exception
     /**
      *  Constructs a <code>SQLException</code> object with a given
      * <code>reason</code>. The  <code>SQLState</code>  is initialized to
-     * <code>null</code> and the vender code is initialized to 0.
+     * <code>null</code> and the vendor code is initialized to 0.
      *
      * The <code>cause</code> is not initialized, and may subsequently be
      * initialized by a call to the
@@ -134,7 +134,7 @@ public class SQLException extends java.lang.Exception
      * The <code>cause</code> is not initialized, and may subsequently be
      * initialized by a call to the
      * {@link Throwable#initCause(java.lang.Throwable)} method.
-     * <p>
+     *
      */
     public SQLException() {
         super();

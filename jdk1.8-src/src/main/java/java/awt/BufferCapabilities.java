@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -137,7 +137,7 @@ public class BufferCapabilities implements Cloneable {
             return super.clone();
         } catch (CloneNotSupportedException e) {
             // Since we implement Cloneable, this should never happen
-            throw new InternalError();
+            throw new InternalError(e);
         }
     }
 

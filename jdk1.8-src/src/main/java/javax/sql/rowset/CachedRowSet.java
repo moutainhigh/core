@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,7 +46,7 @@ import javax.sql.rowset.spi.*;
  * A <code>CachedRowSet</code> object is a container for rows of data
  * that caches its rows in memory, which makes it possible to operate without always being
  * connected to its data source. Further, it is a
- * JavaBeans<sup><font size=-2>TM</font></sup> component and is scrollable,
+ * JavaBeans&trade; component and is scrollable,
  * updatable, and serializable. A <code>CachedRowSet</code> object typically
  * contains rows from a result set, but it can also contain rows from any file
  * with a tabular format, such as a spread sheet.  The reference implementation
@@ -66,7 +66,7 @@ import javax.sql.rowset.spi.*;
  * object much leaner and therefore much easier to pass to another component.  For
  * example, a disconnected <code>RowSet</code> object can be serialized and passed
  * over the wire to a thin client such as a personal digital assistant (PDA).
- * <P>
+ *
  *
  * <h3>1.0 Creating a <code>CachedRowSet</code> Object</h3>
  * The following line of code uses the default constructor for
@@ -118,7 +118,7 @@ import javax.sql.rowset.spi.*;
  * <P>
  * There are two ways for a <code>CachedRowSet</code> object to specify which
  * <code>SyncProvider</code> object it will use.
- * <UL)
+ * <UL>
  *     <LI>Supplying the name of the implementation to the constructor<BR>
  *     The following line of code creates the <code>CachedRowSet</code>
  *     object <i>crs2</i> that is initialized with default values except that its
@@ -135,11 +135,11 @@ import javax.sql.rowset.spi.*;
  *      <PRE>
  *           crs.setSyncProvider("com.fred.providers.HighAvailabilityProvider");
  *      </PRE>
- * </UL)
+ * </UL>
  * See the comments for <code>SyncFactory</code> and <code>SyncProvider</code> for
  * more details.
  *
- * <P>
+ *
  * <h3>2.0 Retrieving Data from a <code>CachedRowSet</code> Object</h3>
  * Data is retrieved from a <code>CachedRowSet</code> object by using the
  * getter methods inherited from the <code>ResultSet</code>
@@ -195,7 +195,7 @@ import javax.sql.rowset.spi.*;
  *   <LI><i>It includes <code>setter</code> methods:</i> A <code>RowSet</code>
  *   object uses these methods internally when it is populated with data from a
  *   different <code>ResultSet</code> object.
- *   <P>
+ *
  *   <LI><i>It contains fewer <code>getter</code> methods:</i> Some
  *   <code>ResultSetMetaData</code> methods to not apply to a <code>RowSet</code>
  *   object. For example, methods retrieving whether a column value is writable
@@ -260,7 +260,7 @@ import javax.sql.rowset.spi.*;
  * <code>acceptChanges</code> after all calls to <code>updateRow</code>
  * and <code>insertRow</code> have been made.  If <code>acceptChanges</code>
  * is called only once, only one connection needs to be established.
- * <P>
+ *
  * <h3>4.0 Updating the Underlying Data Source</h3>
  * When the method <code>acceptChanges</code> is executed, the
  * <code>CachedRowSet</code> object's writer, a <code>RowSetWriterImpl</code>
@@ -304,7 +304,7 @@ import javax.sql.rowset.spi.*;
  * the values in the database have been changed, there is a conflict.
  * Whether a writer checks for conflicts, what degree of checking it does, and how
  * it handles conflicts all depend on how it is implemented.
- * <P>
+ *
  * <h3>5.0 Registering and Notifying Listeners</h3>
  * Being JavaBeans components, all rowsets participate in the JavaBeans event
  * model, inheriting methods for registering listeners and notifying them of
@@ -327,7 +327,7 @@ import javax.sql.rowset.spi.*;
  * data also notifies registered listeners of the changes, so
  * <code>table</code> and <code>barGraph</code> will be notified when there is
  * a change in <code>crs</code>.
- * <P>
+ *
  * <h3>6.0 Passing Data to Thin Clients</h3>
  * One of the main reasons to use a <code>CachedRowSet</code> object is to
  * pass data between different components of an application. Because it is
@@ -343,7 +343,7 @@ import javax.sql.rowset.spi.*;
  * due to resource limitations or security considerations.
  * Thus, a <code>CachedRowSet</code> object provides a means to "get rows in"
  * without the need to implement the full JDBC API.
- * <P>
+ *
  * <h3>7.0 Scrolling and Updating</h3>
  * A second major use for <code>CachedRowSet</code> objects is to provide
  * scrolling and updating for <code>ResultSet</code> objects that
@@ -377,7 +377,7 @@ import javax.sql.rowset.spi.*;
  * and it is well suited to sending data to a thin client. However, a
  * <code>CachedRowSet</code> object does have a limitation: It is limited in
  * size by the amount of data it can store in memory at one time.
- * <P>
+ *
  * <h3>8.0 Getting Universal Data Access</h3>
  * Another advantage of the <code>CachedRowSet</code> class is that it makes it
  * possible to retrieve and store data from sources other than a relational
@@ -390,7 +390,7 @@ import javax.sql.rowset.spi.*;
  * non-SQL data sources. Nevertheless, it is expected that most of the time,
  * <code>CachedRowSet</code> objects will contain data that was fetched
  * from an SQL database using the JDBC API.
- * <P>
+ *
  * <h3>9.0 Setting Properties</h3>
  * All rowsets maintain a set of properties, which will usually be set using
  * a tool.  The number and kinds of properties a rowset has will vary,
@@ -410,7 +410,7 @@ import javax.sql.rowset.spi.*;
  * NOTE:  In order to use a <code>DataSource</code> object for making a
  * connection, the <code>DataSource</code> object must have been registered
  * with a naming service that uses the Java Naming and Directory
- * Interface<sup><font size=-2>TM</font></sup> (JNDI) API.  This registration
+ * Interface&trade; (JNDI) API.  This registration
  * is usually done by a person acting in the capacity of a system
  * administrator.
  * <P>
@@ -426,10 +426,10 @@ import javax.sql.rowset.spi.*;
  * The following code fragment illustrates how the <code>CachedRowSet</code>
  * object <code>crs</code> might have its command property set.  Note that if a
  * tool is used to set properties, this is the code that the tool would use.
- * <PRE>
+ * <PRE>{@code
  *    crs.setCommand("SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS " +
  *                   "WHERE CREDIT_LIMIT > ? AND REGION = ?");
- * </PRE>
+ * } </PRE>
  * <P>
  * The values that will be used to set the command's placeholder parameters are
  * contained in the <code>RowSet</code> object's <code>params</code> field, which is a
@@ -457,7 +457,7 @@ import javax.sql.rowset.spi.*;
  * The following code fragment gives an idea of how the reader
  * does this, after obtaining the <code>Connection</code> object
  * <code>con</code>.
- * <PRE>
+ * <PRE>{@code
  *    PreparedStatement pstmt = con.prepareStatement(crs.getCommand());
  *    reader.decodeParams();
  *    // decodeParams figures out which setter methods to use and does something
@@ -465,16 +465,16 @@ import javax.sql.rowset.spi.*;
  *    //    for (i = 0; i < params.length; i++) {
  *    //        pstmt.setObject(i + 1, params[i]);
  *    //    }
- * </PRE>
+ * }</PRE>
  * <P>
- * At this point, the command for <code>crs</code> is the query <code>"SELECT
+ * At this point, the command for <code>crs</code> is the query {@code "SELECT
  * FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS WHERE CREDIT_LIMIT > 5000
- * AND REGION = "West"</code>.  After the <code>readData</code> method executes
+ * AND REGION = "West"}.  After the <code>readData</code> method executes
  * this command with the following line of code, it will have the data from
  * <code>rs</code> with which to populate <code>crs</code>.
- * <PRE>
+ * <PRE>{@code
  *     ResultSet rs = pstmt.executeQuery();
- * </PRE>
+ * }</PRE>
  * <P>
  * The preceding code fragments give an idea of what goes on behind the
  * scenes; they would not appear in an application, which would not invoke
@@ -484,13 +484,13 @@ import javax.sql.rowset.spi.*;
  * the command. Simply by calling the <code>execute</code> method,
  * <code>crs</code> populates itself with the requested data from the
  * table <code>CUSTOMERS</code>.
- * <PRE>
+ * <PRE>{@code
  *    crs.setCommand("SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS" +
  *                   "WHERE CREDIT_LIMIT > ? AND REGION = ?");
  *    crs.setInt(1, 5000);
  *    crs.setString(2, "West");
  *    crs.execute();
- * </PRE>
+ * }</PRE>
  *
  * <h3>10.0 Paging Data</h3>
  * Because a <code>CachedRowSet</code> object stores data in memory,
@@ -734,7 +734,6 @@ public interface CachedRowSet extends RowSet, Joinable {
     * source. Otherwise, the application <b>must</b> explicity call the
     * <code>commit()</code> or <code>rollback()</code> methods as appropriate.
     *
-    * @throws SQLException if the cursor is on the insert row
     * @throws SyncProviderException if the underlying
     * synchronization provider's writer fails to write the updates
     * back to the data source
@@ -805,7 +804,6 @@ public interface CachedRowSet extends RowSet, Joinable {
     * <code>commit</code> or <code>rollback</code> methods as appropriate.
     *
     * @param con a standard JDBC <code>Connection</code> object
-    * @throws SQLException if the cursor is on the insert row
     * @throws SyncProviderException if the underlying
     * synchronization provider's writer fails to write the updates
     * back to the data source
@@ -1106,7 +1104,7 @@ public interface CachedRowSet extends RowSet, Joinable {
     public SyncProvider getSyncProvider() throws SQLException;
 
    /**
-    * Sets the <code>SyncProvider</code> objec for this <code>CachedRowSet</code>
+    * Sets the <code>SyncProvider</code> object for this <code>CachedRowSet</code>
     * object to the one specified.  This method
     * allows the <code>SyncProvider</code> object to be reset.
     * <P>
@@ -1175,7 +1173,7 @@ public interface CachedRowSet extends RowSet, Joinable {
     * the last synchronization with the underlying data source.  If there have been
     * no synchronizations, the original value will be the value with which the
     * <code>RowSet</code> object was populated.  This method is called internally
-    * when an aplication calls the method <code>acceptChanges</code> and the
+    * when an application calls the method <code>acceptChanges</code> and the
     * <code>SyncProvider</code> object has been implemented to check for conflicts.
     * If this is the case, the writer compares the original value with the value
     * currently in the data source to check for conflicts.
@@ -1371,7 +1369,7 @@ public interface CachedRowSet extends RowSet, Joinable {
      * Applications can form a <code>WebRowSet</code> object from the <code>CachedRowSet</code>
      * object returned by this method in order
      * to export the <code>RowSet</code> schema definition to XML for future use.
-     *
+     * @return An empty copy of this {@code CachedRowSet} object
      * @throws SQLException if an error occurs in cloning the structure of this
      *         <code>CachedRowSet</code> object
      * @see #createShared
@@ -1543,6 +1541,7 @@ public interface CachedRowSet extends RowSet, Joinable {
      * @param numRows when populating, the number of rows interval on which the
      *     <code>CachedRowSet</code> populated should fire; the default value
      *     is zero; cannot be less than <code>fetchSize</code> or zero
+     * @throws SQLException {@code numRows < 0 or numRows < getFetchSize() }
      */
     public void rowSetPopulated(RowSetEvent event, int numRows) throws SQLException;
 

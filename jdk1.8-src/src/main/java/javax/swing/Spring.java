@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -65,7 +65,7 @@ import java.awt.Component;
  *  from <code>a</code>
  *  to <code>b</code>,
  *  where <code>a &lt;= b</code>).
- *  <p>
+ *
  *  <pre>
  *          [a1, b1] + [a2, b2] = [a1 + a2, b1 + b2]
  *
@@ -78,7 +78,7 @@ import java.awt.Component;
  *  If we denote <code>Spring</code>s as <code>[a, b, c]</code>,
  *  where <code>a &lt;= b &lt;= c</code>, we can define the same
  *  arithmetic operators on <code>Spring</code>s:
- *  <p>
+ *
  *  <pre>
  *          [a1, b1, c1] + [a2, b2, c2] = [a1 + a2, b1 + b2, c1 + c2]
  *
@@ -89,7 +89,7 @@ import java.awt.Component;
  *  <p>
  *  With both intervals and <code>Spring</code>s we can define "-" and <em>min</em>
  *  in terms of negation:
- *  <p>
+ *
  *  <pre>
  *      X - Y = X + (-Y)
  *
@@ -109,7 +109,7 @@ import java.awt.Component;
  * If you are implementing a <code>SpringLayout</code> you
  * can find further information and examples in
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/layout/spring.html">How to Use SpringLayout</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/layout/spring.html">How to Use SpringLayout</a>,
  * a section in <em>The Java Tutorial.</em>
  * <p>
  * <strong>Warning:</strong>
@@ -117,7 +117,7 @@ import java.awt.Component;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *

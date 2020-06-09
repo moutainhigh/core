@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,6 +42,7 @@ import java.security.spec.AlgorithmParameterSpec;
  * <pre>
  * OAEP-PSSDigestAlgorithms    ALGORITHM-IDENTIFIER ::= {
  *   { OID id-sha1 PARAMETERS NULL   }|
+ *   { OID id-sha224 PARAMETERS NULL   }|
  *   { OID id-sha256 PARAMETERS NULL }|
  *   { OID id-sha384 PARAMETERS NULL }|
  *   { OID id-sha512 PARAMETERS NULL },
@@ -62,6 +63,11 @@ public class MGF1ParameterSpec implements AlgorithmParameterSpec {
      */
     public static final MGF1ParameterSpec SHA1 =
         new MGF1ParameterSpec("SHA-1");
+    /**
+     * The MGF1ParameterSpec which uses "SHA-224" message digest.
+     */
+    public static final MGF1ParameterSpec SHA224 =
+        new MGF1ParameterSpec("SHA-224");
     /**
      * The MGF1ParameterSpec which uses "SHA-256" message digest.
      */
@@ -86,7 +92,7 @@ public class MGF1ParameterSpec implements AlgorithmParameterSpec {
      *
      * @param mdName the algorithm name for the message digest
      * used in this mask generation function MGF1.
-     * @exception NullPointerException if <code>mdName</code> is null.
+     * @exception NullPointerException if {@code mdName} is null.
      */
     public MGF1ParameterSpec(String mdName) {
         if (mdName == null) {

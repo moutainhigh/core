@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -63,21 +63,18 @@ class FileOutputStream extends OutputStream
     private final boolean append;
 
     /**
-     * The associated channel, initalized lazily.
+     * The associated channel, initialized lazily.
      */
     private FileChannel channel;
 
+    /**
+     * The path of the referenced file
+     * (null if the stream is created with a file descriptor)
+     */
+    private final String path;
+
     private final Object closeLock = new Object();
     private volatile boolean closed = false;
-    private static final ThreadLocal<Boolean> runningFinalize =
-        new ThreadLocal<>();
-
-    private static boolean isRunningFinalize() {
-        Boolean val;
-        if ((val = runningFinalize.get()) != null)
-            return val.booleanValue();
-        return false;
-    }
 
     /**
      * Creates a file output stream to write to the file with the
@@ -205,10 +202,14 @@ class FileOutputStream extends OutputStream
         if (name == null) {
             throw new NullPointerException();
         }
+        if (file.isInvalid()) {
+            throw new FileNotFoundException("Invalid file path");
+        }
         this.fd = new FileDescriptor();
+        fd.attach(this);
         this.append = append;
+        this.path = name;
 
-        fd.incrementAndGetUseCount();
         open(name, append);
     }
 
@@ -245,13 +246,9 @@ class FileOutputStream extends OutputStream
         }
         this.fd = fdObj;
         this.append = false;
+        this.path = null;
 
-        /*
-         * FileDescriptor is being shared by streams.
-         * Ensure that it's GC'ed only when all the streams/channels are done
-         * using it.
-         */
-        fd.incrementAndGetUseCount();
+        fd.attach(this);
     }
 
     /**
@@ -259,8 +256,19 @@ class FileOutputStream extends OutputStream
      * @param name name of file to be opened
      * @param append whether the file is to be opened in append mode
      */
-    private native void open(String name, boolean append)
+    private native void open0(String name, boolean append)
         throws FileNotFoundException;
+
+    // wrap native call to allow instrumentation
+    /**
+     * Opens a file, with the specified name, for overwriting or appending.
+     * @param name name of file to be opened
+     * @param append whether the file is to be opened in append mode
+     */
+    private void open(String name, boolean append)
+        throws FileNotFoundException {
+        open0(name, append);
+    }
 
     /**
      * Writes the specified byte to this file output stream.
@@ -340,27 +348,14 @@ class FileOutputStream extends OutputStream
         }
 
         if (channel != null) {
-            /*
-             * Decrement FD use count associated with the channel
-             * The use count is incremented whenever a new channel
-             * is obtained from this stream.
-             */
-            fd.decrementAndGetUseCount();
             channel.close();
         }
 
-        /*
-         * Decrement FD use count associated with this stream
-         */
-        int useCount = fd.decrementAndGetUseCount();
-
-        /*
-         * If FileDescriptor is still in use by another stream, the finalizer
-         * will not close it.
-         */
-        if ((useCount <= 0) || !isRunningFinalize()) {
-            close0();
-        }
+        fd.closeAll(new Closeable() {
+            public void close() throws IOException {
+               close0();
+           }
+        });
     }
 
     /**
@@ -374,16 +369,18 @@ class FileOutputStream extends OutputStream
      * @see        java.io.FileDescriptor
      */
      public final FileDescriptor getFD()  throws IOException {
-        if (fd != null) return fd;
+        if (fd != null) {
+            return fd;
+        }
         throw new IOException();
      }
 
     /**
      * Returns the unique {@link java.nio.channels.FileChannel FileChannel}
-     * object associated with this file output stream. </p>
+     * object associated with this file output stream.
      *
      * <p> The initial {@link java.nio.channels.FileChannel#position()
-     * </code>position<code>} of the returned channel will be equal to the
+     * position} of the returned channel will be equal to the
      * number of bytes written to the file so far unless this stream is in
      * append mode, in which case it will be equal to the size of the file.
      * Writing bytes to this stream will increment the channel's position
@@ -398,14 +395,7 @@ class FileOutputStream extends OutputStream
     public FileChannel getChannel() {
         synchronized (this) {
             if (channel == null) {
-                channel = FileChannelImpl.open(fd, false, true, append, this);
-
-                /*
-                 * Increment fd's use count. Invoking the channel's close()
-                 * method will result in decrementing the use count set for
-                 * the channel.
-                 */
-                fd.incrementAndGetUseCount();
+                channel = FileChannelImpl.open(fd, path, false, true, append, this);
             }
             return channel;
         }
@@ -424,18 +414,12 @@ class FileOutputStream extends OutputStream
             if (fd == FileDescriptor.out || fd == FileDescriptor.err) {
                 flush();
             } else {
-
-                /*
-                 * Finalizer should not release the FileDescriptor if another
-                 * stream is still using it. If the user directly invokes
-                 * close() then the FileDescriptor is also released.
+                /* if fd is shared, the references in FileDescriptor
+                 * will ensure that finalizer is only called when
+                 * safe to do so. All references using the fd have
+                 * become unreachable. We can call close()
                  */
-                runningFinalize.set(Boolean.TRUE);
-                try {
-                    close();
-                } finally {
-                    runningFinalize.set(Boolean.FALSE);
-                }
+                close();
             }
         }
     }

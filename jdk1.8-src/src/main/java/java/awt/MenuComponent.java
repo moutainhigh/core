@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -290,7 +290,7 @@ public abstract class MenuComponent implements java.io.Serializable {
     public void setFont(Font f) {
         font = f;
         //Fixed 6312943: NullPointerException in method MenuComponent.setFont(Font)
-        MenuComponentPeer peer = (MenuComponentPeer)this.peer;
+        MenuComponentPeer peer = this.peer;
         if (peer != null) {
             peer.setFont(f);
         }
@@ -303,7 +303,7 @@ public abstract class MenuComponent implements java.io.Serializable {
      */
     public void removeNotify() {
         synchronized (getTreeLock()) {
-            MenuComponentPeer p = (MenuComponentPeer)this.peer;
+            MenuComponentPeer p = this.peer;
             if (p != null) {
                 Toolkit.getEventQueue().removeSourceEvents(this, true);
                 this.peer = null;
@@ -402,7 +402,7 @@ public abstract class MenuComponent implements java.io.Serializable {
 
     /**
      * Gets this component's locking object (the object that owns the thread
-     * sychronization monitor) for AWT component-tree and layout
+     * synchronization monitor) for AWT component-tree and layout
      * operations.
      * @return this component's locking object
      */
@@ -686,7 +686,7 @@ public abstract class MenuComponent implements java.io.Serializable {
         /**
          * Gets the <code>Cursor</code> of this object.
          *
-         * @return the <code>Curso</code>, if supported, of the object;
+         * @return the <code>Cursor</code>, if supported, of the object;
          *     otherwise, <code>null</code>
          */
         public Cursor getCursor() {

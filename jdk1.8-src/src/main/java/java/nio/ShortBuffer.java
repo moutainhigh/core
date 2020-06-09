@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -31,6 +31,11 @@ package java.nio;
 
 
 
+
+
+
+
+
 /**
  * A short buffer.
  *
@@ -39,15 +44,15 @@ package java.nio;
  *
  * <ul>
  *
- *   <li><p> Absolute and relative {@link #get() </code><i>get</i><code>} and
- *   {@link #put(short) </code><i>put</i><code>} methods that read and write
+ *   <li><p> Absolute and relative {@link #get() <i>get</i>} and
+ *   {@link #put(short) <i>put</i>} methods that read and write
  *   single shorts; </p></li>
  *
- *   <li><p> Relative {@link #get(short[]) </code><i>bulk get</i><code>}
+ *   <li><p> Relative {@link #get(short[]) <i>bulk get</i>}
  *   methods that transfer contiguous sequences of shorts from this buffer
  *   into an array; and</p></li>
  *
- *   <li><p> Relative {@link #put(short[]) </code><i>bulk put</i><code>}
+ *   <li><p> Relative {@link #put(short[]) <i>bulk put</i>}
  *   methods that transfer contiguous sequences of shorts from a
  *   short array or some other short
  *   buffer into this buffer;&#32;and </p></li>
@@ -65,14 +70,14 @@ package java.nio;
 
 
  *
- *   <li><p> Methods for {@link #compact </code>compacting<code>}, {@link
- *   #duplicate </code>duplicating<code>}, and {@link #slice
- *   </code>slicing<code>} a short buffer.  </p></li>
+ *   <li><p> Methods for {@link #compact compacting}, {@link
+ *   #duplicate duplicating}, and {@link #slice slicing}
+ *   a short buffer.  </p></li>
  *
  * </ul>
  *
  * <p> Short buffers can be created either by {@link #allocate
- * </code><i>allocation</i><code>}, which allocates space for the buffer's
+ * <i>allocation</i>}, which allocates space for the buffer's
  *
 
 
@@ -81,7 +86,7 @@ package java.nio;
 
 
  *
- * content, by {@link #wrap(short[]) </code><i>wrapping</i><code>} an existing
+ * content, by {@link #wrap(short[]) <i>wrapping</i>} an existing
  * short array  into a buffer, or by creating a
  * <a href="ByteBuffer.html#views"><i>view</i></a> of an existing byte buffer.
  *
@@ -313,9 +318,8 @@ public abstract class ShortBuffer
      *
      * <p> The new buffer's position will be zero, its limit will be its
      * capacity, its mark will be undefined, and each of its elements will be
-     * initialized to zero.  It will have a {@link #array
-     * </code>backing array<code>}, and its {@link #arrayOffset </code>array
-     * offset<code>} will be zero.
+     * initialized to zero.  It will have a {@link #array backing array},
+     * and its {@link #arrayOffset array offset} will be zero.
      *
      * @param  capacity
      *         The new buffer's capacity, in shorts
@@ -339,8 +343,8 @@ public abstract class ShortBuffer
      * and vice versa.  The new buffer's capacity will be
      * <tt>array.length</tt>, its position will be <tt>offset</tt>, its limit
      * will be <tt>offset + length</tt>, and its mark will be undefined.  Its
-     * {@link #array </code>backing array<code>} will be the given array, and
-     * its {@link #arrayOffset </code>array offset<code>} will be zero.  </p>
+     * {@link #array backing array} will be the given array, and
+     * its {@link #arrayOffset array offset} will be zero.  </p>
      *
      * @param  array
      *         The array that will back the new buffer
@@ -379,8 +383,8 @@ public abstract class ShortBuffer
      * that is, modifications to the buffer will cause the array to be modified
      * and vice versa.  The new buffer's capacity and limit will be
      * <tt>array.length</tt>, its position will be zero, and its mark will be
-     * undefined.  Its {@link #array </code>backing array<code>} will be the
-     * given array, and its {@link #arrayOffset </code>array offset<code>} will
+     * undefined.  Its {@link #array backing array} will be the
+     * given array, and its {@link #arrayOffset array offset>} will
      * be zero.  </p>
      *
      * @param  array
@@ -546,7 +550,7 @@ public abstract class ShortBuffer
 
     /**
      * Relative <i>get</i> method.  Reads the short at this buffer's
-     * current position, and then increments the position. </p>
+     * current position, and then increments the position.
      *
      * @return  The short at the buffer's current position
      *
@@ -576,7 +580,7 @@ public abstract class ShortBuffer
 
     /**
      * Absolute <i>get</i> method.  Reads the short at the given
-     * index. </p>
+     * index.
      *
      * @param  index
      *         The index from which the short will be read
@@ -588,6 +592,19 @@ public abstract class ShortBuffer
      *          or not smaller than the buffer's limit
      */
     public abstract short get(int index);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Absolute <i>put</i> method&nbsp;&nbsp;<i>(optional operation)</i>.
@@ -634,12 +651,13 @@ public abstract class ShortBuffer
      * <tt>src.get(dst,&nbsp;off,&nbsp;len)</tt> has exactly the same effect as
      * the loop
      *
-     * <pre>
+     * <pre>{@code
      *     for (int i = off; i < off + len; i++)
-     *         dst[i] = src.get(); </pre>
+     *         dst[i] = src.get():
+     * }</pre>
      *
      * except that it first checks that there are sufficient shorts in
-     * this buffer and it is potentially much more efficient. </p>
+     * this buffer and it is potentially much more efficient.
      *
      * @param  dst
      *         The array into which shorts are to be written
@@ -684,6 +702,9 @@ public abstract class ShortBuffer
      * <pre>
      *     src.get(a, 0, a.length) </pre>
      *
+     * @param   dst
+     *          The destination array
+     *
      * @return  This buffer
      *
      * @throws  BufferUnderflowException
@@ -720,7 +741,7 @@ public abstract class ShortBuffer
      *         dst.put(src.get()); </pre>
      *
      * except that it first checks that there is sufficient space in this
-     * buffer and it is potentially much more efficient. </p>
+     * buffer and it is potentially much more efficient.
      *
      * @param  src
      *         The source buffer from which shorts are to be read;
@@ -741,6 +762,8 @@ public abstract class ShortBuffer
     public ShortBuffer put(ShortBuffer src) {
         if (src == this)
             throw new IllegalArgumentException();
+        if (isReadOnly())
+            throw new ReadOnlyBufferException();
         int n = src.remaining();
         if (n > remaining())
             throw new BufferOverflowException();
@@ -768,12 +791,13 @@ public abstract class ShortBuffer
      * <tt>dst.put(src,&nbsp;off,&nbsp;len)</tt> has exactly the same effect as
      * the loop
      *
-     * <pre>
+     * <pre>{@code
      *     for (int i = off; i < off + len; i++)
-     *         dst.put(a[i]); </pre>
+     *         dst.put(a[i]);
+     * }</pre>
      *
      * except that it first checks that there is sufficient space in this
-     * buffer and it is potentially much more efficient. </p>
+     * buffer and it is potentially much more efficient.
      *
      * @param  src
      *         The array from which shorts are to be read
@@ -820,6 +844,9 @@ public abstract class ShortBuffer
      * <pre>
      *     dst.put(a, 0, a.length) </pre>
      *
+     * @param   src
+     *          The source array
+     *
      * @return  This buffer
      *
      * @throws  BufferOverflowException
@@ -831,6 +858,14 @@ public abstract class ShortBuffer
     public final ShortBuffer put(short[] src) {
         return put(src, 0, src.length);
     }
+
+
+
+
+
+
+
+
 
 
 
@@ -1023,6 +1058,7 @@ public abstract class ShortBuffer
 
 
 
+
      *
      * @return  This buffer
      *
@@ -1032,7 +1068,7 @@ public abstract class ShortBuffer
     public abstract ShortBuffer compact();
 
     /**
-     * Tells whether or not this short buffer is direct. </p>
+     * Tells whether or not this short buffer is direct.
      *
      * @return  <tt>true</tt> if, and only if, this buffer is direct
      */
@@ -1041,7 +1077,7 @@ public abstract class ShortBuffer
 
 
     /**
-     * Returns a string summarizing the state of this buffer.  </p>
+     * Returns a string summarizing the state of this buffer.
      *
      * @return  A summary string
      */
@@ -1080,7 +1116,11 @@ public abstract class ShortBuffer
         int h = 1;
         int p = position();
         for (int i = limit() - 1; i >= p; i--)
+
+
+
             h = 31 * h + (int)get(i);
+
         return h;
     }
 
@@ -1089,7 +1129,7 @@ public abstract class ShortBuffer
      *
      * <p> Two short buffers are equal if, and only if,
      *
-     * <p><ol>
+     * <ol>
      *
      *   <li><p> They have the same element type,  </p></li>
      *
@@ -1387,7 +1427,7 @@ public abstract class ShortBuffer
      *
      * <p> The byte order of a short buffer created by allocation or by
      * wrapping an existing <tt>short</tt> array is the {@link
-     * ByteOrder#nativeOrder </code>native order<code>} of the underlying
+     * ByteOrder#nativeOrder native order} of the underlying
      * hardware.  The byte order of a short buffer created as a <a
      * href="ByteBuffer.html#views">view</a> of a byte buffer is that of the
      * byte buffer at the moment that the view is created.  </p>
@@ -1395,6 +1435,18 @@ public abstract class ShortBuffer
      * @return  This buffer's byte order
      */
     public abstract ByteOrder order();
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

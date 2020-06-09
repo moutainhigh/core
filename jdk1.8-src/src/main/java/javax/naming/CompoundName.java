@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -38,8 +38,8 @@ import java.util.Properties;
  * This range may be written as [0,N).
  * The most significant component is at index 0.
  * An empty compound name has no components.
- *<p>
- * <h4>Compound Name Syntax</h4>
+ *
+ * <h1>Compound Name Syntax</h1>
  * The syntax of a compound name is specified using a set of properties:
  *<dl>
  *  <dt>jndi.syntax.direction
@@ -135,8 +135,8 @@ import java.util.Properties;
  * applied (e.g. embedded separators are escaped or quoted)
  * so that when the same string is parsed, it will yield the same components
  * of the original compound name.
- *<p>
- *<h4>Multithreaded Access</h4>
+ *
+ *<h1>Multithreaded Access</h1>
  * A <tt>CompoundName</tt> instance is not synchronized against concurrent
  * multithreaded access. Multiple threads trying to access and modify a
  * <tt>CompoundName</tt> should lock the object.
@@ -376,7 +376,7 @@ public class CompoundName implements Name {
       *         If posn is outside the specified range.
       */
     public Name getPrefix(int posn) {
-        Enumeration comps = impl.getPrefix(posn);
+        Enumeration<String> comps = impl.getPrefix(posn);
         return (new CompoundName(comps, mySyntax));
     }
 
@@ -396,7 +396,7 @@ public class CompoundName implements Name {
       *         If posn is outside the specified range.
       */
     public Name getSuffix(int posn) {
-        Enumeration comps = impl.getSuffix(posn);
+        Enumeration<String> comps = impl.getSuffix(posn);
         return (new CompoundName(comps, mySyntax));
     }
 
@@ -557,7 +557,7 @@ public class CompoundName implements Name {
             throws java.io.IOException {
         s.writeObject(mySyntax);
         s.writeInt(size());
-        Enumeration comps = getAll();
+        Enumeration<String> comps = getAll();
         while (comps.hasMoreElements()) {
             s.writeObject(comps.nextElement());
         }

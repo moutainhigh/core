@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2015, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -44,6 +44,9 @@ import com.sun.org.apache.xerces.internal.xni.Augmentations;
 import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
 import com.sun.org.apache.xerces.internal.impl.XMLEntityHandler;
 import com.sun.org.apache.xerces.internal.impl.Constants;
+import com.sun.org.apache.xerces.internal.utils.XMLLimitAnalyzer;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.xml.internal.stream.Entity;
 
 /**
  * This class is responsible for scanning the declarations found
@@ -66,7 +69,7 @@ import com.sun.org.apache.xerces.internal.impl.Constants;
  * @author Glenn Marcy, IBM
  * @author Eric Ye, IBM
  *
- * @version $Id: XMLDTDScannerImpl.java,v 1.7 2007/09/26 12:52:40 ndw Exp $
+ * @version $Id: XMLDTDScannerImpl.java,v 1.8 2010-11-01 04:39:41 joehw Exp $
  */
 public class XMLDTDScannerImpl
 extends XMLScanner
@@ -260,6 +263,11 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
         fEntityManager.startDTDEntity(inputSource);
     } // setInputSource(XMLInputSource)
 
+
+    public void setLimitAnalyzer(XMLLimitAnalyzer limitAnalyzer) {
+        fLimitAnalyzer = limitAnalyzer;
+    }
+
     /**
      * Scans the external subset of the document.
      *
@@ -361,6 +369,8 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
                 }
                 // we're done, set starting state for external subset
                 setScannerState(SCANNER_STATE_TEXT_DECL);
+                // we're done scanning DTD.
+                fLimitAnalyzer.reset(XMLSecurityManager.Limit.TOTAL_ENTITY_SIZE_LIMIT);
                 return false;
             }
         } while (complete);
@@ -369,6 +379,26 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
         return true;
 
     } // scanDTDInternalSubset(boolean,boolean,boolean):boolean
+
+    /**
+     * Skip the DTD if javax.xml.stream.supportDTD is false.
+     *
+     * @param supportDTD The value of the property javax.xml.stream.supportDTD.
+     * @return true if DTD is skipped, false otherwise.
+     * @throws java.io.IOException if i/o error occurs
+     */
+    @Override
+    public boolean skipDTD(boolean supportDTD) throws IOException {
+        if (!supportDTD) {
+            fStringBuffer.clear();
+            if (!fEntityScanner.scanData("]", fStringBuffer)) {
+                fEntityScanner.fCurrentEntity.position--;
+            }
+
+            return true;
+        }
+        return false;
+    }
 
     //
     // XMLComponent methods
@@ -696,7 +726,7 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
             fErrorReporter.reportError( XMLMessageFormatter.XML_DOMAIN,"EntityNotDeclared",
             new Object[]{name}, XMLErrorReporter.SEVERITY_ERROR);
         }
-        fEntityManager.startEntity(fSymbolTable.addSymbol(pName),
+        fEntityManager.startEntity(false, fSymbolTable.addSymbol(pName),
         literal);
         // if we actually got a new entity and it's external
         // parse text decl if there is any
@@ -1410,7 +1440,7 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
             // AttValue
             boolean isVC = !fStandalone  &&  (fSeenExternalDTD || fSeenExternalPE) ;
             scanAttributeValue(defaultVal, nonNormalizedDefaultVal, atName,
-            fAttributes, 0, isVC);
+            fAttributes, 0, isVC, elName);
         }
         return defaultType;
 
@@ -1545,7 +1575,7 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
 
         // internal entity
         if (systemId == null) {
-            scanEntityValue(fLiteral, fLiteral2);
+            scanEntityValue(name, isPEDecl, fLiteral, fLiteral2);
             // since we need it's value anyway, let's snag it so it doesn't get corrupted
             // if a new load takes place before we store the entity values
             fStringBuffer.clear();
@@ -1610,7 +1640,7 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
      * the use of scanCharReferenceValue), and fStringBuffer2, anything in them
      * at the time of calling is lost.
      */
-    protected final void scanEntityValue(XMLString value,
+    protected final void scanEntityValue(String entityName, boolean isPEDecl, XMLString value,
     XMLString nonNormalizedValue)
     throws IOException, XNIException {
         int quote = fEntityScanner.scanChar();
@@ -1622,10 +1652,18 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
 
         XMLString literal = fString;
         XMLString literal2 = fString;
+        int countChar = 0;
+        if (fLimitAnalyzer == null ) {
+            fLimitAnalyzer = fEntityManager.fLimitAnalyzer;
+         }
+        fLimitAnalyzer.startEntity(entityName);
+
         if (fEntityScanner.scanLiteral(quote, fString) != quote) {
             fStringBuffer.clear();
             fStringBuffer2.clear();
             do {
+                checkEntityLimit(isPEDecl, entityName, fString.length + countChar);
+                countChar = 0;
                 fStringBuffer.append(fString);
                 fStringBuffer2.append(fString);
                 if (fEntityScanner.skipChar('&')) {
@@ -1685,6 +1723,7 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
                     }
                 }
                 else {
+                    countChar++;
                     int c = fEntityScanner.peekChar();
                     if (XMLChar.isHighSurrogate(c)) {
                         scanSurrogates(fStringBuffer2);
@@ -1708,9 +1747,15 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
             fStringBuffer2.append(fString);
             literal = fStringBuffer;
             literal2 = fStringBuffer2;
+        } else {
+            checkEntityLimit(isPEDecl, entityName, literal);
         }
         value.setValues(literal);
         nonNormalizedValue.setValues(literal2);
+        if (fLimitAnalyzer != null) {
+            fLimitAnalyzer.endEntity(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT, entityName);
+        }
+
         if (!fEntityScanner.skipChar(quote)) {
             reportFatalError("CloseQuoteMissingInDecl", null);
         }
@@ -2124,6 +2169,59 @@ implements XMLDTDScanner, XMLComponent, XMLEntityHandler {
         // set starting state
         setScannerState(SCANNER_STATE_TEXT_DECL);
         //new SymbolTable());
+
+        fLimitAnalyzer = fEntityManager.fLimitAnalyzer;
+        fSecurityManager = fEntityManager.fSecurityManager;
+    }
+
+    /**
+     * Add the count of the content buffer and check if the accumulated
+     * value exceeds the limit
+     * @param isPEDecl a flag to indicate whether the entity is parameter
+     * @param entityName entity name
+     * @param buffer content buffer
+     */
+    private void checkEntityLimit(boolean isPEDecl, String entityName, XMLString buffer) {
+        checkEntityLimit(isPEDecl, entityName, buffer.length);
+    }
+
+    /**
+     * Add the count and check limit
+     * @param isPEDecl a flag to indicate whether the entity is parameter
+     * @param entityName entity name
+     * @param len length of the buffer
+     */
+    private void checkEntityLimit(boolean isPEDecl, String entityName, int len) {
+        if (fLimitAnalyzer == null) {
+            fLimitAnalyzer = fEntityManager.fLimitAnalyzer;
+        }
+        if (isPEDecl) {
+            fLimitAnalyzer.addValue(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT, "%" + entityName, len);
+            if (fSecurityManager.isOverLimit(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT, fLimitAnalyzer)) {
+                        fSecurityManager.debugPrint(fLimitAnalyzer);
+                reportFatalError("MaxEntitySizeLimit", new Object[]{"%" + entityName,
+                    fLimitAnalyzer.getValue(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT),
+                    fSecurityManager.getLimit(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT),
+                    fSecurityManager.getStateLiteral(XMLSecurityManager.Limit.PARAMETER_ENTITY_SIZE_LIMIT)});
+            }
+        } else {
+            fLimitAnalyzer.addValue(XMLSecurityManager.Limit.GENERAL_ENTITY_SIZE_LIMIT, entityName, len);
+            if (fSecurityManager.isOverLimit(XMLSecurityManager.Limit.GENERAL_ENTITY_SIZE_LIMIT, fLimitAnalyzer)) {
+                        fSecurityManager.debugPrint(fLimitAnalyzer);
+                reportFatalError("MaxEntitySizeLimit", new Object[]{entityName,
+                    fLimitAnalyzer.getValue(XMLSecurityManager.Limit.GENERAL_ENTITY_SIZE_LIMIT),
+                    fSecurityManager.getLimit(XMLSecurityManager.Limit.GENERAL_ENTITY_SIZE_LIMIT),
+                    fSecurityManager.getStateLiteral(XMLSecurityManager.Limit.GENERAL_ENTITY_SIZE_LIMIT)});
+            }
+        }
+        if (fSecurityManager.isOverLimit(XMLSecurityManager.Limit.TOTAL_ENTITY_SIZE_LIMIT, fLimitAnalyzer)) {
+            fSecurityManager.debugPrint(fLimitAnalyzer);
+            reportFatalError("TotalEntitySizeLimit",
+                new Object[]{fLimitAnalyzer.getTotalValue(XMLSecurityManager.Limit.TOTAL_ENTITY_SIZE_LIMIT),
+                fSecurityManager.getLimit(XMLSecurityManager.Limit.TOTAL_ENTITY_SIZE_LIMIT),
+                fSecurityManager.getStateLiteral(XMLSecurityManager.Limit.TOTAL_ENTITY_SIZE_LIMIT)});
+        }
+
     }
 
     public DTDGrammar getGrammar(){

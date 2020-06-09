@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,7 +32,7 @@ package java.awt;
  * and one component is placed in each rectangle.
  * For example, the following is an applet that lays out six buttons
  * into three rows and two columns:
- * <p>
+ *
  * <hr><blockquote>
  * <pre>
  * import java.awt.*;
@@ -54,8 +54,8 @@ package java.awt;
  * and left-to-right, the above example produces the output shown in Figure 1.
  * If the container's <code>ComponentOrientation</code> property is horizontal
  * and right-to-left, the example produces the output shown in Figure 2.
- * <p>
- * <center><table COLS=2 WIDTH=600 summary="layout">
+ *
+ * <table style="float:center" WIDTH=600 summary="layout">
  * <tr ALIGN=CENTER>
  * <td><img SRC="doc-files/GridLayout-1.gif"
  *      alt="Shows 6 buttons in rows of 2. Row 1 shows buttons 1 then 2.
@@ -73,7 +73,7 @@ package java.awt;
  *
  * <td>Figure 2: Horizontal, Right-to-Left</td>
  * </tr>
- * </table></center>
+ * </table>
  * <p>
  * When both the number of rows and the number of columns have
  * been set to non-zero values, either by a constructor or

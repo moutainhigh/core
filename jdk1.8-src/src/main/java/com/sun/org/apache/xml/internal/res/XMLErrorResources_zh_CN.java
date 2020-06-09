@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -17,16 +17,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XMLErrorResources_zh_CN.java,v 1.2.4.1 2005/09/15 07:45:47 suresh_emailid Exp $
- */
 package com.sun.org.apache.xml.internal.res;
 
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -182,7 +176,7 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
   // Error messages...
 
   /** The lookup table for error messages.   */
-  private static final Object[][] _contents = {
+  private static final Object[][] contents = {
 
   /** Error message ID that has a null message, but takes in a single object.    */
     {"ER0000" , "{0}" },
@@ -215,10 +209,10 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
       "Coroutine \u53C2\u6570\u9519\u8BEF ({0})"},
 
     { ER_PARSER_DOTERMINATE_ANSWERS,
-      "\n\u610F\u5916: \u8BED\u6CD5\u5206\u6790\u5668\u5BF9\u7B54\u590D{0}\u6267\u884C doTerminate"},
+      "\n\u610F\u5916: \u89E3\u6790\u5668\u5BF9\u7B54\u590D{0}\u6267\u884C doTerminate"},
 
     { ER_NO_PARSE_CALL_WHILE_PARSING,
-      "\u65E0\u6CD5\u5728\u6267\u884C\u8BED\u6CD5\u5206\u6790\u65F6\u8C03\u7528 parse"},
+      "\u65E0\u6CD5\u5728\u89E3\u6790\u65F6\u8C03\u7528 parse"},
 
     { ER_TYPED_ITERATOR_AXIS_NOT_IMPLEMENTED,
       "\u9519\u8BEF: \u672A\u5B9E\u73B0\u8F74{0}\u7684\u7C7B\u578B\u5316\u8FED\u4EE3\u5668"},
@@ -248,13 +242,13 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
       "\u65E0\u6CD5\u5C06\u8282\u70B9\u89E3\u6790\u4E3A\u53E5\u67C4"},
 
     { ER_STARTPARSE_WHILE_PARSING,
-       "\u65E0\u6CD5\u5728\u6267\u884C\u8BED\u6CD5\u5206\u6790\u65F6\u8C03\u7528 startParse"},
+       "\u65E0\u6CD5\u5728\u89E3\u6790\u65F6\u8C03\u7528 startParse"},
 
     { ER_STARTPARSE_NEEDS_SAXPARSER,
        "startParse \u9700\u8981\u975E\u7A7A SAXParser"},
 
     { ER_COULD_NOT_INIT_PARSER,
-       "\u65E0\u6CD5\u4F7F\u7528\u4EE5\u4E0B\u5BF9\u8C61\u521D\u59CB\u5316\u8BED\u6CD5\u5206\u6790\u5668"},
+       "\u65E0\u6CD5\u4F7F\u7528\u4EE5\u4E0B\u5BF9\u8C61\u521D\u59CB\u5316\u89E3\u6790\u5668"},
 
     { ER_EXCEPTION_CREATING_POOL,
        "\u4E3A\u6C60\u521B\u5EFA\u65B0\u5B9E\u4F8B\u65F6\u51FA\u73B0\u5F02\u5E38\u9519\u8BEF"},
@@ -272,7 +266,7 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
        "\u5728 URI \u4E2D\u627E\u4E0D\u5230\u65B9\u6848"},
 
     { ER_PATH_INVALID_CHAR,
-       "\u8DEF\u5F84\u5305\u542B\u65E0\u6548\u5B57\u7B26: {0}"},
+       "\u8DEF\u5F84\u5305\u542B\u65E0\u6548\u7684\u5B57\u7B26: {0}"},
 
     { ER_SCHEME_FROM_NULL_STRING,
        "\u65E0\u6CD5\u4ECE\u7A7A\u5B57\u7B26\u4E32\u8BBE\u7F6E\u65B9\u6848"},
@@ -299,10 +293,10 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
        "\u7247\u6BB5\u5305\u542B\u65E0\u6548\u7684\u5B57\u7B26"},
 
     { ER_PARSER_IN_USE,
-      "\u8BED\u6CD5\u5206\u6790\u5668\u5DF2\u5728\u4F7F\u7528"},
+      "\u89E3\u6790\u5668\u5DF2\u5728\u4F7F\u7528"},
 
     { ER_CANNOT_CHANGE_WHILE_PARSING,
-      "\u65E0\u6CD5\u5728\u8FDB\u884C\u8BED\u6CD5\u5206\u6790\u65F6\u66F4\u6539{0} {1}"},
+      "\u65E0\u6CD5\u5728\u89E3\u6790\u65F6\u66F4\u6539{0} {1}"},
 
     { ER_SELF_CAUSATION_NOT_PERMITTED,
       "\u4E0D\u5141\u8BB8\u4F7F\u7528\u81EA\u56E0"},
@@ -450,70 +444,7 @@ public class XMLErrorResources_zh_CN extends ListResourceBundle
    */
 
     protected Object[][] getContents() {
-        return _contents;
+        return contents;
     }
-
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XMLErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XMLErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XMLErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

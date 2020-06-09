@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -39,7 +39,7 @@ import javax.swing.Icon;
  * All sizes are specified in points (such as found in postscript), a
  * device independent measure.
  * </p>
- * <p align=center><img src="doc-files/paragraph.gif"
+ * <p style="text-align:center"><img src="doc-files/paragraph.gif"
  * alt="Diagram shows SpaceAbove, FirstLineIndent, LeftIndent, RightIndent,
  *      and SpaceBelow a paragraph."></p>
  * <p>
@@ -65,7 +65,7 @@ public class StyleConstants {
     public static final Object NameAttribute = new StyleConstants("name");
 
     /**
-     * Attribute name used to identifiy the resolving parent
+     * Attribute name used to identify the resolving parent
      * set of attributes, if one is defined.
      */
     public static final Object ResolveAttribute = new StyleConstants("resolver");

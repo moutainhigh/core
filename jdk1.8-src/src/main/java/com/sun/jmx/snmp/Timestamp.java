@@ -37,11 +37,6 @@ public class Timestamp implements java.io.Serializable {
     private long crtime ;
 
     /**
-     * A <CODE>Date</CODE> object representing the current date.
-     */
-    private Date dateCache = null ;
-
-    /**
      * The <CODE>SnmpTimeticks</CODE> object corresponding to the <CODE>TimeStamp</CODE> object.
      */
     private SnmpTimeticks uptimeCache = null ;
@@ -107,9 +102,7 @@ public class Timestamp implements java.io.Serializable {
      * @return A <CODE>Date</CODE> object representing the current date.
      */
     final public synchronized Date getDate() {
-        if (dateCache == null)
-            dateCache = new Date(crtime) ;
-        return dateCache ;
+        return new Date(crtime) ;
     }
 
     /**

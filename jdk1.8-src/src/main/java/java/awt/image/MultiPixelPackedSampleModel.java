@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -52,14 +52,14 @@ package java.awt.image;
  * <code>x,&nbsp;y</code> from <code>DataBuffer</code> <code>data</code>
  * and storing the pixel data in data elements of type
  * <code>dataType</code>:
- * <pre>
+ * <pre>{@code
  *      int dataElementSize = DataBuffer.getDataTypeSize(dataType);
  *      int bitnum = dataBitOffset + x*pixelBitStride;
  *      int element = data.getElem(y*scanlineStride + bitnum/dataElementSize);
  *      int shift = dataElementSize - (bitnum & (dataElementSize-1))
  *                  - pixelBitStride;
  *      int pixel = (element >> shift) & ((1 << pixelBitStride) - 1);
- * </pre>
+ * }</pre>
  */
 
 public class MultiPixelPackedSampleModel extends SampleModel
@@ -348,7 +348,7 @@ public class MultiPixelPackedSampleModel extends SampleModel
      *                  data
      * @return the specified band containing the sample of the specified
      * pixel.
-     * @exception ArrayIndexOutOfBoundException if the specified
+     * @exception ArrayIndexOutOfBoundsException if the specified
      *          coordinates are not in bounds.
      * @see #setSample(int, int, int, int, DataBuffer)
      */

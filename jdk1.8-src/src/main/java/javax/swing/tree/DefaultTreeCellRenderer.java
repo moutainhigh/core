@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -49,7 +49,7 @@ import sun.swing.DefaultLookup;
  * <code>DefaultTreeCellRenderer</code> is not opaque and
  * unless you subclass paint you should not change this.
  * See <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/components/tree.html">How to Use Trees</a>
+ href="https://docs.oracle.com/javase/tutorial/uiswing/components/tree.html">How to Use Trees</a>
  * in <em>The Java Tutorial</em>
  * for examples of customizing node display using this class.
  * <p>
@@ -60,11 +60,10 @@ import sun.swing.DefaultLookup;
  * that have a value of type {@code UIResource} are refreshed from the
  * defaults table. The following table lists the mapping between
  * {@code DefaultTreeCellRenderer} property and defaults table key:
- * <table border="1" cellpadding="1" cellspacing="0"
- *         valign="top" >
+ * <table border="1" cellpadding="1" cellspacing="0" summary="">
  *   <tr valign="top"  align="left">
- *     <th bgcolor="#CCCCFF" align="left">Property:
- *     <th bgcolor="#CCCCFF" align="left">Key:
+ *     <th style="background-color:#CCCCFF" align="left">Property:
+ *     <th style="background-color:#CCCCFF" align="left">Key:
  *   <tr><td>"leafIcon"<td>"Tree.leafIcon"
  *   <tr><td>"closedIcon"<td>"Tree.closedIcon"
  *   <tr><td>"openIcon"<td>"Tree.openIcon"
@@ -96,7 +95,7 @@ import sun.swing.DefaultLookup;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -156,7 +155,7 @@ public class DefaultTreeCellRenderer extends JLabel implements TreeCellRenderer
     protected Color borderSelectionColor;
 
     private boolean isDropCell;
-    private boolean fillBackground = true;
+    private boolean fillBackground;
 
     /**
      * Set to true after the constructor has run.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,6 +26,7 @@
 package java.awt;
 
 import java.util.LinkedList;
+import sun.awt.AWTAccessor;
 import sun.awt.AppContext;
 import sun.awt.SunToolkit;
 
@@ -48,11 +49,22 @@ class SequencedEvent extends AWTEvent implements ActiveEvent {
 
     private static final int ID =
         java.awt.event.FocusEvent.FOCUS_LAST + 1;
-    private static final LinkedList list = new LinkedList();
+    private static final LinkedList<SequencedEvent> list = new LinkedList<>();
 
     private final AWTEvent nested;
     private AppContext appContext;
     private boolean disposed;
+
+    static {
+        AWTAccessor.setSequencedEventAccessor(new AWTAccessor.SequencedEventAccessor() {
+            public AWTEvent getNested(AWTEvent sequencedEvent) {
+                return ((SequencedEvent)sequencedEvent).nested;
+            }
+            public boolean isSequencedEvent(AWTEvent event) {
+                return event instanceof SequencedEvent;
+            }
+        });
+    }
 
     /**
      * Constructs a new SequencedEvent which will dispatch the specified

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -39,7 +39,7 @@ import java.util.*;
 public class LogStream extends PrintStream {
 
     /** table mapping known log names to log stream objects */
-    private static Hashtable    known = new Hashtable(5);
+    private static Map<String,LogStream> known = new HashMap<>(5);
     /** default output stream for new logs */
     private static PrintStream  defaultStream = System.err;
 
@@ -90,7 +90,7 @@ public class LogStream extends PrintStream {
     public static LogStream log(String name) {
         LogStream stream;
         synchronized (known) {
-            stream = (LogStream)known.get(name);
+            stream = known.get(name);
             if (stream == null) {
                 stream = new LogStream(name, defaultStream);
             }
@@ -120,6 +120,13 @@ public class LogStream extends PrintStream {
      */
     @Deprecated
     public static synchronized void setDefaultStream(PrintStream newDefault) {
+        SecurityManager sm = System.getSecurityManager();
+
+        if (sm != null) {
+            sm.checkPermission(
+                new java.util.logging.LoggingPermission("control", null));
+        }
+
         defaultStream = newDefault;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -25,19 +25,11 @@
 
 package java.awt;
 
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Method;
-import java.security.AccessController;
-import sun.security.action.GetPropertyAction;
-import sun.awt.AWTAutoShutdown;
-import sun.awt.SunToolkit;
-import sun.awt.AppContext;
 
 import java.util.ArrayList;
-import java.util.List;
 import sun.util.logging.PlatformLogger;
 
 import sun.awt.dnd.SunDragSourceContextPeer;
@@ -67,8 +59,7 @@ class EventDispatchThread extends Thread {
     private static final PlatformLogger eventLog = PlatformLogger.getLogger("java.awt.event.EventDispatchThread");
 
     private EventQueue theQueue;
-    private boolean doDispatch = true;
-    private volatile boolean shutdown = false;
+    private volatile boolean doDispatch = true;
 
     private static final int ANY_EVENT = -1;
 
@@ -86,54 +77,17 @@ class EventDispatchThread extends Thread {
         doDispatch = false;
     }
 
-    public void interrupt() {
-        shutdown = true;
-        super.interrupt();
-    }
-
     public void run() {
-        while (true) {
-            try {
-                pumpEvents(new Conditional() {
-                    public boolean evaluate() {
-                        return true;
-                    }
-                });
-            } finally {
-                if(getEventQueue().detachDispatchThread(this, shutdown)) {
-                    break;
-                }
-            }
-        }
-    }
-
-    // MacOSX change:
-    //  This was added because this class (and java.awt.Conditional) are package private.
-    //  There are certain instances where classes in other packages need to block the
-    //  AWTEventQueue while still allowing it to process events. This uses reflection
-    //  to call back into the caller in order to remove dependencies.
-    //
-    // NOTE: This uses reflection in its implementation, so it is not for performance critical code.
-    //
-    //  cond is an instance of sun.lwawt.macosx.EventDispatchAccess
-    //
-    private Conditional _macosxGetConditional(final Object cond) {
         try {
-            return new Conditional() {
-                final Method evaluateMethod = Class.forName("sun.lwawt.macosx.EventDispatchAccess").getMethod("evaluate", null);
+            pumpEvents(new Conditional() {
                 public boolean evaluate() {
-                    try {
-                        return ((Boolean)evaluateMethod.invoke(cond, null)).booleanValue();
-                    } catch (Exception e) {
-                        return false;
-                    }
+                    return true;
                 }
-            };
-        } catch (Exception e) {
-            return new Conditional() { public boolean evaluate() { return false; } };
+            });
+        } finally {
+            getEventQueue().detachDispatchThread(this);
         }
     }
-
 
     void pumpEvents(Conditional cond) {
         pumpEvents(ANY_EVENT, cond);
@@ -158,15 +112,16 @@ class EventDispatchThread extends Thread {
     void pumpEventsForFilter(int id, Conditional cond, EventFilter filter) {
         addEventFilter(filter);
         doDispatch = true;
-        shutdown |= isInterrupted();
-        while (doDispatch && !shutdown && cond.evaluate()) {
+        while (doDispatch && !isInterrupted() && cond.evaluate()) {
             pumpOneEventForFilters(id);
         }
         removeEventFilter(filter);
     }
 
     void addEventFilter(EventFilter filter) {
-        eventLog.finest("adding the event filter: " + filter);
+        if (eventLog.isLoggable(PlatformLogger.Level.FINEST)) {
+            eventLog.finest("adding the event filter: " + filter);
+        }
         synchronized (eventFilters) {
             if (!eventFilters.contains(filter)) {
                 if (filter instanceof ModalEventFilter) {
@@ -190,7 +145,9 @@ class EventDispatchThread extends Thread {
     }
 
     void removeEventFilter(EventFilter filter) {
-        eventLog.finest("removing the event filter: " + filter);
+        if (eventLog.isLoggable(PlatformLogger.Level.FINEST)) {
+            eventLog.finest("removing the event filter: " + filter);
+        }
         synchronized (eventFilters) {
             eventFilters.remove(filter);
         }
@@ -233,7 +190,7 @@ class EventDispatchThread extends Thread {
             }
             while (eventOK == false);
 
-            if (eventLog.isLoggable(PlatformLogger.FINEST)) {
+            if (eventLog.isLoggable(PlatformLogger.Level.FINEST)) {
                 eventLog.finest("Dispatching: " + event);
             }
 
@@ -247,12 +204,12 @@ class EventDispatchThread extends Thread {
             }
         }
         catch (ThreadDeath death) {
-            shutdown = true;
+            doDispatch = false;
             throw death;
         }
         catch (InterruptedException interruptedException) {
-            shutdown = true; // AppContext.dispose() interrupts all
-                             // Threads in the AppContext
+            doDispatch = false; // AppContext.dispose() interrupts all
+                                // Threads in the AppContext
         }
         catch (Throwable e) {
             processException(e);
@@ -260,7 +217,7 @@ class EventDispatchThread extends Thread {
     }
 
     private void processException(Throwable e) {
-        if (eventLog.isLoggable(PlatformLogger.FINE)) {
+        if (eventLog.isLoggable(PlatformLogger.Level.FINE)) {
             eventLog.fine("Processing exception: " + e);
         }
         getUncaughtExceptionHandler().uncaughtException(this, e);

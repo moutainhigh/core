@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -90,7 +90,13 @@ public class ErrorMessages_cs extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    private static final Object[][] _contents = new Object[][] {
+    /** Get the lookup table for error messages.
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+      return new Object[][] {
         {ErrorMsg.MULTIPLE_STYLESHEET_ERR,
         "V\u00edce ne\u017e jedna p\u0159edloha stylu je definov\u00e1na ve stejn\u00e9m souboru."},
 
@@ -442,6 +448,12 @@ public class ErrorMessages_cs extends ListResourceBundle {
          */
         {ErrorMsg.MISSING_XSLT_TARGET_ERR,
         "Nelze naj\u00edt c\u00edlovou p\u0159edlohu se stylem ''{0}''."},
+
+        /*
+         * Note to translators:  access to the stylesheet target is denied
+         */
+        {ErrorMsg.ACCESSING_XSLT_TARGET_ERR,
+        "Could not read stylesheet target ''{0}'', because ''{1}'' access is not allowed."},
 
         /*
          * Note to translators:  This message represents an internal error in
@@ -847,12 +859,5 @@ public class ErrorMessages_cs extends ListResourceBundle {
         "FEATURE_SECURE_PROCESSING: Cannot set the feature to false when security manager is present."}
     };
 
-    /** Get the lookup table for error messages.
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-      return _contents;
     }
 }

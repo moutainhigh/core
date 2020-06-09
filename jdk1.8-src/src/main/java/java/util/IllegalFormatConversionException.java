@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2012, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -40,7 +40,7 @@ public class IllegalFormatConversionException extends IllegalFormatException {
     private static final long serialVersionUID = 17000126L;
 
     private char c;
-    private Class arg;
+    private Class<?> arg;
 
     /**
      * Constructs an instance of this class with the mismatched conversion and

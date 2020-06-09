@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,8 +37,8 @@ package javax.print.attribute;
  * constructors and mutating operations guarantee an additional invariant,
  * namely that all attribute values in the PrintRequestAttributeSet must be
  * instances of interface {@link PrintRequestAttribute PrintRequestAttribute}.
- * The {@link #add(Attribute) <CODE>add(Attribute)</CODE>}, and
- * {@link #addAll(AttributeSet) <CODE>addAll(AttributeSet)</CODE>} operations
+ * The {@link #add(Attribute) add(Attribute)}, and
+ * {@link #addAll(AttributeSet) addAll(AttributeSet)} operations
  * are respecified below to guarantee this additional invariant.
  * <P>
  *
@@ -73,7 +73,7 @@ public interface PrintRequestAttributeSet extends AttributeSet {
     /**
      * Adds all of the elements in the specified set to this attribute.
      * The outcome is  the same as if the
-     * {@link #add(Attribute) <CODE>add(Attribute)</CODE>}
+     * {@link #add(Attribute) add(Attribute)}
      * operation had been applied to this attribute set successively with
      * each element from the specified set. If none of the categories in the
      * specified set  are the same as any categories in this attribute set,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,7 +37,7 @@ import javax.swing.text.View;
 
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JToolTip}.
  *
  * @author Joshua Outwater
@@ -58,7 +58,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults(JComponent c) {
@@ -72,7 +72,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults(JComponent c) {
@@ -83,7 +83,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners(JComponent c) {
@@ -91,7 +91,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners(JComponent c) {
@@ -99,7 +99,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -107,8 +107,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {
@@ -144,7 +143,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -196,7 +195,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getPreferredSize(JComponent c) {
@@ -224,7 +223,7 @@ public class SynthToolTipUI extends BasicToolTipUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

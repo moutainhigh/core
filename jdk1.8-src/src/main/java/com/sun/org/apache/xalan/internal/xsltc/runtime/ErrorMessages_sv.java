@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 2001-2004 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,6 @@
  * limitations under the License.
  */
 
-/*
- * $Id: ErrorMessages_sv.java 3023 2011-03-01 00:53:34Z joehw $
- */
 package com.sun.org.apache.xalan.internal.xsltc.runtime;
 
 import java.util.ListResourceBundle;
@@ -81,21 +78,27 @@ public class ErrorMessages_sv extends ListResourceBundle {
  */
 
     // These message should be read from a locale-specific resource bundle
-    private static final Object[][] _contents =  new Object[][] {
+    /** Get the lookup table for error messages.
+     *
+     * @return The message lookup table.
+     */
+    public Object[][] getContents()
+    {
+        return new Object[][] {
 
         /*
          * Note to translators:  the substitution text in the following message
          * is a class name.  Used for internal errors in the processor.
          */
         {BasisLibrary.RUN_TIME_INTERNAL_ERR,
-        "Internt k\u00F6rningsfel i ''{0}''"},
+        "Internt exekveringsfel i ''{0}''"},
 
         /*
          * Note to translators:  <xsl:copy> is a keyword that should not be
          * translated.
          */
         {BasisLibrary.RUN_TIME_COPY_ERR,
-        "K\u00F6rningsfel vid k\u00F6rning av <xsl:copy>."},
+        "Exekveringsexekveringsfel av <xsl:copy>."},
 
         /*
          * Note to translators:  The substitution text refers to data types.
@@ -276,13 +279,6 @@ public class ErrorMessages_sv extends ListResourceBundle {
         {BasisLibrary.UNALLOWED_EXTENSION_ELEMENT_ERR,
         "Anv\u00E4ndning av till\u00E4ggselementet ''{0}'' \u00E4r inte till\u00E5tet n\u00E4r s\u00E4ker bearbetning till\u00E4mpas."},
     };
-    /** Get the lookup table for error messages.
-     *
-     * @return The message lookup table.
-     */
-    public Object[][] getContents()
-    {
-        return _contents;
     }
 
 }

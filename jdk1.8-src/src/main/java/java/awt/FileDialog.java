@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -439,7 +439,6 @@ public class FileDialog extends Dialog {
      * Note that the method is private and it's intended to be used
      * by the peers through the AWTAccessor API.
      *
-     * @param directory the current directory
      * @param files     the array that contains the short names of
      *                  all the files that the user selects.
      *
@@ -457,9 +456,16 @@ public class FileDialog extends Dialog {
      * specified file. This file becomes the default file if it is set
      * before the file dialog window is first shown.
      * <p>
+     * When the dialog is shown, the specified file is selected. The kind of
+     * selection depends on the file existence, the dialog type, and the native
+     * platform. E.g., the file could be highlighted in the file list, or a
+     * file name editbox could be populated with the file name.
+     * <p>
+     * This method accepts either a full file path, or a file name with an
+     * extension if used together with the {@code setDirectory} method.
+     * <p>
      * Specifying "" as the file is exactly equivalent to specifying
-     * <code>null</code>
-     * as the file.
+     * {@code null} as the file.
      *
      * @param    file   the file being set
      * @see      #getFile

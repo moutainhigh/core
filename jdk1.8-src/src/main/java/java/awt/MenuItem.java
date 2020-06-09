@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,8 +42,8 @@ import sun.awt.AWTAccessor;
  * <p>
  * This picture of a menu bar shows five menu items:
  * <IMG SRC="doc-files/MenuBar-1.gif" alt="The following text describes this graphic."
- * ALIGN=CENTER HSPACE=10 VSPACE=7>
- * <br CLEAR=LEFT>
+ * style="float:center; margin: 7px 10px;">
+ * <br style="clear:left;">
  * The first two items are simple menu items, labeled
  * <code>"Basic"</code> and <code>"Simple"</code>.
  * Following these two items is a separator, which is itself
@@ -564,7 +564,7 @@ public class MenuItem extends MenuComponent implements Accessible {
      * @since 1.4
      */
     public synchronized ActionListener[] getActionListeners() {
-        return (ActionListener[])(getListeners(ActionListener.class));
+        return getListeners(ActionListener.class);
     }
 
     /**
@@ -648,7 +648,7 @@ public class MenuItem extends MenuComponent implements Accessible {
      * This method is not called unless action events are
      * enabled for this component. Action events are enabled
      * when one of the following occurs:
-     * <p><ul>
+     * <ul>
      * <li>An <code>ActionListener</code> object is registered
      * via <code>addActionListener</code>.
      * <li>Action events are enabled via <code>enableEvents</code>.

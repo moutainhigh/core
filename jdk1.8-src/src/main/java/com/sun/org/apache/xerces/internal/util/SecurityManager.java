@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -176,7 +176,6 @@ public final class SecurityManager {
 
         private void readSystemProperties(){
 
-                //TODO: also read SYSTEM_PROPERTY_ELEMENT_ATTRIBUTE_LIMIT
                 try {
                         String value = System.getProperty(Constants.ENTITY_EXPANSION_LIMIT);
                         if(value != null && !value.equals("")){
@@ -200,7 +199,7 @@ public final class SecurityManager {
                 }catch(Exception ex){}
 
                 try {
-                        String value = System.getProperty(Constants.SYSTEM_PROPERTY_ELEMENT_ATTRIBUTE_LIMIT);
+                        String value = System.getProperty(Constants.ELEMENT_ATTRIBUTE_LIMIT);
                         if(value != null && !value.equals("")){
                                 fElementAttributeLimit = Integer.parseInt(value);
                                 if ( fElementAttributeLimit < 0)

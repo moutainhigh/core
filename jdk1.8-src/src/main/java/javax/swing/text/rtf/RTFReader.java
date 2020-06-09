@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -27,9 +27,9 @@ package javax.swing.text.rtf;
 import java.lang.*;
 import java.util.*;
 import java.io.*;
-import java.awt.Font;
 import java.awt.Color;
-
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import javax.swing.text.*;
 
 /**
@@ -528,7 +528,7 @@ public void setCharacterSet(String name)
             try {
                 translationTable = (char[])getCharacterSet("ansi");
             } catch (IOException e) {
-                throw new InternalError("RTFReader: Unable to find character set resources (" + e + ")");
+                throw new InternalError("RTFReader: Unable to find character set resources (" + e + ")", e);
             }
         }
     }
@@ -558,16 +558,14 @@ getCharacterSet(final String name)
 {
     char[] set = characterSets.get(name);
     if (set == null) {
-      InputStream charsetStream;
-      charsetStream = java.security.AccessController.
-              doPrivileged(new java.security.PrivilegedAction<InputStream>() {
-          public InputStream run() {
-              return RTFReader.class.getResourceAsStream
-                                     ("charsets/" + name + ".txt");
-          }
-      });
-      set = readCharset(charsetStream);
-      defineCharacterSet(name, set);
+        InputStream charsetStream = AccessController.doPrivileged(
+                new PrivilegedAction<InputStream>() {
+                    public InputStream run() {
+                        return RTFReader.class.getResourceAsStream("charsets/" + name + ".txt");
+                    }
+                });
+        set = readCharset(charsetStream);
+        defineCharacterSet(name, set);
     }
     return set;
 }
@@ -1614,7 +1612,7 @@ class DocumentDestination
         } catch (BadLocationException ble) {
             /* This shouldn't be able to happen, of course */
             /* TODO is InternalError the correct error to throw? */
-            throw new InternalError(ble.getMessage());
+            throw new InternalError(ble.getMessage(), ble);
         }
     }
 
@@ -1628,7 +1626,7 @@ class DocumentDestination
         } catch (BadLocationException ble) {
             /* This shouldn't be able to happen, of course */
             /* TODO is InternalError the correct error to throw? */
-            throw new InternalError(ble.getMessage());
+            throw new InternalError(ble.getMessage(), ble);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -45,7 +45,7 @@ import java.util.Enumeration;
  * single-mechanism environments where the underlying mechanism supports
  * multiple namespaces). Different name formats and their definitions are
  * identified with {@link Oid Oid's} and some standard types
- * are defind in this interface. The format of the names can be derived
+ * are defined in this interface. The format of the names can be derived
  * based on the unique <code>Oid</code> of its name type.<p>
  *
  * Included below are code examples utilizing the <code>GSSName</code> interface.

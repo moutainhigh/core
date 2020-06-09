@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2006, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -80,14 +80,16 @@ import java.beans.ConstructorProperties;
  * from the focus point. The following figure shows that the distance AB
  * is equal to the distance BC, and the distance AD is equal to the distance DE.
  * <center>
- * <img src = "doc-files/RadialGradientPaint-3.png">
+ * <img src = "doc-files/RadialGradientPaint-3.png" alt="image showing the
+ * distance AB=BC, and AD=DE">
  * </center>
  * If the gradient and graphics rendering transforms are uniformly scaled and
  * the user sets the focus so that it coincides with the center of the circle,
  * the gradient color proportions are equal for any line drawn from the center.
  * The following figure shows the distances AB, BC, AD, and DE. They are all equal.
  * <center>
- * <img src = "doc-files/RadialGradientPaint-4.png">
+ * <img src = "doc-files/RadialGradientPaint-4.png" alt="image showing the
+ * distance of AB, BC, AD, and DE are all equal">
  * </center>
  * Note that some minor variations in distances may occur due to sampling at
  * the granularity of a pixel.
@@ -102,7 +104,6 @@ import java.beans.ConstructorProperties;
  * The following code demonstrates typical usage of
  * {@code RadialGradientPaint}, where the center and focus points are
  * the same:
- * <p>
  * <pre>
  *     Point2D center = new Point2D.Float(50, 50);
  *     float radius = 25;
@@ -115,15 +116,14 @@ import java.beans.ConstructorProperties;
  * <p>
  * This image demonstrates the example code above, with default
  * (centered) focus for each of the three cycle methods:
- * <p>
  * <center>
- * <img src = "doc-files/RadialGradientPaint-1.png">
+ * <img src = "doc-files/RadialGradientPaint-1.png" alt="image showing the
+ * output of the sameple code">
  * </center>
  *
  * <p>
  * It is also possible to specify a non-centered focus point, as
  * in the following code:
- * <p>
  * <pre>
  *     Point2D center = new Point2D.Float(50, 50);
  *     float radius = 25;
@@ -139,9 +139,9 @@ import java.beans.ConstructorProperties;
  * <p>
  * This image demonstrates the previous example code, with non-centered
  * focus for each of the three cycle methods:
- * <p>
  * <center>
- * <img src = "doc-files/RadialGradientPaint-2.png">
+ * <img src = "doc-files/RadialGradientPaint-2.png" alt="image showing the
+ * output of the sample code">
  * </center>
  *
  * @see java.awt.Paint

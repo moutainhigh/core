@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,7 +46,7 @@ import javax.swing.plaf.*;
 
 
 /**
- * A default L&F implementation of MenuBarUI.  This implementation
+ * A default L&amp;F implementation of MenuBarUI.  This implementation
  * is a "combined" view/controller.
  *
  * @author Georges Saab

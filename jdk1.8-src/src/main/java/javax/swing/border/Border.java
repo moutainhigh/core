@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,7 +33,7 @@ import java.awt.Component;
  * Interface describing an object capable of rendering a border
  * around the edges of a swing component.
  * For examples of using borders see
- * <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/border.html">How to Use Borders</a>,
+ * <a href="https://docs.oracle.com/javase/tutorial/uiswing/components/border.htmll">How to Use Borders</a>,
  * a section in <em>The Java Tutorial.</em>
  * <p>
  * In the Swing component set, borders supercede Insets as the

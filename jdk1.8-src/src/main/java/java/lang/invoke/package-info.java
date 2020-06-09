@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -43,13 +43,13 @@
  * </li>
  * </ul>
  *
- * <h2><a name="jvm_mods"></a>Summary of relevant Java Virtual Machine changes</h2>
+ * <h1><a name="jvm_mods"></a>Summary of relevant Java Virtual Machine changes</h1>
  * The following low-level information summarizes relevant parts of the
  * Java Virtual Machine specification.  For full details, please see the
  * current version of that specification.
  *
  * Each occurrence of an {@code invokedynamic} instruction is called a <em>dynamic call site</em>.
- * <h3><a name="indyinsn"></a>{@code invokedynamic} instructions</h3>
+ * <h2><a name="indyinsn"></a>{@code invokedynamic} instructions</h2>
  * A dynamic call site is originally in an unlinked state.  In this state, there is
  * no target method for the call site to invoke.
  * <p>
@@ -97,7 +97,7 @@
  * If this happens, the same error will the thrown for all subsequent
  * attempts to execute the dynamic call site.
  *
- * <h3>timing of linkage</h3>
+ * <h2>timing of linkage</h2>
  * A dynamic call site is linked just before its first execution.
  * The bootstrap method call implementing the linkage occurs within
  * a thread that is attempting a first execution.
@@ -131,7 +131,7 @@
  * just before its first invocation.
  * There is no way to undo the effect of a completed bootstrap method call.
  *
- * <h3>types of bootstrap methods</h3>
+ * <h2>types of bootstrap methods</h2>
  * As long as each bootstrap method can be correctly invoked
  * by {@code MethodHandle.invoke}, its detailed type is arbitrary.
  * For example, the first argument could be {@code Object}
@@ -190,6 +190,13 @@
  * will cast the reference back to {@code MethodHandle} before invoking the bootstrap method.
  * (If a string constant were passed instead, by badly generated code, that cast would then fail,
  * resulting in a {@code BootstrapMethodError}.)
+ * <p>
+ * Note that, as a consequence of the above rules, the bootstrap method may accept a primitive
+ * argument, if it can be represented by a constant pool entry.
+ * However, arguments of type {@code boolean}, {@code byte}, {@code short}, or {@code char}
+ * cannot be created for bootstrap methods, since such constants cannot be directly
+ * represented in the constant pool, and the invocation of the bootstrap method will
+ * not perform the necessary narrowing primitive conversions.
  * <p>
  * Extra bootstrap method arguments are intended to allow language implementors
  * to safely and compactly encode metadata.

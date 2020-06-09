@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,6 +33,7 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 import sun.reflect.misc.MethodUtil;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * The <code>EventHandler</code> class provides
@@ -385,14 +386,14 @@ public class EventHandler implements InvocationHandler {
             if (target != null) {
                 getter = Statement.getMethod(target.getClass(),
                                       "get" + NameGenerator.capitalize(first),
-                                      new Class[]{});
+                                      new Class<?>[]{});
                 if (getter == null) {
                     getter = Statement.getMethod(target.getClass(),
                                    "is" + NameGenerator.capitalize(first),
-                                   new Class[]{});
+                                   new Class<?>[]{});
                 }
                 if (getter == null) {
-                    getter = Statement.getMethod(target.getClass(), first, new Class[]{});
+                    getter = Statement.getMethod(target.getClass(), first, new Class<?>[]{});
                 }
             }
             if (getter == null) {
@@ -450,12 +451,12 @@ public class EventHandler implements InvocationHandler {
 
             if (eventPropertyName == null) {     // Nullary method.
                 newArgs = new Object[]{};
-                argTypes = new Class[]{};
+                argTypes = new Class<?>[]{};
             }
             else {
                 Object input = applyGetters(arguments[0], getEventPropertyName());
                 newArgs = new Object[]{input};
-                argTypes = new Class[]{input == null ? null :
+                argTypes = new Class<?>[]{input == null ? null :
                                        input.getClass()};
             }
             try {
@@ -515,6 +516,7 @@ public class EventHandler implements InvocationHandler {
      *</pre>
      *</blockquote>
      *
+     * @param <T> the type to create
      * @param listenerInterface the listener interface to create a proxy for
      * @param target the object that will perform the action
      * @param action the name of a (possibly qualified) property or method on
@@ -570,6 +572,7 @@ public class EventHandler implements InvocationHandler {
      *</pre>
      *</blockquote>
      *
+     * @param <T> the type to create
      * @param listenerInterface the listener interface to create a proxy for
      * @param target the object that will perform the action
      * @param action the name of a (possibly qualified) property or method on
@@ -608,7 +611,7 @@ public class EventHandler implements InvocationHandler {
      * the empty string.
      * The format of the <code>eventPropertyName</code> string is a sequence of
      * methods or properties where each method or
-     * property is applied to the value returned by the preceeding method
+     * property is applied to the value returned by the preceding method
      * starting from the incoming event object.
      * The syntax is: <code>propertyName{.propertyName}*</code>
      * where <code>propertyName</code> matches a method or
@@ -659,6 +662,7 @@ public class EventHandler implements InvocationHandler {
      * </pre>
      *</blockquote>
      *
+     * @param <T> the type to create
      * @param listenerInterface the listener interface to create a proxy for
      * @param target the object that will perform the action
      * @param action the name of a (possibly qualified) property or method on
@@ -680,15 +684,32 @@ public class EventHandler implements InvocationHandler {
                                String listenerMethodName)
     {
         // Create this first to verify target/action are non-null
-        EventHandler eventHandler = new EventHandler(target, action,
+        final EventHandler handler = new EventHandler(target, action,
                                                      eventPropertyName,
                                                      listenerMethodName);
         if (listenerInterface == null) {
             throw new NullPointerException(
                           "listenerInterface must be non-null");
         }
-        return (T)Proxy.newProxyInstance(target.getClass().getClassLoader(),
-                                         new Class[] {listenerInterface},
-                                         eventHandler);
+        final ClassLoader loader = getClassLoader(listenerInterface);
+        final Class<?>[] interfaces = {listenerInterface};
+        return AccessController.doPrivileged(new PrivilegedAction<T>() {
+            @SuppressWarnings("unchecked")
+            public T run() {
+                return (T) Proxy.newProxyInstance(loader, interfaces, handler);
+            }
+        });
+    }
+
+    private static ClassLoader getClassLoader(Class<?> type) {
+        ReflectUtil.checkPackageAccess(type);
+        ClassLoader loader = type.getClassLoader();
+        if (loader == null) {
+            loader = Thread.currentThread().getContextClassLoader(); // avoid use of BCP
+            if (loader == null) {
+                loader = ClassLoader.getSystemClassLoader();
+            }
+        }
+        return loader;
     }
 }

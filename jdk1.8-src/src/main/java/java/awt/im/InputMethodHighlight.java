@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -51,8 +51,8 @@ import java.util.Map;
 * mappings from abstract to concrete styles. Currently defined state values
 * are raw (unconverted) and converted.
 * These state values are recommended for use before and after the
-* main conversion step of text composition, say, before and after kana->kanji
-* or pinyin->hanzi conversion.
+* main conversion step of text composition, say, before and after kana-&gt;kanji
+* or pinyin-&gt;hanzi conversion.
 * The <code>variation</code> field allows input methods to express additional
 * information about the conversion results.
 * <p>
@@ -190,6 +190,6 @@ public class InputMethodHighlight {
     private boolean selected;
     private int state;
     private int variation;
-    private Map style;
+    private Map<TextAttribute, ?> style;
 
 };

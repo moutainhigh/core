@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2001, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -112,7 +112,7 @@ import java.awt.font.FontRenderContext;
  * <strong>Examples</strong>:<p>
  * Rendering a paragraph in a component
  * <blockquote>
- * <pre>
+ * <pre>{@code
  * public void paint(Graphics graphics) {
  *
  *     Point2D pen = new Point2D(10, 20);
@@ -137,13 +137,13 @@ import java.awt.font.FontRenderContext;
  *         pen.y += layout.getDescent() + layout.getLeading();
  *     }
  * }
- * </pre>
+ * }</pre>
  * </blockquote>
  * <p>
  * Rendering text with tabs.  For simplicity, the overall text
  * direction is assumed to be left-to-right
  * <blockquote>
- * <pre>
+ * <pre>{@code
  * public void paint(Graphics graphics) {
  *
  *     float leftMargin = 10, rightMargin = 310;
@@ -240,7 +240,7 @@ import java.awt.font.FontRenderContext;
  *         verticalPos += maxDescent;
  *     }
  * }
- * </pre>
+ * }</pre>
  * </blockquote>
  * @see TextLayout
  */

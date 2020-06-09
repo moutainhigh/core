@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XPATHErrorResources_es.java,v 1.2.4.1 2005/09/15 00:39:22 jeffsuttor Exp $
- */
 package com.sun.org.apache.xpath.internal.res;
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -435,7 +429,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
      "ERROR. C\u00F3digo de operaci\u00F3n desconocido: {0}"},
 
   { ER_EXTRA_ILLEGAL_TOKENS,
-     "Elementos no permitidos adicionales: {0}"},
+     "Tokens no permitidos adicionales: {0}"},
 
   { ER_EXPECTED_DOUBLE_QUOTE,
       "literal con comillas incorrectas... se esperaban comillas dobles"},
@@ -552,7 +546,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
      "En XPath.readObject: {0}"},
 
   { ER_FUNCTION_TOKEN_NOT_FOUND,
-      "No se ha encontrado el elemento de funci\u00F3n."},
+      "No se ha encontrado el token de funci\u00F3n."},
 
   { ER_CANNOT_DEAL_XPATH_TYPE,
        "No se puede negociar con el tipo de XPath: {0}"},
@@ -646,13 +640,13 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // The message indicates that such an expression was expected following the
   // characters '/' or '//', but was not found.
   { ER_EXPECTED_REL_LOC_PATH,
-      "Se esperaba una ruta de acceso de ubicaci\u00F3n relativa despu\u00E9s del elemento '/' o '//'."},
+      "Se esperaba una ruta de acceso de ubicaci\u00F3n relativa despu\u00E9s del token '/' o '//'."},
 
   // Note to translators:  A location path is a form of XPath expression.
   // The message indicates that syntactically such an expression was expected,but
   // the characters specified by the substitution text were encountered instead.
   { ER_EXPECTED_LOC_PATH,
-       "Se esperaba una ruta de acceso de ubicaci\u00F3n, pero se ha encontrado el siguiente elemento: {0}"},
+       "Se esperaba una ruta de acceso de ubicaci\u00F3n, pero se ha encontrado el siguiente token: {0}"},
 
   // Note to translators:  A location path is a form of XPath expression.
   // The message indicates that syntactically such a subexpression was expected,
@@ -664,7 +658,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
   // The message indicates that syntactically such an expression was expected
   // following the specified characters.
   { ER_EXPECTED_LOC_STEP,
-       "Se esperaba un paso de ubicaci\u00F3n despu\u00E9s del elemento '/' o '//'."},
+       "Se esperaba un paso de ubicaci\u00F3n despu\u00E9s del token '/' o '//'."},
 
   // Note to translators:  A node test is part of an XPath expression that is
   // used to test for particular kinds of nodes.  In this case, a node test that
@@ -849,7 +843,7 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
       "XPath necesita un objeto derivado para implantar una prueba de nodo."},
 
   { WG_FUNCTION_TOKEN_NOT_FOUND,
-      "No se ha encontrado el elemento de funci\u00F3n."},
+      "No se ha encontrado el token de funci\u00F3n."},
 
   { WG_COULDNOT_FIND_FUNCTION,
       "No se ha encontrado la funci\u00F3n: {0}"},
@@ -938,69 +932,5 @@ public static final String ER_IGNORABLE_WHITESPACE_NOT_HANDLED =
 
   /** Field QUERY_HEADER          */
   public static final String QUERY_HEADER = "PATTERN ";
-
-
-  /**
-   * Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   * of ResourceBundle.getBundle().
-   *
-   * @param className Name of local-specific subclass.
-   * @return the ResourceBundle
-   * @throws MissingResourceException
-   */
-  public static final XPATHErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XPATHErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XPATHErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

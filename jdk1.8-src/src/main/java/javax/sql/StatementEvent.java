@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,6 +42,7 @@ import java.util.EventObject;
  */
 public class StatementEvent extends EventObject {
 
+        static final long serialVersionUID = -8089573731826608315L;
         private SQLException            exception;
         private PreparedStatement       statement;
 
@@ -52,7 +53,7 @@ public class StatementEvent extends EventObject {
          * <p>
          * @param con                   The <code>PooledConnection</code> that the closed or invalid
          * <code>PreparedStatement</code>is associated with.
-         * @param statement             The <code>PreparedStatement</code> that is bieng closed or is invalid
+         * @param statement             The <code>PreparedStatement</code> that is being closed or is invalid
          * <p>
          * @throws IllegalArgumentException if <code>con</code> is null.
          *

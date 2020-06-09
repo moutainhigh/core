@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2000, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
 public abstract class ComboBoxUI extends ComponentUI {
 
     /**
-     * Set the visiblity of the popup
+     * Set the visibility of the popup
      */
     public abstract void setPopupVisible( JComboBox c, boolean v );
 

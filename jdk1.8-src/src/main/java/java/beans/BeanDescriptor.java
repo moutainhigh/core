@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,8 +37,8 @@ import java.lang.ref.Reference;
 
 public class BeanDescriptor extends FeatureDescriptor {
 
-    private Reference<Class> beanClassRef;
-    private Reference<Class> customizerClassRef;
+    private Reference<? extends Class<?>> beanClassRef;
+    private Reference<? extends Class<?>> customizerClassRef;
 
     /**
      * Create a BeanDescriptor for a bean that doesn't have a customizer.
@@ -59,8 +59,8 @@ public class BeanDescriptor extends FeatureDescriptor {
      *          the bean's Customizer.  For example sun.beans.OurButtonCustomizer.class.
      */
     public BeanDescriptor(Class<?> beanClass, Class<?> customizerClass) {
-        this.beanClassRef = getWeakReference((Class)beanClass);
-        this.customizerClassRef = getWeakReference((Class)customizerClass);
+        this.beanClassRef = getWeakReference(beanClass);
+        this.customizerClassRef = getWeakReference(customizerClass);
 
         String name = beanClass.getName();
         while (name.indexOf('.') >= 0) {

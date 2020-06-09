@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -42,7 +42,7 @@ import sun.swing.SwingUtilities2;
 
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link JSlider}.
  *
  * @author Joshua Outwater
@@ -98,7 +98,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults(JSlider slider) {
@@ -127,7 +127,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners(JSlider slider) {
@@ -136,7 +136,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners(JSlider slider) {
@@ -200,7 +200,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected TrackListener createTrackListener(JSlider s) {
@@ -231,7 +231,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int getBaseline(JComponent c, int width, int height) {
@@ -302,7 +302,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getPreferredSize(JComponent c)  {
@@ -320,7 +320,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public Dimension getMinimumSize(JComponent c) {
@@ -335,7 +335,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void calculateGeometry() {
@@ -534,7 +534,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void calculateThumbLocation() {
@@ -551,7 +551,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setThumbLocation(int x, int y) {
@@ -564,7 +564,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected int xPositionForValue(int value) {
@@ -593,7 +593,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected int yPositionForValue(int value, int trackY, int trackHeight) {
@@ -622,7 +622,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int valueForYPosition(int yPos) {
@@ -651,7 +651,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public int valueForXPosition(int xPos) {
@@ -680,7 +680,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected Dimension getThumbSize() {
@@ -697,7 +697,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void recalculateIfInsetsChanged() {
@@ -714,7 +714,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -722,8 +722,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                            SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private SynthContext getContext(JComponent c, Region subregion) {
@@ -732,14 +731,13 @@ public class SynthSliderUI extends BasicSliderUI
 
     private SynthContext getContext(JComponent c, Region subregion, int state) {
         SynthStyle style = null;
-        Class klass = SynthContext.class;
 
         if (subregion == Region.SLIDER_TRACK) {
             style = sliderTrackStyle;
         } else if (subregion == Region.SLIDER_THUMB) {
             style = sliderThumbStyle;
         }
-        return SynthContext.getContext(klass, c, subregion, style, state);
+        return SynthContext.getContext(c, subregion, style, state);
     }
 
     private int getComponentState(JComponent c, Region region) {
@@ -851,7 +849,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -899,7 +897,7 @@ public class SynthSliderUI extends BasicSliderUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void propertyChange(PropertyChangeEvent e) {

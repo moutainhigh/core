@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -71,17 +71,17 @@ import static sun.font.EAttribute.*;
  * and to render sequences of glyphs on <code>Graphics</code> and
  * <code>Component</code> objects.
  *
- * <h4>Characters and Glyphs</h4>
+ * <h3>Characters and Glyphs</h3>
  *
  * A <em>character</em> is a symbol that represents an item such as a letter,
  * a digit, or punctuation in an abstract way. For example, <code>'g'</code>,
- * <font size=-1>LATIN SMALL LETTER G</font>, is a character.
+ * LATIN SMALL LETTER G, is a character.
  * <p>
  * A <em>glyph</em> is a shape used to render a character or a sequence of
  * characters. In simple writing systems, such as Latin, typically one glyph
  * represents one character. In general, however, characters and glyphs do not
  * have one-to-one correspondence. For example, the character '&aacute;'
- * <font size=-1>LATIN SMALL LETTER A WITH ACUTE</font>, can be represented by
+ * LATIN SMALL LETTER A WITH ACUTE, can be represented by
  * two glyphs: one for 'a' and one for '&acute;'. On the other hand, the
  * two-character string "fi" can be represented by a single glyph, an
  * "fi" ligature. In complex writing systems, such as Arabic or the South
@@ -93,7 +93,7 @@ import static sun.font.EAttribute.*;
  * of characters as well as the tables needed to map sequences of characters to
  * corresponding sequences of glyphs.
  *
- * <h4>Physical and Logical Fonts</h4>
+ * <h3>Physical and Logical Fonts</h3>
  *
  * The Java Platform distinguishes between two kinds of fonts:
  * <em>physical</em> fonts and <em>logical</em> fonts.
@@ -127,10 +127,10 @@ import static sun.font.EAttribute.*;
  * <p>
  * For a discussion of the relative advantages and disadvantages of using
  * physical or logical fonts, see the
- * <a href="http://java.sun.com/j2se/corejava/intl/reference/faqs/index.html#desktop-rendering">Internationalization FAQ</a>
+ * <a href="http://www.oracle.com/technetwork/java/javase/tech/faq-jsp-138165.html">Internationalization FAQ</a>
  * document.
  *
- * <h4>Font Faces and Names</h4>
+ * <h3>Font Faces and Names</h3>
  *
  * A <code>Font</code>
  * can have many faces, such as heavy, medium, oblique, gothic and
@@ -160,7 +160,7 @@ import static sun.font.EAttribute.*;
  * with varying sizes, styles, transforms and font features via the
  * <code>deriveFont</code> methods in this class.
  *
- * <h4>Font and TextAttribute</h4>
+ * <h3>Font and TextAttribute</h3>
  *
  * <p><code>Font</code> supports most
  * <code>TextAttribute</code>s.  This makes some operations, such as
@@ -192,12 +192,12 @@ import static sun.font.EAttribute.*;
  * not serializable.  See {@link java.awt.im.InputMethodHighlight}.</li>
  * </ul>
  *
- * Clients who create custom subclasses of <code>Paint</code> and
+ * <p>Clients who create custom subclasses of <code>Paint</code> and
  * <code>GraphicAttribute</code> can make them serializable and
  * avoid this problem.  Clients who use input method highlights can
  * convert these to the platform-specific attributes for that
  * highlight on the current platform and set them on the Font as
- * a workaround.</p>
+ * a workaround.
  *
  * <p>The <code>Map</code>-based constructor and
  * <code>deriveFont</code> APIs ignore the FONT attribute, and it is
@@ -255,7 +255,7 @@ public class Font implements java.io.Serializable
      * @serial
      * @see #getAttributes()
      */
-    private Hashtable fRequestedAttributes;
+    private Hashtable<Object, Object> fRequestedAttributes;
 
     /*
      * Constants to be used for logical font family names.
@@ -447,6 +447,7 @@ public class Font implements java.io.Serializable
     //       We implement this functionality in a package-private method
     //       to insure that it cannot be overridden by client subclasses.
     //       DO NOT INVOKE CLIENT CODE ON THIS THREAD!
+    @SuppressWarnings("deprecation")
     final FontPeer getPeer_NoClientCode() {
         if(peer == null) {
             Toolkit tk = Toolkit.getDefaultToolkit();
@@ -872,6 +873,33 @@ public class Font implements java.io.Serializable
     public static Font createFont(int fontFormat, InputStream fontStream)
         throws java.awt.FontFormatException, java.io.IOException {
 
+        if (hasTempPermission()) {
+            return createFont0(fontFormat, fontStream, null);
+        }
+
+        // Otherwise, be extra conscious of pending temp file creation and
+        // resourcefully handle the temp file resources, among other things.
+        CreatedFontTracker tracker = CreatedFontTracker.getTracker();
+        boolean acquired = false;
+        try {
+            acquired = tracker.acquirePermit();
+            if (!acquired) {
+                throw new IOException("Timed out waiting for resources.");
+            }
+            return createFont0(fontFormat, fontStream, tracker);
+        } catch (InterruptedException e) {
+            throw new IOException("Problem reading font data.");
+        } finally {
+            if (acquired) {
+                tracker.releasePermit();
+            }
+        }
+    }
+
+    private static Font createFont0(int fontFormat, InputStream fontStream,
+                                    CreatedFontTracker tracker)
+        throws java.awt.FontFormatException, java.io.IOException {
+
         if (fontFormat != Font.TRUETYPE_FONT &&
             fontFormat != Font.TYPE1_FONT) {
             throw new IllegalArgumentException ("font format not recognized");
@@ -885,9 +913,11 @@ public class Font implements java.io.Serializable
                     }
                 }
             );
+            if (tracker != null) {
+                tracker.add(tFile);
+            }
 
             int totalSize = 0;
-            CreatedFontTracker tracker = null;
             try {
                 final OutputStream outStream =
                     AccessController.doPrivileged(
@@ -897,8 +927,8 @@ public class Font implements java.io.Serializable
                             }
                         }
                     );
-                if (!hasTempPermission()) {
-                    tracker = CreatedFontTracker.getTracker();
+                if (tracker != null) {
+                    tracker.set(tFile, outStream);
                 }
                 try {
                     byte[] buf = new byte[8192];
@@ -908,11 +938,11 @@ public class Font implements java.io.Serializable
                             break;
                         }
                         if (tracker != null) {
-                            if (totalSize+bytesRead > tracker.MAX_FILE_SIZE) {
+                            if (totalSize+bytesRead > CreatedFontTracker.MAX_FILE_SIZE) {
                                 throw new IOException("File too big.");
                             }
                             if (totalSize+tracker.getNumBytes() >
-                                tracker.MAX_TOTAL_BYTES)
+                                CreatedFontTracker.MAX_TOTAL_BYTES)
                               {
                                 throw new IOException("Total files too big.");
                             }
@@ -939,6 +969,9 @@ public class Font implements java.io.Serializable
                 Font font = new Font(tFile, fontFormat, true, tracker);
                 return font;
             } finally {
+                if (tracker != null) {
+                    tracker.remove(tFile);
+                }
                 if (!copiedFontData) {
                     if (tracker != null) {
                         tracker.subBytes(totalSize);
@@ -1301,7 +1334,7 @@ public class Font implements java.io.Serializable
      * Indicates whether or not this <code>Font</code> object's style is
      * PLAIN.
      * @return    <code>true</code> if this <code>Font</code> has a
-     *            PLAIN sytle;
+     *            PLAIN style;
      *            <code>false</code> otherwise.
      * @see       java.awt.Font#getStyle
      * @since     JDK1.0
@@ -1386,7 +1419,7 @@ public class Font implements java.io.Serializable
      * To ensure that this method returns the desired Font,
      * format the <code>str</code> parameter in
      * one of these ways
-     * <p>
+     *
      * <ul>
      * <li><em>fontname-style-pointsize</em>
      * <li><em>fontname-pointsize</em>
@@ -2127,11 +2160,11 @@ public class Font implements java.io.Serializable
         return false;   // REMIND always safe, but prevents caller optimize
     }
 
-    private transient SoftReference flmref;
+    private transient SoftReference<FontLineMetrics> flmref;
     private FontLineMetrics defaultLineMetrics(FontRenderContext frc) {
         FontLineMetrics flm = null;
         if (flmref == null
-            || (flm = (FontLineMetrics)flmref.get()) == null
+            || (flm = flmref.get()) == null
             || !flm.frc.equals(frc)) {
 
             /* The device transform in the frc is not used in obtaining line
@@ -2195,7 +2228,7 @@ public class Font implements java.io.Serializable
                                              ssOffset, italicAngle);
 
             flm = new FontLineMetrics(0, cm, frc);
-            flmref = new SoftReference(flm);
+            flmref = new SoftReference<FontLineMetrics>(flm);
         }
 
         return (FontLineMetrics)flm.clone();

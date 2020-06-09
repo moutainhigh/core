@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -36,24 +36,25 @@ import java.beans.ConstructorProperties;
  *
  * For example, this class may be used to add blank margin space
  * to a component with an existing decorative border:
- * <p>
- * <code><pre>
+ *
+ * <pre>
  *    Border border = comp.getBorder();
  *    Border margin = new EmptyBorder(10,10,10,10);
  *    comp.setBorder(new CompoundBorder(border, margin));
- * </pre></code>
+ * </pre>
  * <p>
  * <strong>Warning:</strong>
  * Serialized objects of this class will not be compatible with
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
  * @author David Kloba
  */
+@SuppressWarnings("serial")
 public class CompoundBorder extends AbstractBorder {
     protected Border outsideBorder;
     protected Border insideBorder;

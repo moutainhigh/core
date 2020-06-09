@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -46,6 +46,8 @@ import com.sun.corba.se.impl.ior.FreezableList ;
 import com.sun.corba.se.impl.encoding.CDROutputStream ;
 import com.sun.corba.se.impl.encoding.EncapsOutputStream ;
 import com.sun.corba.se.impl.encoding.EncapsInputStream ;
+
+import sun.corba.EncapsInputStreamFactory;
 
 /**
  * This static utility class contains various utility methods for reading and
@@ -108,8 +110,8 @@ public class EncapsulationUtility
     static public InputStream getEncapsulationStream( InputStream is )
     {
         byte[] data = readOctets( is ) ;
-        EncapsInputStream result = new EncapsInputStream( is.orb(), data,
-            data.length ) ;
+        EncapsInputStream result = EncapsInputStreamFactory.newEncapsInputStream( is.orb(), data,
+                data.length ) ;
         result.consumeEndian() ;
         return result ;
     }
@@ -128,7 +130,8 @@ public class EncapsulationUtility
     static public void writeEncapsulation( WriteContents obj,
         OutputStream os )
     {
-        EncapsOutputStream out = new EncapsOutputStream( (ORB)os.orb() ) ;
+        EncapsOutputStream out =
+            sun.corba.OutputStreamFactory.newEncapsOutputStream((ORB)os.orb());
 
         out.putEndian() ;
 

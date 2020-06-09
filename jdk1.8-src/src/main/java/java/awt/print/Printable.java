@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -26,6 +26,7 @@
 package java.awt.print;
 
 import java.awt.Graphics;
+
 
 /**
  * The <code>Printable</code> interface is implemented
@@ -75,7 +76,7 @@ import java.awt.Graphics;
  * <li>With the exception of re-imaging an entire document for multiple
  * collated copies, the increasing page index order means that when
  * page N is requested if a client needs to calculate page break position,
- * it may safely discard any state related to pages < N, and make current
+ * it may safely discard any state related to pages &lt; N, and make current
  * that for page N. "State" usually is just the calculated position in the
  * document that corresponds to the start of the page.
  *

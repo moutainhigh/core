@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -80,6 +80,7 @@ public interface SignedInfo extends XMLStructure {
      *
      * @return an unmodifiable list of one or more {@link Reference}s
      */
+    @SuppressWarnings("rawtypes")
     List getReferences();
 
     /**

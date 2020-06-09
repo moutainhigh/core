@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -60,6 +60,7 @@ public interface AccessibleValue {
     /**
      * Set the value of this object as a Number.
      *
+     * @param n the number to use for the value
      * @return True if the value was set; else False
      * @see #getCurrentAccessibleValue
      */

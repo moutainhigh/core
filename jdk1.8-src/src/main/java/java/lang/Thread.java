@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1994, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1994, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -37,6 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.LockSupport;
 import sun.nio.ch.Interruptible;
+import sun.reflect.CallerSensitive;
+import sun.reflect.Reflection;
 import sun.security.util.SecurityConstants;
 
 
@@ -74,7 +76,7 @@ import sun.security.util.SecurityConstants;
  * <code>Thread</code>. An instance of the subclass can then be
  * allocated and started. For example, a thread that computes primes
  * larger than a stated value could be written as follows:
- * <p><hr><blockquote><pre>
+ * <hr><blockquote><pre>
  *     class PrimeThread extends Thread {
  *         long minPrime;
  *         PrimeThread(long minPrime) {
@@ -89,7 +91,7 @@ import sun.security.util.SecurityConstants;
  * </pre></blockquote><hr>
  * <p>
  * The following code would then create a thread and start it running:
- * <p><blockquote><pre>
+ * <blockquote><pre>
  *     PrimeThread p = new PrimeThread(143);
  *     p.start();
  * </pre></blockquote>
@@ -100,7 +102,7 @@ import sun.security.util.SecurityConstants;
  * then be allocated, passed as an argument when creating
  * <code>Thread</code>, and started. The same example in this other
  * style looks like the following:
- * <p><hr><blockquote><pre>
+ * <hr><blockquote><pre>
  *     class PrimeRun implements Runnable {
  *         long minPrime;
  *         PrimeRun(long minPrime) {
@@ -115,7 +117,7 @@ import sun.security.util.SecurityConstants;
  * </pre></blockquote><hr>
  * <p>
  * The following code would then create a thread and start it running:
- * <p><blockquote><pre>
+ * <blockquote><pre>
  *     PrimeRun p = new PrimeRun(143);
  *     new Thread(p).start();
  * </pre></blockquote>
@@ -143,10 +145,10 @@ class Thread implements Runnable {
         registerNatives();
     }
 
-    private char        name[];
-    private int         priority;
-    private Thread      threadQ;
-    private long        eetop;
+    private volatile char  name[];
+    private int            priority;
+    private Thread         threadQ;
+    private long           eetop;
 
     /* Whether or not to single_step this thread. */
     private boolean     single_step;
@@ -339,6 +341,15 @@ class Thread implements Runnable {
     }
 
     /**
+     * Initializes a Thread with the current AccessControlContext.
+     * @see #init(ThreadGroup,Runnable,String,long,AccessControlContext)
+     */
+    private void init(ThreadGroup g, Runnable target, String name,
+                      long stackSize) {
+        init(g, target, name, stackSize, null);
+    }
+
+    /**
      * Initializes a Thread.
      *
      * @param g the Thread group
@@ -346,12 +357,16 @@ class Thread implements Runnable {
      * @param name the name of the new Thread
      * @param stackSize the desired stack size for the new thread, or
      *        zero to indicate that this parameter is to be ignored.
+     * @param acc the AccessControlContext to inherit, or
+     *            AccessController.getContext() if null
      */
     private void init(ThreadGroup g, Runnable target, String name,
-                      long stackSize) {
+                      long stackSize, AccessControlContext acc) {
         if (name == null) {
             throw new NullPointerException("name cannot be null");
         }
+
+        this.name = name.toCharArray();
 
         Thread parent = currentThread();
         SecurityManager security = System.getSecurityManager();
@@ -389,12 +404,12 @@ class Thread implements Runnable {
         this.group = g;
         this.daemon = parent.isDaemon();
         this.priority = parent.getPriority();
-        this.name = name.toCharArray();
         if (security == null || isCCLOverridden(parent.getClass()))
             this.contextClassLoader = parent.getContextClassLoader();
         else
             this.contextClassLoader = parent.contextClassLoader;
-        this.inheritedAccessControlContext = AccessController.getContext();
+        this.inheritedAccessControlContext =
+                acc != null ? acc : AccessController.getContext();
         this.target = target;
         setPriority(priority);
         if (parent.inheritableThreadLocals != null)
@@ -444,6 +459,14 @@ class Thread implements Runnable {
      */
     public Thread(Runnable target) {
         init(null, target, "Thread-" + nextThreadNum(), 0);
+    }
+
+    /**
+     * Creates a new Thread that inherits the given AccessControlContext.
+     * This is not a public constructor.
+     */
+    Thread(Runnable target, AccessControlContext acc) {
+        init(null, target, "Thread-" + nextThreadNum(), 0, acc);
     }
 
     /**
@@ -810,68 +833,10 @@ class Thread implements Runnable {
      */
     @Deprecated
     public final void stop() {
-        stop(new ThreadDeath());
-    }
-
-    /**
-     * Forces the thread to stop executing.
-     * <p>
-     * If there is a security manager installed, the <code>checkAccess</code>
-     * method of this thread is called, which may result in a
-     * <code>SecurityException</code> being raised (in the current thread).
-     * <p>
-     * If this thread is different from the current thread (that is, the current
-     * thread is trying to stop a thread other than itself) or
-     * <code>obj</code> is not an instance of <code>ThreadDeath</code>, the
-     * security manager's <code>checkPermission</code> method (with the
-     * <code>RuntimePermission("stopThread")</code> argument) is called in
-     * addition.
-     * Again, this may result in throwing a
-     * <code>SecurityException</code> (in the current thread).
-     * <p>
-     * If the argument <code>obj</code> is null, a
-     * <code>NullPointerException</code> is thrown (in the current thread).
-     * <p>
-     * The thread represented by this thread is forced to stop
-     * whatever it is doing abnormally and to throw the
-     * <code>Throwable</code> object <code>obj</code> as an exception. This
-     * is an unusual action to take; normally, the <code>stop</code> method
-     * that takes no arguments should be used.
-     * <p>
-     * It is permitted to stop a thread that has not yet been started.
-     * If the thread is eventually started, it immediately terminates.
-     *
-     * @param      obj   the Throwable object to be thrown.
-     * @exception  SecurityException  if the current thread cannot modify
-     *               this thread.
-     * @throws     NullPointerException if obj is <tt>null</tt>.
-     * @see        #interrupt()
-     * @see        #checkAccess()
-     * @see        #run()
-     * @see        #start()
-     * @see        #stop()
-     * @see        SecurityManager#checkAccess(Thread)
-     * @see        SecurityManager#checkPermission
-     * @deprecated This method is inherently unsafe.  See {@link #stop()}
-     *        for details.  An additional danger of this
-     *        method is that it may be used to generate exceptions that the
-     *        target thread is unprepared to handle (including checked
-     *        exceptions that the thread could not possibly throw, were it
-     *        not for this method).
-     *        For more information, see
-     *        <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">Why
-     *        are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
-     */
-    @Deprecated
-    public final synchronized void stop(Throwable obj) {
-        if (obj == null)
-            throw new NullPointerException();
-
         SecurityManager security = System.getSecurityManager();
         if (security != null) {
             checkAccess();
-            if ((this != Thread.currentThread()) ||
-                (!(obj instanceof ThreadDeath))) {
+            if (this != Thread.currentThread()) {
                 security.checkPermission(SecurityConstants.STOP_THREAD_PERMISSION);
             }
         }
@@ -882,7 +847,26 @@ class Thread implements Runnable {
         }
 
         // The VM can handle all thread states
-        stop0(obj);
+        stop0(new ThreadDeath());
+    }
+
+    /**
+     * Throws {@code UnsupportedOperationException}.
+     *
+     * @param obj ignored
+     *
+     * @deprecated This method was originally designed to force a thread to stop
+     *        and throw a given {@code Throwable} as an exception. It was
+     *        inherently unsafe (see {@link #stop()} for details), and furthermore
+     *        could be used to generate exceptions that the target thread was
+     *        not prepared to handle.
+     *        For more information, see
+     *        <a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">Why
+     *        are Thread.stop, Thread.suspend and Thread.resume Deprecated?</a>.
+     */
+    @Deprecated
+    public final synchronized void stop(Throwable obj) {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -902,8 +886,8 @@ class Thread implements Runnable {
      * will receive an {@link InterruptedException}.
      *
      * <p> If this thread is blocked in an I/O operation upon an {@link
-     * java.nio.channels.InterruptibleChannel </code>interruptible
-     * channel<code>} then the channel will be closed, the thread's interrupt
+     * java.nio.channels.InterruptibleChannel InterruptibleChannel}
+     * then the channel will be closed, the thread's interrupt
      * status will be set, and the thread will receive a {@link
      * java.nio.channels.ClosedByInterruptException}.
      *
@@ -1133,9 +1117,12 @@ class Thread implements Runnable {
      * @see        #getName
      * @see        #checkAccess()
      */
-    public final void setName(String name) {
+    public final synchronized void setName(String name) {
         checkAccess();
         this.name = name.toCharArray();
+        if (threadStatus != 0) {
+            setNativeName(name);
+        }
     }
 
     /**
@@ -1145,7 +1132,7 @@ class Thread implements Runnable {
      * @see     #setName(String)
      */
     public final String getName() {
-        return String.valueOf(name);
+        return new String(name, true);
     }
 
     /**
@@ -1440,16 +1427,14 @@ class Thread implements Runnable {
      *
      * @since 1.2
      */
+    @CallerSensitive
     public ClassLoader getContextClassLoader() {
         if (contextClassLoader == null)
             return null;
         SecurityManager sm = System.getSecurityManager();
         if (sm != null) {
-            ClassLoader ccl = ClassLoader.getCallerClassLoader();
-            if (ccl != null && ccl != contextClassLoader &&
-                    !contextClassLoader.isAncestor(ccl)) {
-                sm.checkPermission(SecurityConstants.GET_CLASSLOADER_PERMISSION);
-            }
+            ClassLoader.checkClassLoaderPermission(contextClassLoader,
+                                                   Reflection.getCallerClass());
         }
         return contextClassLoader;
     }
@@ -1650,7 +1635,7 @@ class Thread implements Runnable {
      * security-sensitive non-final methods, or else the
      * "enableContextClassLoaderOverride" RuntimePermission is checked.
      */
-    private static boolean isCCLOverridden(Class cl) {
+    private static boolean isCCLOverridden(Class<?> cl) {
         if (cl == Thread.class)
             return false;
 
@@ -1670,21 +1655,21 @@ class Thread implements Runnable {
      * override security-sensitive non-final methods.  Returns true if the
      * subclass overrides any of the methods, false otherwise.
      */
-    private static boolean auditSubclass(final Class subcl) {
+    private static boolean auditSubclass(final Class<?> subcl) {
         Boolean result = AccessController.doPrivileged(
             new PrivilegedAction<Boolean>() {
                 public Boolean run() {
-                    for (Class cl = subcl;
+                    for (Class<?> cl = subcl;
                          cl != Thread.class;
                          cl = cl.getSuperclass())
                     {
                         try {
-                            cl.getDeclaredMethod("getContextClassLoader", new Class[0]);
+                            cl.getDeclaredMethod("getContextClassLoader", new Class<?>[0]);
                             return Boolean.TRUE;
                         } catch (NoSuchMethodException ex) {
                         }
                         try {
-                            Class[] params = {ClassLoader.class};
+                            Class<?>[] params = {ClassLoader.class};
                             cl.getDeclaredMethod("setContextClassLoader", params);
                             return Boolean.TRUE;
                         } catch (NoSuchMethodException ex) {
@@ -1849,6 +1834,7 @@ class Thread implements Runnable {
      * @see ThreadGroup#uncaughtException
      * @since 1.5
      */
+    @FunctionalInterface
     public interface UncaughtExceptionHandler {
         /**
          * Method invoked when the given thread terminates due to the
@@ -1918,6 +1904,7 @@ class Thread implements Runnable {
      * there is no default.
      * @since 1.5
      * @see #setDefaultUncaughtExceptionHandler
+     * @return the default uncaught exception handler for all threads
      */
     public static UncaughtExceptionHandler getDefaultUncaughtExceptionHandler(){
         return defaultUncaughtExceptionHandler;
@@ -1930,6 +1917,7 @@ class Thread implements Runnable {
      * <tt>ThreadGroup</tt> object is returned, unless this thread
      * has terminated, in which case <tt>null</tt> is returned.
      * @since 1.5
+     * @return the uncaught exception handler for this thread
      */
     public UncaughtExceptionHandler getUncaughtExceptionHandler() {
         return uncaughtExceptionHandler != null ?
@@ -2025,6 +2013,25 @@ class Thread implements Runnable {
             }
         }
     }
+
+
+    // The following three initially uninitialized fields are exclusively
+    // managed by class java.util.concurrent.ThreadLocalRandom. These
+    // fields are used to build the high-performance PRNGs in the
+    // concurrent code, and we can not risk accidental false sharing.
+    // Hence, the fields are isolated with @Contended.
+
+    /** The current seed for a ThreadLocalRandom */
+    @sun.misc.Contended("tlr")
+    long threadLocalRandomSeed;
+
+    /** Probe hash value; nonzero if threadLocalRandomSeed initialized */
+    @sun.misc.Contended("tlr")
+    int threadLocalRandomProbe;
+
+    /** Secondary seed isolated from public ThreadLocalRandom sequence */
+    @sun.misc.Contended("tlr")
+    int threadLocalRandomSecondarySeed;
 
     /* Some private helper methods */
     private native void setPriority0(int newPriority);

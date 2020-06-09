@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -91,7 +91,7 @@ public class PipedReader extends Reader {
      * @param      src       the stream to connect to.
      * @param      pipeSize  the size of the pipe's buffer.
      * @exception  IOException  if an I/O error occurs.
-     * @exception  IllegalArgumentException if <code>pipeSize <= 0</code>.
+     * @exception  IllegalArgumentException if {@code pipeSize <= 0}.
      * @since      1.6
      */
     public PipedReader(PipedWriter src, int pipeSize) throws IOException {
@@ -120,7 +120,7 @@ public class PipedReader extends Reader {
      * before being used.
      *
      * @param   pipeSize the size of the pipe's buffer.
-     * @exception  IllegalArgumentException if <code>pipeSize <= 0</code>.
+     * @exception  IllegalArgumentException if {@code pipeSize <= 0}.
      * @since      1.6
      */
     public PipedReader(int pipeSize) {
@@ -145,15 +145,14 @@ public class PipedReader extends Reader {
      * unconnected piped writer and <code>snk</code>
      * is an unconnected piped reader, they
      * may be connected by either the call:
-     * <p>
+     *
      * <pre><code>snk.connect(src)</code> </pre>
      * <p>
      * or the call:
-     * <p>
+     *
      * <pre><code>src.connect(snk)</code> </pre>
      * <p>
-     * The two
-     * calls have the same effect.
+     * The two calls have the same effect.
      *
      * @param      src   The piped writer to connect to.
      * @exception  IOException  if an I/O error occurs.

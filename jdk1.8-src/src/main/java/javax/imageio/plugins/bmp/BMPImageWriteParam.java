@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -29,6 +29,7 @@ import java.util.Locale;
 import javax.imageio.ImageWriteParam;
 
 import com.sun.imageio.plugins.bmp.BMPConstants;
+import com.sun.imageio.plugins.bmp.BMPCompressionTypes;
 
 /**
  * A subclass of <code>ImageWriteParam</code> for encoding images in
@@ -56,9 +57,9 @@ import com.sun.imageio.plugins.bmp.BMPConstants;
  * <p><table border=1>
  * <caption><b>Compression Types</b></caption>
  * <tr><th>Type String</th> <th>Description</th>  <th>Image Types</th></tr>
- * <tr><td>BI_RGB</td>  <td>Uncompressed RLE</td> <td><= 8-bits/sample</td></tr>
- * <tr><td>BI_RLE8</td> <td>8-bit Run Length Encoding</td> <td><= 8-bits/sample</td></tr>
- * <tr><td>BI_RLE4</td> <td>4-bit Run Length Encoding</td> <td><= 4-bits/sample</td></tr>
+ * <tr><td>BI_RGB</td>  <td>Uncompressed RLE</td> <td>{@literal <= } 8-bits/sample</td></tr>
+ * <tr><td>BI_RLE8</td> <td>8-bit Run Length Encoding</td> <td>{@literal <=} 8-bits/sample</td></tr>
+ * <tr><td>BI_RLE4</td> <td>4-bit Run Length Encoding</td> <td>{@literal <=} 4-bits/sample</td></tr>
  * <tr><td>BI_BITFIELDS</td> <td>Packed data</td> <td> 16 or 32 bits/sample</td></tr>
  * </table>
  */
@@ -78,7 +79,7 @@ public class BMPImageWriteParam extends ImageWriteParam {
         super(locale);
 
         // Set compression types ("BI_RGB" denotes uncompressed).
-        compressionTypes = BMPConstants.compressionTypeNames.clone();
+        compressionTypes = BMPCompressionTypes.getCompressionTypes();
 
         // Set compression flag.
         canWriteCompressed = true;

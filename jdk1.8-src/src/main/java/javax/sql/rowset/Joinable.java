@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -57,7 +57,7 @@ import java.sql.SQLException;
  *         :
  *     }
  * </pre>
- * <P>
+ *
  * <h3>2.0 Usage Guidelines</h3>
  * <P>
  * The methods in the <code>Joinable</code> interface allow a <code>RowSet</code> object
@@ -66,7 +66,7 @@ import java.sql.SQLException;
  * An instance of a class that implements these methods can be added to a
  * <code>JoinRowSet</code> object to allow an SQL <code>JOIN</code> relationship to
  *  be established.
- * <p>
+ *
  * <pre>
  *     CachedRowSet crs = new MyRowSetImpl();
  *     crs.populate((ResultSet)rs);
@@ -76,7 +76,7 @@ import java.sql.SQLException;
  *     jrs.addRowSet(crs);
  * </pre>
  * In the previous example, <i>crs</i> is a <code>CachedRowSet</code> object that
- * has emplemented the <code>Joinable</code> interface.  In the following example,
+ * has implemented the <code>Joinable</code> interface.  In the following example,
  * <i>crs2</i> has not, so it must supply the match column as an argument to the
  * <code>addRowSet</code> method. This example assumes that column 1 is the match
  * column.
@@ -97,7 +97,7 @@ import java.sql.SQLException;
  * <code>JdbcRowSet</code> object, being always connected to its data source, can
  * become part of an SQL <code>JOIN</code> directly without having to become part
  * of a <code>JoinRowSet</code> object.
- * <P>
+ *
  * <h3>3.0 Managing Multiple Match Columns</h3>
  * The index array passed into the <code>setMatchColumn</code> methods indicates
  * how many match columns are being set (the length of the array) in addition to
@@ -137,7 +137,7 @@ public interface Joinable {
      * object. A <code>JoinRowSet</code> object can now add this <code>RowSet</code>
      * object based on the match column.
      * <p>
-     * Sub-interfaces such as the <code>CachedRowSet</code><sup><font size=-2>TM</font></sup>
+     * Sub-interfaces such as the <code>CachedRowSet</code>&trade;
      * interface define the method <code>CachedRowSet.setKeyColumns</code>, which allows
      * primary key semantics to be enforced on specific columns.
      * Implementations of the <code>setMatchColumn(int columnIdx)</code> method
@@ -250,7 +250,7 @@ public interface Joinable {
      * Unsets the designated columns as the match column for this <code>RowSet</code>
      * object.
      *
-     * @param columnIdxes an arrary of <code>int</code> that identifies the indexes
+     * @param columnIdxes an array of <code>int</code> that identifies the indexes
      *     of the columns that are to be unset as match columns
      * @throws SQLException if an invalid column index is designated or if
      *          the designated column was not previously set as a match

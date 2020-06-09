@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,6 +32,8 @@ import org.omg.CORBA.LocalObject;
 
 import com.sun.corba.se.spi.ior.iiop.GIOPVersion;
 import com.sun.corba.se.spi.logging.CORBALogDomains;
+
+import sun.corba.EncapsInputStreamFactory;
 
 import com.sun.corba.se.impl.corba.AnyImpl;
 import com.sun.corba.se.impl.encoding.EncapsInputStream;
@@ -155,7 +157,8 @@ public final class CDREncapsCodec
         // be versioned.  This can be handled once this work is complete.
 
         // Create output stream with default endianness.
-        EncapsOutputStream cdrOut = new EncapsOutputStream(
+        EncapsOutputStream cdrOut =
+            sun.corba.OutputStreamFactory.newEncapsOutputStream(
             (com.sun.corba.se.spi.orb.ORB)orb, giopVersion );
 
         // This is an encapsulation, so put out the endian:
@@ -192,8 +195,9 @@ public final class CDREncapsCodec
         // it is turned into a FormatMismatch exception.
 
         try {
-            EncapsInputStream cdrIn = new EncapsInputStream( orb, data,
-                data.length, giopVersion );
+            EncapsInputStream cdrIn = EncapsInputStreamFactory.newEncapsInputStream( orb, data,
+                    data.length, giopVersion );
+
 
             cdrIn.consumeEndian();
 

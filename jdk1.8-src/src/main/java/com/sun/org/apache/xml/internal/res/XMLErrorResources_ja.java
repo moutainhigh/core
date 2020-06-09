@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -17,16 +17,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * $Id: XMLErrorResources_ja.java,v 1.2.4.1 2005/09/15 07:45:42 suresh_emailid Exp $
- */
 package com.sun.org.apache.xml.internal.res;
 
 
 import java.util.ListResourceBundle;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 /**
  * Set up error messages.
@@ -182,7 +176,7 @@ public class XMLErrorResources_ja extends ListResourceBundle
   // Error messages...
 
   /** The lookup table for error messages.   */
-  private static final Object[][] _contents = {
+  private static final Object[][] contents = {
 
   /** Error message ID that has a null message, but takes in a single object.    */
     {"ER0000" , "{0}" },
@@ -233,7 +227,7 @@ public class XMLErrorResources_ja extends ListResourceBundle
       "\u4E0D\u660E\u306A\u8EF8\u30C8\u30E9\u30D0\u30FC\u30B9\u30FB\u30BF\u30A4\u30D7\u3067\u3059: {0}"},
 
     { ER_AXIS_NOT_SUPPORTED,
-      "\u8EF8traverser\u6A5F\u80FD\u306F\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093: {0}"},
+      "\u8EF8\u30C8\u30E9\u30D0\u30FC\u30B5\u6A5F\u80FD\u306F\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093: {0}"},
 
     { ER_NO_DTMIDS_AVAIL,
       "DTM ID\u306F\u3053\u308C\u4EE5\u4E0A\u4F7F\u7528\u3067\u304D\u307E\u305B\u3093"},
@@ -272,13 +266,13 @@ public class XMLErrorResources_ja extends ListResourceBundle
        "\u30B9\u30AD\u30FC\u30E0\u304CURI\u306B\u898B\u3064\u304B\u308A\u307E\u305B\u3093"},
 
     { ER_PATH_INVALID_CHAR,
-       "\u30D1\u30B9\u306B\u7121\u52B9\u6587\u5B57{0}\u304C\u542B\u307E\u308C\u3066\u3044\u307E\u3059"},
+       "\u30D1\u30B9\u306B\u7121\u52B9\u306A\u6587\u5B57\u304C\u542B\u307E\u308C\u3066\u3044\u307E\u3059: {0}"},
 
     { ER_SCHEME_FROM_NULL_STRING,
        "null\u6587\u5B57\u5217\u304B\u3089\u306F\u30B9\u30AD\u30FC\u30E0\u3092\u8A2D\u5B9A\u3067\u304D\u307E\u305B\u3093"},
 
     { ER_SCHEME_NOT_CONFORMANT,
-       "\u30B9\u30AD\u30FC\u30E0\u306F\u4E00\u81F4\u3057\u3066\u3044\u307E\u305B\u3093\u3002"},
+       "\u30B9\u30AD\u30FC\u30E0\u304C\u6574\u5408\u3057\u3066\u3044\u307E\u305B\u3093\u3002"},
 
     { ER_HOST_ADDRESS_NOT_WELLFORMED,
        "\u30DB\u30B9\u30C8\u306F\u6574\u5F62\u5F0F\u306E\u30A2\u30C9\u30EC\u30B9\u3067\u306F\u3042\u308A\u307E\u305B\u3093"},
@@ -332,7 +326,7 @@ public class XMLErrorResources_ja extends ListResourceBundle
       "XMLReader\u306FstartParse\u30EA\u30AF\u30A8\u30B9\u30C8\u3088\u308A\u524D\u306B\u3067\u304D\u307E\u305B\u3093"},
 
     { ER_AXIS_TRAVERSER_NOT_SUPPORTED,
-      "\u8EF8traverser\u6A5F\u80FD\u306F\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093: {0}"},
+      "\u8EF8\u30C8\u30E9\u30D0\u30FC\u30B5\u6A5F\u80FD\u306F\u30B5\u30DD\u30FC\u30C8\u3055\u308C\u3066\u3044\u307E\u305B\u3093: {0}"},
 
     { ER_ERRORHANDLER_CREATED_WITH_NULL_PRINTWRITER,
       "null PrintWriter\u306B\u3088\u3063\u3066ListingErrorHandler\u304C\u4F5C\u6210\u3055\u308C\u307E\u3057\u305F\u3002"},
@@ -400,7 +394,7 @@ public class XMLErrorResources_ja extends ListResourceBundle
       "\u7121\u52B9\u306AUTF-16\u30B5\u30ED\u30B2\u30FC\u30C8\u304C\u691C\u51FA\u3055\u308C\u307E\u3057\u305F: {0}\u3002" },
 
     {ER_OIERROR,
-      "\u5165\u51FA\u529B\u30A8\u30E9\u30FC" },
+      "IO\u30A8\u30E9\u30FC" },
 
     {ER_ILLEGAL_ATTRIBUTE_POSITION,
       "\u5B50\u30CE\u30FC\u30C9\u306E\u5F8C\u307E\u305F\u306F\u8981\u7D20\u304C\u751F\u6210\u3055\u308C\u308B\u524D\u306B\u5C5E\u6027{0}\u3092\u8FFD\u52A0\u3067\u304D\u307E\u305B\u3093\u3002\u5C5E\u6027\u306F\u7121\u8996\u3055\u308C\u307E\u3059\u3002"},
@@ -450,70 +444,7 @@ public class XMLErrorResources_ja extends ListResourceBundle
    */
 
     protected Object[][] getContents() {
-        return _contents;
+        return contents;
     }
-
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XMLErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XMLErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
-    }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XMLErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
 
 }

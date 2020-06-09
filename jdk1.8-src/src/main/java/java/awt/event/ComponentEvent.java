@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1996, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1996, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -28,6 +28,7 @@ package java.awt.event;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Rectangle;
+import java.lang.annotation.Native;
 
 /**
  * A low-level event which indicates that a component moved, changed
@@ -59,7 +60,7 @@ import java.awt.Rectangle;
  *
  * @see ComponentAdapter
  * @see ComponentListener
- * @see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/componentlistener.html">Tutorial: Writing a Component Listener</a>
+ * @see <a href="https://docs.oracle.com/javase/tutorial/uiswing/events/componentlistener.html">Tutorial: Writing a Component Listener</a>
  *
  * @author Carl Quinn
  * @since 1.1
@@ -79,22 +80,22 @@ public class ComponentEvent extends AWTEvent {
    /**
      * This event indicates that the component's position changed.
      */
-    public static final int COMPONENT_MOVED     = COMPONENT_FIRST;
+    @Native public static final int COMPONENT_MOVED     = COMPONENT_FIRST;
 
     /**
      * This event indicates that the component's size changed.
      */
-    public static final int COMPONENT_RESIZED   = 1 + COMPONENT_FIRST;
+    @Native public static final int COMPONENT_RESIZED   = 1 + COMPONENT_FIRST;
 
     /**
      * This event indicates that the component was made visible.
      */
-    public static final int COMPONENT_SHOWN     = 2 + COMPONENT_FIRST;
+    @Native public static final int COMPONENT_SHOWN     = 2 + COMPONENT_FIRST;
 
     /**
      * This event indicates that the component was rendered invisible.
      */
-    public static final int COMPONENT_HIDDEN    = 3 + COMPONENT_FIRST;
+    @Native public static final int COMPONENT_HIDDEN    = 3 + COMPONENT_FIRST;
 
     /*
      * JDK 1.1 serialVersionUID

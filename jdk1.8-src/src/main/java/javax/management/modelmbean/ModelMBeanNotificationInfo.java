@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2008, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -56,7 +56,7 @@ import javax.management.RuntimeOperationsException;
  * Note that when the Type in this table is Number, a String that is the decimal
  * representation of a Long can also be used.</P>
  *
- * <table border="1" cellpadding="5">
+ * <table border="1" cellpadding="5" summary="ModelMBeanNotificationInfo Fields">
  * <tr><th>Name</th><th>Type</th><th>Meaning</th></tr>
  * <tr><td>name</td><td>String</td>
  *     <td>Notification name.</td></tr>

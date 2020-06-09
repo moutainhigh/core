@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2005, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -62,6 +62,7 @@ final class ConditionalSpecialCasing {
         //# Conditional mappings
         //# ================================================================================
         new Entry(0x03A3, new char[]{0x03C2}, new char[]{0x03A3}, null, FINAL_CASED), // # GREEK CAPITAL LETTER SIGMA
+        new Entry(0x0130, new char[]{0x0069, 0x0307}, new char[]{0x0130}, null, 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
 
         //# ================================================================================
         //# Locale-sensitive mappings
@@ -74,33 +75,29 @@ final class ConditionalSpecialCasing {
         new Entry(0x00CC, new char[]{0x0069, 0x0307, 0x0300}, new char[]{0x00CC}, "lt", 0), // # LATIN CAPITAL LETTER I WITH GRAVE
         new Entry(0x00CD, new char[]{0x0069, 0x0307, 0x0301}, new char[]{0x00CD}, "lt", 0), // # LATIN CAPITAL LETTER I WITH ACUTE
         new Entry(0x0128, new char[]{0x0069, 0x0307, 0x0303}, new char[]{0x0128}, "lt", 0), // # LATIN CAPITAL LETTER I WITH TILDE
-        new Entry(0x0130, new char[]{0x0069, 0x0307}, new char[]{0x0130}, "lt", 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
 
         //# ================================================================================
         //# Turkish and Azeri
-//      new Entry(0x0130, new char[]{0x0069}, new char[]{0x0130}, "tr", 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
-//      new Entry(0x0130, new char[]{0x0069}, new char[]{0x0130}, "az", 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
+        new Entry(0x0130, new char[]{0x0069}, new char[]{0x0130}, "tr", 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
+        new Entry(0x0130, new char[]{0x0069}, new char[]{0x0130}, "az", 0), // # LATIN CAPITAL LETTER I WITH DOT ABOVE
         new Entry(0x0307, new char[]{}, new char[]{0x0307}, "tr", AFTER_I), // # COMBINING DOT ABOVE
         new Entry(0x0307, new char[]{}, new char[]{0x0307}, "az", AFTER_I), // # COMBINING DOT ABOVE
         new Entry(0x0049, new char[]{0x0131}, new char[]{0x0049}, "tr", NOT_BEFORE_DOT), // # LATIN CAPITAL LETTER I
         new Entry(0x0049, new char[]{0x0131}, new char[]{0x0049}, "az", NOT_BEFORE_DOT), // # LATIN CAPITAL LETTER I
         new Entry(0x0069, new char[]{0x0069}, new char[]{0x0130}, "tr", 0), // # LATIN SMALL LETTER I
-        new Entry(0x0069, new char[]{0x0069}, new char[]{0x0130}, "az", 0), // # LATIN SMALL LETTER I
-        //# ================================================================================
-        //# Other
-        new Entry(0x0130, new char[]{0x0069, 0x0307}, new char[]{0x0130}, "en", 0), // # LATIN CAPITALLETTER I WITH DOT ABOVE
+        new Entry(0x0069, new char[]{0x0069}, new char[]{0x0130}, "az", 0)  // # LATIN SMALL LETTER I
     };
 
     // A hash table that contains the above entries
-    static Hashtable entryTable = new Hashtable();
+    static Hashtable<Integer, HashSet<Entry>> entryTable = new Hashtable<>();
     static {
         // create hashtable from the entry
         for (int i = 0; i < entry.length; i ++) {
             Entry cur = entry[i];
             Integer cp = new Integer(cur.getCodePoint());
-            HashSet set = (HashSet)entryTable.get(cp);
+            HashSet<Entry> set = entryTable.get(cp);
             if (set == null) {
-                set = new HashSet();
+                set = new HashSet<Entry>();
             }
             set.add(cur);
             entryTable.put(cp, set);
@@ -151,22 +148,26 @@ final class ConditionalSpecialCasing {
     }
 
     private static char[] lookUpTable(String src, int index, Locale locale, boolean bLowerCasing) {
-        HashSet set = (HashSet)entryTable.get(new Integer(src.codePointAt(index)));
+        HashSet<Entry> set = entryTable.get(new Integer(src.codePointAt(index)));
+        char[] ret = null;
 
         if (set != null) {
-            Iterator iter = set.iterator();
+            Iterator<Entry> iter = set.iterator();
             String currentLang = locale.getLanguage();
             while (iter.hasNext()) {
-                Entry entry = (Entry)iter.next();
-                String conditionLang= entry.getLanguage();
+                Entry entry = iter.next();
+                String conditionLang = entry.getLanguage();
                 if (((conditionLang == null) || (conditionLang.equals(currentLang))) &&
                         isConditionMet(src, index, locale, entry.getCondition())) {
-                    return (bLowerCasing ? entry.getLowerCase() : entry.getUpperCase());
+                    ret = bLowerCasing ? entry.getLowerCase() : entry.getUpperCase();
+                    if (conditionLang != null) {
+                        break;
+                    }
                 }
             }
         }
 
-        return null;
+        return ret;
     }
 
     private static boolean isConditionMet(String src, int index, Locale locale, int condition) {

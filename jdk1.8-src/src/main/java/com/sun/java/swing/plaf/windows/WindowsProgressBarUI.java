@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2014, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -137,6 +137,11 @@ public class WindowsProgressBarUI extends BasicProgressBarUI
                 g.setColor(progressBar.getForeground());
                 barRectHeight -= 2;
                 barRectWidth -= 2;
+
+                if (barRectWidth <= 0 || barRectHeight <= 0) {
+                    return;
+                }
+
                 Graphics2D g2 = (Graphics2D)g;
                 g2.setStroke(new BasicStroke((float)(vertical ? barRectWidth : barRectHeight),
                                              BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));
@@ -317,8 +322,9 @@ public class WindowsProgressBarUI extends BasicProgressBarUI
     private Rectangle getFullChunkBounds(Rectangle box) {
         boolean vertical = (progressBar.getOrientation() == JProgressBar.VERTICAL);
         XPStyle xp = XPStyle.getXP();
-        int gap = xp.getInt(progressBar, Part.PP_PROGRESS, null,
-                            Prop.PROGRESSSPACESIZE, 0);
+        int gap = (xp != null) ? xp.getInt(progressBar, Part.PP_PROGRESS,
+                                           null, Prop.PROGRESSSPACESIZE, 0)
+                               : 0;
 
         if (!vertical) {
             int chunksize = box.width+gap;
@@ -333,6 +339,9 @@ public class WindowsProgressBarUI extends BasicProgressBarUI
                                           boolean vertical,
                                           int bgwidth, int bgheight) {
         XPStyle xp = XPStyle.getXP();
+        if (xp == null) {
+            return;
+        }
 
         // create a new graphics to keep drawing surface state
         Graphics2D gfx = (Graphics2D)g.create();
@@ -391,6 +400,9 @@ public class WindowsProgressBarUI extends BasicProgressBarUI
     private void paintXPBackground(Graphics g, boolean vertical,
                                    int barRectWidth, int barRectHeight) {
         XPStyle xp = XPStyle.getXP();
+        if (xp == null) {
+            return;
+        }
         Part part = vertical ? Part.PP_BARVERT : Part.PP_BAR;
         Skin skin = xp.getSkin(progressBar, part);
 

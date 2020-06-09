@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2015, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -101,7 +101,6 @@ int awtPreloadD3D = -1;
 /* funtion in awt.dll (src/windows/native/sun/java2d/d3d/D3DPipelineManager.cpp) */
 #define D3D_PRELOAD_FUNC "preloadD3D"
 
-
 /* Extracts value of a parameter with the specified name
  * from command line argument (returns pointer in the argument).
  * Returns NULL if the argument does not contains the parameter.
@@ -180,7 +179,7 @@ CreateExecutionEnvironment(int *pargc, char ***pargv,
     int wanted = running;
 
     char** argv = *pargv;
-    for (i = 0; i < *pargc ; i++) {
+    for (i = 1; i < *pargc ; i++) {
         if (JLI_StrCmp(argv[i], "-J-d64") == 0 || JLI_StrCmp(argv[i], "-d64") == 0) {
             wanted = 64;
             continue;
@@ -189,6 +188,11 @@ CreateExecutionEnvironment(int *pargc, char ***pargv,
             wanted = 32;
             continue;
         }
+
+        if (IsJavaArgs() && argv[i][0] != '-')
+            continue;
+        if (argv[i][0] != '-')
+            break;
     }
     if (running != wanted) {
         JLI_ReportErrorMessage(JRE_ERROR2, wanted);
@@ -276,7 +280,8 @@ LoadMSVCRT()
 #endif
 #ifdef CRT_DLL
         if (GetJREPath(crtpath, MAXPATHLEN)) {
-            if (JLI_StrLen(crtpath) + JLI_StrLen("\\bin\\") + JLI_StrLen(CRT_DLL) >= MAXPATHLEN) {
+            if (JLI_StrLen(crtpath) + JLI_StrLen("\\bin\\") +
+                    JLI_StrLen(CRT_DLL) >= MAXPATHLEN) {
                 JLI_ReportErrorMessage(JRE_ERROR11);
                 return JNI_FALSE;
             }
@@ -313,7 +318,11 @@ GetJREPath(char *path, jint pathsize)
             JLI_TraceLauncher("JRE path is %s\n", path);
             return JNI_TRUE;
         }
-
+        /* ensure storage for path + \jre + NULL */
+        if ((JLI_StrLen(path) + 4 + 1) > pathsize) {
+            JLI_TraceLauncher("Insufficient space to store JRE path\n");
+            return JNI_FALSE;
+        }
         /* Does this app ship a private JRE in <apphome>\jre directory? */
         JLI_Snprintf(javadll, sizeof (javadll), "%s\\jre\\bin\\" JAVA_DLL, path);
         if (stat(javadll, &s) == 0) {
@@ -347,7 +356,8 @@ GetJVMPath(const char *jrepath, const char *jvmtype,
     if (JLI_StrChr(jvmtype, '/') || JLI_StrChr(jvmtype, '\\')) {
         JLI_Snprintf(jvmpath, jvmpathsize, "%s\\" JVM_DLL, jvmtype);
     } else {
-        JLI_Snprintf(jvmpath, jvmpathsize, "%s\\bin\\%s\\" JVM_DLL, jrepath, jvmtype);
+        JLI_Snprintf(jvmpath, jvmpathsize, "%s\\bin\\%s\\" JVM_DLL,
+                     jrepath, jvmtype);
     }
     if (stat(jvmpath, &s) == 0) {
         return JNI_TRUE;
@@ -524,6 +534,37 @@ jlong Counter2Micros(jlong counts)
         return 0;
     }
     return (counts * 1000 * 1000)/counterFrequency.QuadPart;
+}
+/*
+ * windows snprintf does not guarantee a null terminator in the buffer,
+ * if the computed size is equal to or greater than the buffer size,
+ * as well as error conditions. This function guarantees a null terminator
+ * under all these conditions. An unreasonable buffer or size will return
+ * an error value. Under all other conditions this function will return the
+ * size of the bytes actually written minus the null terminator, similar
+ * to ansi snprintf api. Thus when calling this function the caller must
+ * ensure storage for the null terminator.
+ */
+int
+JLI_Snprintf(char* buffer, size_t size, const char* format, ...) {
+    int rc;
+    va_list vl;
+    if (size == 0 || buffer == NULL)
+        return -1;
+    buffer[0] = '\0';
+    va_start(vl, format);
+    rc = vsnprintf(buffer, size, format, vl);
+    va_end(vl);
+    /* force a null terminator, if something is amiss */
+    if (rc < 0) {
+        /* apply ansi semantics */
+        buffer[size - 1] = '\0';
+        return size;
+    } else if (rc == size) {
+        /* force a null terminator */
+        buffer[size - 1] = '\0';
+    }
+    return rc;
 }
 
 void
@@ -880,7 +921,7 @@ unquote(const char *s) {
  */
 void
 ExecJRE(char *jre, char **argv) {
-    int     len;
+    jint     len;
     char    path[MAXPATHLEN + 1];
 
     const char *progname = GetProgramName();
@@ -1269,6 +1310,14 @@ int AWTPreload(const char *funcName)
             /* save path length */
             jrePathLen = JLI_StrLen(libraryPath);
 
+            if (jrePathLen + JLI_StrLen("\\bin\\verify.dll") >= MAXPATHLEN) {
+              /* jre path is too long, the library path will not fit there;
+               * report and abort preloading
+               */
+              JLI_ReportErrorMessage(JRE_ERROR11);
+              break;
+            }
+
             /* load msvcrt 1st */
             LoadMSVCRT();
 
@@ -1356,4 +1405,117 @@ jboolean
 ProcessPlatformOption(const char *arg)
 {
     return JNI_FALSE;
+}
+
+int
+filterArgs(StdArg *stdargs, const int nargc, StdArg **pargv) {
+    StdArg* argv = NULL;
+    int nargs = 0;
+    int i;
+
+    /* Copy the non-vm args */
+    for (i = 0; i < nargc ; i++) {
+        const char *arg = stdargs[i].arg;
+        if (arg[0] == '-' && arg[1] == 'J')
+            continue;
+        argv = (StdArg*) JLI_MemRealloc(argv, (nargs+1) * sizeof(StdArg));
+        argv[nargs].arg = JLI_StringDup(arg);
+        argv[nargs].has_wildcard = stdargs[i].has_wildcard;
+        nargs++;
+    }
+    *pargv = argv;
+    return nargs;
+}
+
+/*
+ * At this point we have the arguments to the application, and we need to
+ * check with original stdargs in order to compare which of these truly
+ * needs expansion. cmdtoargs will specify this if it finds a bare
+ * (unquoted) argument containing a glob character(s) ie. * or ?
+ */
+jobjectArray
+CreateApplicationArgs(JNIEnv *env, char **strv, int argc)
+{
+    int i, j, idx, tlen;
+    jobjectArray outArray, inArray;
+    char *ostart, *astart, **nargv;
+    jboolean needs_expansion = JNI_FALSE;
+    jmethodID mid;
+    int filteredargc, stdargc;
+    StdArg *stdargs;
+    StdArg *filteredargs;
+    jclass cls = GetLauncherHelperClass(env);
+    NULL_CHECK0(cls);
+
+    if (argc == 0) {
+        return NewPlatformStringArray(env, strv, argc);
+    }
+    // the holy grail we need to compare with.
+    stdargs = JLI_GetStdArgs();
+    stdargc = JLI_GetStdArgc();
+
+    filteredargc = filterArgs(stdargs, stdargc, &filteredargs);
+
+    // sanity check, this should never happen
+    if (argc > stdargc) {
+        JLI_TraceLauncher("Warning: app args is larger than the original, %d %d\n", argc, stdargc);
+        JLI_TraceLauncher("passing arguments as-is.\n");
+        return NewPlatformStringArray(env, strv, argc);
+    }
+
+    // sanity check, match the args we have, to the holy grail
+    idx = filteredargc - argc;
+    ostart = filteredargs[idx].arg;
+    astart = strv[0];
+    // sanity check, ensure that the first argument of the arrays are the same
+    if (JLI_StrCmp(ostart, astart) != 0) {
+        // some thing is amiss the args don't match
+        JLI_TraceLauncher("Warning: app args parsing error\n");
+        JLI_TraceLauncher("passing arguments as-is\n");
+        return NewPlatformStringArray(env, strv, argc);
+    }
+
+    // make a copy of the args which will be expanded in java if required.
+    nargv = (char **)JLI_MemAlloc(argc * sizeof(char*));
+    for (i = 0, j = idx; i < argc; i++, j++) {
+        jboolean arg_expand = (JLI_StrCmp(filteredargs[j].arg, strv[i]) == 0)
+                                ? filteredargs[j].has_wildcard
+                                : JNI_FALSE;
+        if (needs_expansion == JNI_FALSE)
+            needs_expansion = arg_expand;
+
+        // indicator char + String + NULL terminator, the java method will strip
+        // out the first character, the indicator character, so no matter what
+        // we add the indicator
+        tlen = 1 + JLI_StrLen(strv[i]) + 1;
+        nargv[i] = (char *) JLI_MemAlloc(tlen);
+        if (JLI_Snprintf(nargv[i], tlen, "%c%s", arg_expand ? 'T' : 'F',
+                         strv[i]) < 0) {
+            return NULL;
+        }
+        JLI_TraceLauncher("%s\n", nargv[i]);
+    }
+
+    if (!needs_expansion) {
+        // clean up any allocated memory and return back the old arguments
+        for (i = 0 ; i < argc ; i++) {
+            JLI_MemFree(nargv[i]);
+        }
+        JLI_MemFree(nargv);
+        return NewPlatformStringArray(env, strv, argc);
+    }
+    NULL_CHECK0(mid = (*env)->GetStaticMethodID(env, cls,
+                                                "expandArgs",
+                                                "([Ljava/lang/String;)[Ljava/lang/String;"));
+
+    // expand the arguments that require expansion, the java method will strip
+    // out the indicator character.
+    inArray = NewPlatformStringArray(env, nargv, argc);
+    outArray = (*env)->CallStaticObjectMethod(env, cls, mid, inArray);
+    for (i = 0; i < argc; i++) {
+        JLI_MemFree(nargv[i]);
+    }
+    JLI_MemFree(nargv);
+    JLI_MemFree(filteredargs);
+    return outArray;
 }

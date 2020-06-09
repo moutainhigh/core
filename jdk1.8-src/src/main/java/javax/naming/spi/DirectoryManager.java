@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2004, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -84,15 +84,16 @@ public class DirectoryManager extends NamingManager {
       *
       * @see NamingManager#getContinuationContext(CannotProceedException)
       */
+    @SuppressWarnings("unchecked")
     public static DirContext getContinuationDirContext(
             CannotProceedException cpe) throws NamingException {
 
-        Hashtable env = cpe.getEnvironment();
+        Hashtable<Object,Object> env = (Hashtable<Object,Object>)cpe.getEnvironment();
         if (env == null) {
-            env = new Hashtable(7);
+            env = new Hashtable<>(7);
         } else {
             // Make a (shallow) copy of the environment.
-            env = (Hashtable) env.clone();
+            env = (Hashtable<Object,Object>) env.clone();
         }
         env.put(CPE, cpe);
 
@@ -217,7 +218,7 @@ public class DirectoryManager extends NamingManager {
     }
 
     private static Object createObjectFromFactories(Object obj, Name name,
-            Context nameCtx, Hashtable environment, Attributes attrs)
+            Context nameCtx, Hashtable<?,?> environment, Attributes attrs)
         throws Exception {
 
         FactoryEnumeration factories = ResourceManager.getFactories(

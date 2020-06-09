@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -119,7 +119,12 @@ public final class SplashScreen {
             // SplashScreen class is now a singleton
             if (!wasClosed && theInstance == null) {
                 java.security.AccessController.doPrivileged(
-                        new sun.security.action.LoadLibraryAction("splashscreen"));
+                    new java.security.PrivilegedAction<Void>() {
+                        public Void run() {
+                            System.loadLibrary("splashscreen");
+                            return null;
+                        }
+                    });
                 long ptr = _getInstance();
                 if (ptr != 0 && _isVisible(ptr)) {
                     theInstance = new SplashScreen(ptr);
@@ -214,7 +219,7 @@ public final class SplashScreen {
                     }
                 }
                 catch(java.net.MalformedURLException e) {
-                    if (log.isLoggable(PlatformLogger.FINE)) {
+                    if (log.isLoggable(PlatformLogger.Level.FINE)) {
                         log.fine("MalformedURLException caught in the getImageURL() method", e);
                     }
                 }
@@ -240,7 +245,14 @@ public final class SplashScreen {
     public Rectangle getBounds() throws IllegalStateException {
         synchronized (SplashScreen.class) {
             checkVisible();
-            return _getBounds(splashPtr);
+            float scale = _getScaleFactor(splashPtr);
+            Rectangle bounds = _getBounds(splashPtr);
+            assert scale > 0;
+            if (scale > 0 && scale != 1) {
+                bounds.setSize((int) (bounds.getWidth() / scale),
+                        (int) (bounds.getWidth() / scale));
+            }
+            return bounds;
         }
     }
 
@@ -281,11 +293,21 @@ public final class SplashScreen {
      */
     public Graphics2D createGraphics() throws IllegalStateException {
         synchronized (SplashScreen.class) {
+            checkVisible();
             if (image==null) {
-                Dimension dim = getSize();
-                image = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                // get unscaled splash image size
+                Dimension dim = _getBounds(splashPtr).getSize();
+                image = new BufferedImage(dim.width, dim.height,
+                        BufferedImage.TYPE_INT_ARGB);
             }
-            return image.createGraphics();
+            float scale = _getScaleFactor(splashPtr);
+            Graphics2D g = image.createGraphics();
+            assert (scale > 0);
+            if (scale <= 0) {
+                scale = 1;
+            }
+            g.scale(scale, scale);
+            return g;
         }
     }
 
@@ -396,5 +418,6 @@ public final class SplashScreen {
     private native static String _getImageFileName(long splashPtr);
     private native static String _getImageJarName(long SplashPtr);
     private native static boolean _setImageData(long SplashPtr, byte[] data);
+    private native static float _getScaleFactor(long SplashPtr);
 
-};
+}

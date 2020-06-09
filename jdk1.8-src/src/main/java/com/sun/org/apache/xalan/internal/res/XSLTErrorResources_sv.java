@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
- * Copyright 1999-2004 The Apache Software Foundation.
+ * Copyright 1999-2005 The Apache Software Foundation.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
-/*
- * $Id: XSLTErrorResources_sv.java,v 1.2.4.1 2005/09/13 11:12:11 pvedula Exp $
  */
 package com.sun.org.apache.xalan.internal.res;
 
@@ -471,7 +468,13 @@ public class XSLTErrorResources_sv extends ListResourceBundle
 
   // Error messages...
 
-  private static final Object[][] _contents = new Object[][] {
+  /** Get the lookup table for error messages.
+    *
+    * @return The message lookup table.
+    */
+  public Object[][] getContents()
+  {
+      return new Object[][] {
 
   /** Error message ID that has a null message, but takes in a single object.    */
   {"ER0000" , "{0}" },
@@ -495,7 +498,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
      "{0} m\u00E5ste ha ett namnattribut."},
 
     {ER_TEMPLATE_NOT_FOUND,
-     "Kunde inte hitta mallen med namnet: {0}"},
+     "Hittade inte mallen med namnet: {0}"},
 
     {ER_CANT_RESOLVE_NAME_AVT,
       "Kunde inte matcha namn-AVT i xsl:call-template."},
@@ -510,10 +513,10 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "Felaktigt v\u00E4rde i niv\u00E5attribut: {0}"},
 
     {ER_PROCESSINGINSTRUCTION_NAME_CANT_BE_XML,
-      "Namn p\u00E5 processing-instruction kan inte vara 'xml'"},
+      "Namn p\u00E5 bearbetningsinstruktion kan inte vara 'xml'"},
 
     { ER_PROCESSINGINSTRUCTION_NOTVALID_NCNAME,
-      "Namn p\u00E5 processing-instruction m\u00E5ste vara ett giltigt NCName: {0}"},
+      "Namn p\u00E5 bearbetningsinstruktion m\u00E5ste vara ett giltigt NCName: {0}"},
 
     { ER_NEED_MATCH_ATTRIB,
       "{0} m\u00E5ste ha ett matchningsattribut n\u00E4r det anger ett l\u00E4ge."},
@@ -588,7 +591,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "Fick IO-undantag med formatmallfil: {0}"},
 
     { ER_NO_HREF_ATTRIB,
-      "(StylesheetHandler) Kunde inte hitta href-attribut f\u00F6r {0}"},
+      "(StylesheetHandler) Hittade inte href-attribut f\u00F6r {0}"},
 
     { ER_STYLESHEET_INCLUDES_ITSELF,
       "(StylesheetHandler) {0} inkluderar, direkt eller indirekt, sig sj\u00E4lv!"},
@@ -627,7 +630,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
      "Kunde inte tolka dokumentet {0}!"},
 
     { ER_COULDNT_FIND_FRAGMENT,
-     "Kunde inte hitta fragment: {0}"},
+     "Hittade inte fragment: {0}"},
 
     { ER_NODE_NOT_ELEMENT,
       "Nod som pekades p\u00E5 av fragment-identifierare var inte ett element: {0}"},
@@ -796,7 +799,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "Ogiltigt funktionsanrop: rekursiva key()-anrop \u00E4r inte till\u00E5tna"},
 
     { ER_REFERENCING_ITSELF,
-      "Variabel {0} h\u00E4nvisar, direkt eller indirekt, till sig sj\u00E4lv!"},
+      "Variabeln {0} refererar, direkt eller indirekt, till sig sj\u00E4lv!"},
 
     { ER_ILLEGAL_DOMSOURCE_INPUT,
       "Indatanoden till en DOMSource f\u00F6r newTemplates f\u00E5r inte vara null!"},
@@ -995,7 +998,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
      "F\u00F6rs\u00F6ker formatera ett tal som \u00E4r st\u00F6rre \u00E4n det st\u00F6rsta l\u00E5nga heltalet"},
 
     { ER_CANNOT_FIND_SAX1_DRIVER,
-     "Kan inte hitta SAX1-drivrutinen klass {0}"},
+     "Hittar inte SAX1-drivrutinen klass {0}"},
 
     { ER_SAX1_DRIVER_NOT_LOADED,
      "SAX1-drivrutinen klass {0} hittades, men kan inte laddas"},
@@ -1058,7 +1061,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
 //   'RedundentExprEliminator' is the name of a class, and should not be
 //   translated.
     { ER_ASSERT_REDUNDENT_EXPR_ELIMINATOR,
-     "Programmerarverifiering i RedundentExprEliminator: {0}"},
+     "Programmerarens utsaga i RedundentExprEliminator: {0}"},
 
     { ER_NOT_ALLOWED_IN_POSITION,
      "{0} \u00E4r inte till\u00E5ten i denna position i formatmallen!"},
@@ -1220,10 +1223,10 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "Gammal syntax: Namnet p\u00E5 'expr'-attributet har \u00E4ndrats till 'select'."},
 
     { WG_NO_LOCALE_IN_FORMATNUMBER,
-      "Xalan hanterar \u00E4nnu inte spr\u00E5knamnet i funktionen format-number."},
+      "Xalan hanterar \u00E4nnu inte spr\u00E5kkonventionen i funktionen format-number."},
 
     { WG_LOCALE_NOT_FOUND,
-      "Varning: Kunde inte hitta spr\u00E5kinst\u00E4llning f\u00F6r xml:lang={0}"},
+      "Varning: Hittade inte spr\u00E5kkonvention f\u00F6r xml:lang={0}"},
 
     { WG_CANNOT_MAKE_URL_FROM,
       "Kan inte skapa URL fr\u00E5n: {0}"},
@@ -1232,7 +1235,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "Kan inte ladda beg\u00E4rt dokument: {0}"},
 
     { WG_CANNOT_FIND_COLLATOR,
-      "Hittade inte uppsamlare f\u00F6r <sort xml:lang={0}"},
+      "Hittade inte kollationering f\u00F6r <sort xml:lang={0}"},
 
     { WG_FUNCTIONS_SHOULD_USE_URL,
       "Gammal syntax: funktionsinstruktionen b\u00F6r anv\u00E4nda url:en {0}"},
@@ -1244,7 +1247,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "kodning underst\u00F6ds inte: {0}, anv\u00E4nder Java {1}"},
 
     { WG_SPECIFICITY_CONFLICTS,
-      "Specificitetkonflikter hittades: {0} Senast hittade i formatmall kommer att anv\u00E4ndas."},
+      "Specifika konflikter hittades: {0} Senast hittade i formatmall kommer att anv\u00E4ndas."},
 
     { WG_PARSING_AND_PREPARING,
       "========= Tolkar och f\u00F6rbereder {0} =========="},
@@ -1280,10 +1283,10 @@ public class XSLTErrorResources_sv extends ListResourceBundle
       "xsl:stylesheet kr\u00E4ver ett 'version'-attribut!"},
 
     { WG_ILLEGAL_ATTRIBUTE_NAME,
-      "Ogiltigt attributnamn: {0}"},
+      "Otill\u00E5tet attributnamn: {0}"},
 
     { WG_ILLEGAL_ATTRIBUTE_VALUE,
-      "Ogiltigt v\u00E4rde anv\u00E4nds f\u00F6r attributet {0}: {1}"},
+      "Otill\u00E5tet v\u00E4rde anv\u00E4nds f\u00F6r attributet {0}: {1}"},
 
     { WG_EMPTY_SECOND_ARG,
       "Resulterande nodupps\u00E4ttning fr\u00E5n dokumentfunktionens andra argumentet \u00E4r tomt. En tom nodupps\u00E4ttning anv\u00E4nds."},
@@ -1323,8 +1326,8 @@ public class XSLTErrorResources_sv extends ListResourceBundle
   {  "version", ">>>>>>> Xalan version "},
   {  "version2",  "<<<<<<<"},
   {  "yes", "ja"},
-  { "line", "Rad #"},
-  { "column","Kolumn #"},
+  { "line", "Rad nr"},
+  { "column","Kolumn nr"},
   { "xsldone", "XSLProcessor: utf\u00F6rd"},
 
 
@@ -1359,7 +1362,7 @@ public class XSLTErrorResources_sv extends ListResourceBundle
   {  "optionQ", "   [-Q  (Tyst l\u00E4ge)]"},
   {  "optionLF", "   [-LF (Anv\u00E4nd radmatningar endast f\u00F6r utdata {standard \u00E4r CR/LF})]"},
   {  "optionCR", "   [-CR (Anv\u00E4nd radmatningar endast f\u00F6r utdata {standard \u00E4r CR/LF})]"},
-  { "optionESCAPE", "   [-ESCAPE (Vilka tecken \u00E4r skiftningstecken {standard \u00E4r <>&\"\'\\r\\n}]"},
+  { "optionESCAPE", "   [-ESCAPE (Vilka tecken \u00E4r skiftningstecken {standard \u00E4r <>&\"'\\r\\n}]"},
   { "optionINDENT", "   [-INDENT (Best\u00E4m antal blanksteg f\u00F6r indrag {standard \u00E4r 0})]"},
   { "optionTT", "   [-TT (Sp\u00E5ra mallar vid anrop.)]"},
   { "optionTG", "   [-TG (Sp\u00E5ra varje generationsh\u00E4ndelse.)]"},
@@ -1412,13 +1415,6 @@ public class XSLTErrorResources_sv extends ListResourceBundle
 
   };
 
-  /** Get the lookup table for error messages.
-   *
-   * @return The int to message lookup table.
-   */
-  public Object[][] getContents()
-  {
-      return _contents;
   }
   // ================= INFRASTRUCTURE ======================
 
@@ -1448,68 +1444,4 @@ public class XSLTErrorResources_sv extends ListResourceBundle
   public static final String QUERY_HEADER = "PATTERN ";
 
 
-  /**
-   *   Return a named ResourceBundle for a particular locale.  This method mimics the behavior
-   *   of ResourceBundle.getBundle().
-   *
-   *   @param className the name of the class that implements the resource bundle.
-   *   @return the ResourceBundle
-   *   @throws MissingResourceException
-   */
-  public static final XSLTErrorResources loadResourceBundle(String className)
-          throws MissingResourceException
-  {
-
-    Locale locale = Locale.getDefault();
-    String suffix = getResourceSuffix(locale);
-
-    try
-    {
-
-      // first try with the given locale
-      return (XSLTErrorResources) ResourceBundle.getBundle(className
-              + suffix, locale);
     }
-    catch (MissingResourceException e)
-    {
-      try  // try to fall back to en_US if we can't load
-      {
-
-        // Since we can't find the localized property file,
-        // fall back to en_US.
-        return (XSLTErrorResources) ResourceBundle.getBundle(className,
-                new Locale("en", "US"));
-      }
-      catch (MissingResourceException e2)
-      {
-
-        // Now we are really in trouble.
-        // very bad, definitely very bad...not going to get very far
-        throw new MissingResourceException(
-          "Could not load any resource bundles.", className, "");
-      }
-    }
-  }
-
-  /**
-   * Return the resource file suffic for the indicated locale
-   * For most locales, this will be based the language code.  However
-   * for Chinese, we do distinguish between Taiwan and PRC
-   *
-   * @param locale the locale
-   * @return an String suffix which canbe appended to a resource name
-   */
-  private static final String getResourceSuffix(Locale locale)
-  {
-
-    String suffix = "_" + locale.getLanguage();
-    String country = locale.getCountry();
-
-    if (country.equals("TW"))
-      suffix += "_" + country;
-
-    return suffix;
-  }
-
-
-}

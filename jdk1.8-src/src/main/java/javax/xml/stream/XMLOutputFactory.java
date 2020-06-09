@@ -23,7 +23,7 @@
  */
 
 /*
- * Copyright (c) 2009 by Oracle Corporation. All Rights Reserved.
+ * Copyright (c) 2009, 2013, by Oracle Corporation. All Rights Reserved.
  */
 
 package javax.xml.stream;
@@ -120,46 +120,64 @@ public abstract class XMLOutputFactory {
   protected XMLOutputFactory(){}
 
   /**
-   * Create a new instance of the factory.
+   * Creates a new instance of the factory in exactly the same manner as the
+   * {@link #newFactory()} method.
    * @throws FactoryConfigurationError if an instance of this factory cannot be loaded
    */
   public static XMLOutputFactory newInstance()
     throws FactoryConfigurationError
   {
-    return (XMLOutputFactory) FactoryFinder.find("javax.xml.stream.XMLOutputFactory",
-                                                 DEFAULIMPL);
+    return FactoryFinder.find(XMLOutputFactory.class, DEFAULIMPL);
   }
 
   /**
    * Create a new instance of the factory.
+   * <p>
    * This static method creates a new factory instance. This method uses the
    * following ordered lookup procedure to determine the XMLOutputFactory
    * implementation class to load:
+   * </p>
+   * <ul>
+   * <li>
    *   Use the javax.xml.stream.XMLOutputFactory system property.
+   * </li>
+   * <li>
    *   Use the properties file "lib/stax.properties" in the JRE directory.
    *     This configuration file is in standard java.util.Properties format
    *     and contains the fully qualified name of the implementation class
    *     with the key being the system property defined above.
-   *   Use the Services API (as detailed in the JAR specification), if available,
-   *     to determine the classname. The Services API will look for a classname
-   *     in the file META-INF/services/javax.xml.stream.XMLOutputFactory in jars
-   *     available to the runtime.
-   *   Platform default XMLOutputFactory instance.
-   *
+   * </li>
+   * <li>
+   *   Use the service-provider loading facilities, defined by the
+   *   {@link java.util.ServiceLoader} class, to attempt to locate and load an
+   *   implementation of the service using the {@linkplain
+   *   java.util.ServiceLoader#load(java.lang.Class) default loading mechanism}:
+   *   the service-provider loading facility will use the {@linkplain
+   *   java.lang.Thread#getContextClassLoader() current thread's context class loader}
+   *   to attempt to load the service. If the context class
+   *   loader is null, the {@linkplain
+   *   ClassLoader#getSystemClassLoader() system class loader} will be used.
+   * </li>
+   * <li>
+   *   Otherwise, the system-default implementation is returned.
+   * </li>
+   * <p>
    * Once an application has obtained a reference to a XMLOutputFactory it
    * can use the factory to configure and obtain stream instances.
-   *
+   * </p>
+   * <p>
    * Note that this is a new method that replaces the deprecated newInstance() method.
    *   No changes in behavior are defined by this replacement method relative to the
    *   deprecated method.
-   *
-   * @throws FactoryConfigurationError if an instance of this factory cannot be loaded
+   * </p>
+   * @throws FactoryConfigurationError in case of {@linkplain
+   *   java.util.ServiceConfigurationError service configuration error} or if
+   *   the implementation is not available or cannot be instantiated.
    */
   public static XMLOutputFactory newFactory()
     throws FactoryConfigurationError
   {
-    return (XMLOutputFactory) FactoryFinder.find("javax.xml.stream.XMLOutputFactory",
-                                                 DEFAULIMPL);
+    return FactoryFinder.find(XMLOutputFactory.class, DEFAULIMPL);
   }
 
   /**
@@ -179,42 +197,70 @@ public abstract class XMLOutputFactory {
   public static XMLInputFactory newInstance(String factoryId,
           ClassLoader classLoader)
           throws FactoryConfigurationError {
-      try {
-          //do not fallback if given classloader can't find the class, throw exception
-          return (XMLInputFactory) FactoryFinder.find(factoryId, classLoader, null);
-      } catch (FactoryFinder.ConfigurationError e) {
-          throw new FactoryConfigurationError(e.getException(),
-                  e.getMessage());
-      }
+      //do not fallback if given classloader can't find the class, throw exception
+      return FactoryFinder.find(XMLInputFactory.class, factoryId, classLoader, null);
   }
 
   /**
    * Create a new instance of the factory.
    * If the classLoader argument is null, then the ContextClassLoader is used.
+   * <p>
+   * This method uses the following ordered lookup procedure to determine
+   * the XMLOutputFactory implementation class to load:
+   * </p>
+   * <ul>
+   * <li>
+   *   Use the value of the system property identified by {@code factoryId}.
+   * </li>
+   * <li>
+   *   Use the properties file "lib/stax.properties" in the JRE directory.
+   *     This configuration file is in standard java.util.Properties format
+   *     and contains the fully qualified name of the implementation class
+   *     with the key being the given {@code factoryId}.
+   * </li>
+   * <li>
+   *   If {@code factoryId} is "javax.xml.stream.XMLOutputFactory",
+   *   use the service-provider loading facilities, defined by the
+   *   {@link java.util.ServiceLoader} class, to attempt to {@linkplain
+   *   java.util.ServiceLoader#load(java.lang.Class, java.lang.ClassLoader) locate and load}
+   *   an implementation of the service using the specified {@code ClassLoader}.
+   *   If {@code classLoader} is null, the {@linkplain
+   *   java.util.ServiceLoader#load(java.lang.Class) default loading mechanism} will apply:
+   *   That is, the service-provider loading facility will use the {@linkplain
+   *   java.lang.Thread#getContextClassLoader() current thread's context class loader}
+   *   to attempt to load the service. If the context class
+   *   loader is null, the {@linkplain
+   *   ClassLoader#getSystemClassLoader() system class loader} will be used.
+   * </li>
+   * <li>
+   *   Otherwise, throws a {@link FactoryConfigurationError}.
+   * </li>
+   * </ul>
    *
-   * Note that this is a new method that replaces the deprecated
-   *   newInstance(String factoryId, ClassLoader classLoader) method.
+   * @apiNote The parameter factoryId defined here is inconsistent with that
+   * of other JAXP factories where the first parameter is fully qualified
+   * factory class name that provides implementation of the factory.
    *
-   *   No changes in behavior are defined by this replacement method relative
-   *   to the deprecated method.
-   *
+   * <p>
+   *   Note that this is a new method that replaces the deprecated
+   *   {@link #newInstance(java.lang.String, java.lang.ClassLoader)
+   *   newInstance(String factoryId, ClassLoader classLoader)} method.
+   *   The original method was incorrectly defined to return XMLInputFactory.
+   * </p>
    *
    * @param factoryId             Name of the factory to find, same as
    *                              a property name
    * @param classLoader           classLoader to use
    * @return the factory implementation
-   * @throws FactoryConfigurationError if an instance of this factory cannot be loaded
+   * @throws FactoryConfigurationError in case of {@linkplain
+   *   java.util.ServiceConfigurationError service configuration error} or if
+   *   the implementation is not available or cannot be instantiated.
    */
   public static XMLOutputFactory newFactory(String factoryId,
           ClassLoader classLoader)
           throws FactoryConfigurationError {
-      try {
-          //do not fallback if given classloader can't find the class, throw exception
-          return (XMLOutputFactory) FactoryFinder.find(factoryId, classLoader, null);
-      } catch (FactoryFinder.ConfigurationError e) {
-          throw new FactoryConfigurationError(e.getException(),
-                  e.getMessage());
-      }
+      //do not fallback if given classloader can't find the class, throw exception
+      return FactoryFinder.find(XMLOutputFactory.class, factoryId, classLoader, null);
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2009, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -65,6 +65,7 @@ public class BeanContextMembershipEvent extends BeanContextEvent {
      * @throws NullPointerException if <CODE>changes</CODE> is <CODE>null</CODE>
      */
 
+    @SuppressWarnings("rawtypes")
     public BeanContextMembershipEvent(BeanContext bc, Collection changes) {
         super(bc);
 
@@ -102,6 +103,7 @@ public class BeanContextMembershipEvent extends BeanContextEvent {
      * Is the child specified affected by the event?
      * @return <code>true</code> if affected, <code>false</code>
      * if not
+     * @param child the object to check for being affected
      */
     public boolean contains(Object child) {
         return children.contains(child);
@@ -117,6 +119,7 @@ public class BeanContextMembershipEvent extends BeanContextEvent {
      * Gets the array of children affected by this event.
      * @return the array of children effected
      */
+    @SuppressWarnings("rawtypes")
     public Iterator iterator() { return children.iterator(); }
 
     /*
@@ -127,5 +130,6 @@ public class BeanContextMembershipEvent extends BeanContextEvent {
     * The list of children affected by this
     * event notification.
     */
+    @SuppressWarnings("rawtypes")
     protected Collection children;
 }

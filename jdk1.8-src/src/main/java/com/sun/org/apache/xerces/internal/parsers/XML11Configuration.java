@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2016, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 /*
@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import javax.xml.XMLConstants;
 
 import com.sun.org.apache.xerces.internal.impl.Constants;
 import com.sun.org.apache.xerces.internal.impl.XML11DTDScannerImpl;
@@ -50,8 +51,9 @@ import com.sun.org.apache.xerces.internal.impl.xs.XSMessageFormatter;
 import com.sun.org.apache.xerces.internal.util.FeatureState;
 import com.sun.org.apache.xerces.internal.util.ParserConfigurationSettings;
 import com.sun.org.apache.xerces.internal.util.PropertyState;
-import com.sun.org.apache.xerces.internal.util.Status;
 import com.sun.org.apache.xerces.internal.util.SymbolTable;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityManager;
+import com.sun.org.apache.xerces.internal.utils.XMLSecurityPropertyManager;
 import com.sun.org.apache.xerces.internal.xni.XMLDTDContentModelHandler;
 import com.sun.org.apache.xerces.internal.xni.XMLDTDHandler;
 import com.sun.org.apache.xerces.internal.xni.XMLDocumentHandler;
@@ -274,6 +276,13 @@ public class XML11Configuration extends ParserConfigurationSettings
     protected static final String SCHEMA_DV_FACTORY =
         Constants.XERCES_PROPERTY_PREFIX + Constants.SCHEMA_DV_FACTORY_PROPERTY;
 
+    /** Property identifier: Security property manager. */
+    private static final String XML_SECURITY_PROPERTY_MANAGER =
+            Constants.XML_SECURITY_PROPERTY_MANAGER;
+
+    /** Property identifier: Security manager. */
+    private static final String SECURITY_MANAGER = Constants.SECURITY_MANAGER;
+
     // debugging
 
     /** Set to true and recompile to print exception stack trace. */
@@ -443,26 +452,26 @@ public class XML11Configuration extends ParserConfigurationSettings
         XMLGrammarPool grammarPool,
         XMLComponentManager parentSettings) {
 
-                super(parentSettings);
+        super(parentSettings);
 
-                // create a vector to hold all the components in use
-                // XML 1.0 specialized components
-                fComponents = new ArrayList();
-                // XML 1.1 specialized components
-                fXML11Components = new ArrayList();
-                // Common components for XML 1.1. and XML 1.0
-                fCommonComponents = new ArrayList();
+        // create a vector to hold all the components in use
+        // XML 1.0 specialized components
+        fComponents = new ArrayList();
+        // XML 1.1 specialized components
+        fXML11Components = new ArrayList();
+        // Common components for XML 1.1. and XML 1.0
+        fCommonComponents = new ArrayList();
 
-                // create table for features and properties
-                fFeatures = new HashMap();
-                fProperties = new HashMap();
+        // create table for features and properties
+        fFeatures = new HashMap();
+        fProperties = new HashMap();
 
         // add default recognized features
         final String[] recognizedFeatures =
             {
                 CONTINUE_AFTER_FATAL_ERROR, LOAD_EXTERNAL_DTD, // from XMLDTDScannerImpl
-                                VALIDATION,
-                                NAMESPACES,
+                VALIDATION,
+                NAMESPACES,
                 NORMALIZE_DATA, SCHEMA_ELEMENT_DEFAULT, SCHEMA_AUGMENT_PSVI,
                 GENERATE_SYNTHETIC_ANNOTATIONS, VALIDATE_ANNOTATIONS,
                 HONOUR_ALL_SCHEMALOCATIONS, NAMESPACE_GROWTH,
@@ -473,28 +482,30 @@ public class XML11Configuration extends ParserConfigurationSettings
                 //       features might not have been set and it would cause a
                 //       not-recognized exception to be thrown. -Ac
                 XMLSCHEMA_VALIDATION, XMLSCHEMA_FULL_CHECKING,
-                                EXTERNAL_GENERAL_ENTITIES,
-                                EXTERNAL_PARAMETER_ENTITIES,
-                                PARSER_SETTINGS
+                EXTERNAL_GENERAL_ENTITIES,
+                EXTERNAL_PARAMETER_ENTITIES,
+                PARSER_SETTINGS,
+                XMLConstants.FEATURE_SECURE_PROCESSING
                         };
         addRecognizedFeatures(recognizedFeatures);
-                // set state for default features
-                fFeatures.put(VALIDATION, Boolean.FALSE);
-                fFeatures.put(NAMESPACES, Boolean.TRUE);
-                fFeatures.put(EXTERNAL_GENERAL_ENTITIES, Boolean.TRUE);
-                fFeatures.put(EXTERNAL_PARAMETER_ENTITIES, Boolean.TRUE);
-                fFeatures.put(CONTINUE_AFTER_FATAL_ERROR, Boolean.FALSE);
-                fFeatures.put(LOAD_EXTERNAL_DTD, Boolean.TRUE);
-                fFeatures.put(SCHEMA_ELEMENT_DEFAULT, Boolean.TRUE);
-                fFeatures.put(NORMALIZE_DATA, Boolean.TRUE);
-                fFeatures.put(SCHEMA_AUGMENT_PSVI, Boolean.TRUE);
+        // set state for default features
+        fFeatures.put(VALIDATION, Boolean.FALSE);
+        fFeatures.put(NAMESPACES, Boolean.TRUE);
+        fFeatures.put(EXTERNAL_GENERAL_ENTITIES, Boolean.TRUE);
+        fFeatures.put(EXTERNAL_PARAMETER_ENTITIES, Boolean.TRUE);
+        fFeatures.put(CONTINUE_AFTER_FATAL_ERROR, Boolean.FALSE);
+        fFeatures.put(LOAD_EXTERNAL_DTD, Boolean.TRUE);
+        fFeatures.put(SCHEMA_ELEMENT_DEFAULT, Boolean.TRUE);
+        fFeatures.put(NORMALIZE_DATA, Boolean.TRUE);
+        fFeatures.put(SCHEMA_AUGMENT_PSVI, Boolean.TRUE);
         fFeatures.put(GENERATE_SYNTHETIC_ANNOTATIONS, Boolean.FALSE);
         fFeatures.put(VALIDATE_ANNOTATIONS, Boolean.FALSE);
         fFeatures.put(HONOUR_ALL_SCHEMALOCATIONS, Boolean.FALSE);
         fFeatures.put(NAMESPACE_GROWTH, Boolean.FALSE);
         fFeatures.put(TOLERATE_DUPLICATES, Boolean.FALSE);
         fFeatures.put(USE_GRAMMAR_POOL_ONLY, Boolean.FALSE);
-                fFeatures.put(PARSER_SETTINGS, Boolean.TRUE);
+        fFeatures.put(PARSER_SETTINGS, Boolean.TRUE);
+        fFeatures.put(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
 
         // add default recognized properties
         final String[] recognizedProperties =
@@ -523,6 +534,8 @@ public class XML11Configuration extends ParserConfigurationSettings
                 SCHEMA_NONS_LOCATION,
                 LOCALE,
                 SCHEMA_DV_FACTORY,
+                SECURITY_MANAGER,
+                XML_SECURITY_PROPERTY_MANAGER
         };
         addRecognizedProperties(recognizedProperties);
 

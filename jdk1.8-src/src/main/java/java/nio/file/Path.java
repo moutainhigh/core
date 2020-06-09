@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2007, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -54,7 +54,7 @@ import java.util.Iterator;
  * resolveSibling} methods to combine paths. The {@link #relativize relativize}
  * method that can be used to construct a relative path between two paths.
  * Paths can be {@link #compareTo compared}, and tested against each other using
- * the {@link #startsWith startsWith} and {@link #endsWith endWith} methods.
+ * the {@link #startsWith startsWith} and {@link #endsWith endsWith} methods.
  *
  * <p> This interface extends {@link Watchable} interface so that a directory
  * located by a path can be {@link #register registered} with a {@link
@@ -64,7 +64,7 @@ import java.util.Iterator;
  * those developing custom file system implementations. Methods may be added to
  * this interface in future releases. </p>
  *
- * <a name="interop"><h4>Accessing Files</h4></a>
+ * <h2>Accessing Files</h2>
  * <p> Paths may be used with the {@link Files} class to operate on files,
  * directories, and other types of files. For example, suppose we want a {@link
  * java.io.BufferedReader} to read text from a file "{@code access.log}". The
@@ -72,10 +72,10 @@ import java.util.Iterator;
  * directory and is UTF-8 encoded.
  * <pre>
  *     Path path = FileSystems.getDefault().getPath("logs", "access.log");
- *     BufferReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+ *     BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8);
  * </pre>
  *
- * <a name="interop"><h4>Interoperability</h4></a>
+ * <a name="interop"></a><h2>Interoperability</h2>
  * <p> Paths associated with the default {@link
  * java.nio.file.spi.FileSystemProvider provider} are generally interoperable
  * with the {@link java.io.File java.io.File} class. Paths created by other
@@ -87,7 +87,7 @@ import java.util.Iterator;
  * addition, the {@link #toFile toFile} method is useful to construct a {@code
  * File} from the {@code String} representation of a {@code Path}.
  *
- * <h4>Concurrency</h4></a>
+ * <h2>Concurrency</h2>
  * <p> Implementations of this interface are immutable and safe for use by
  * multiple concurrent threads.
  *
@@ -297,7 +297,7 @@ public interface Path
      * @param   other
      *          the given path string
      *
-     * @return  {@code true} if this path starts with the given path; otherwise
+     * @return  {@code true} if this path ends with the given path; otherwise
      *          {@code false}
      *
      * @throws  InvalidPathException
@@ -315,7 +315,7 @@ public interface Path
      * and parent directory. In such file systems all occurrences of "{@code .}"
      * are considered redundant. If a "{@code ..}" is preceded by a
      * non-"{@code ..}" name then both names are considered redundant (the
-     * process to identify such names is repeated until is it no longer
+     * process to identify such names is repeated until it is no longer
      * applicable).
      *
      * <p> This method does not access the file system; the path may not locate
@@ -522,7 +522,7 @@ public interface Path
      *
      * @return  a {@code Path} object representing the absolute path
      *
-     * @throws  IOError
+     * @throws  java.io.IOError
      *          if an I/O error occurs
      * @throws  SecurityException
      *          In the case of the default provider, a security manager

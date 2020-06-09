@@ -9,6 +9,7 @@ package com.sun.jmx.snmp;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.util.Objects;
 
 import com.sun.jmx.snmp.SnmpDefinitions;
 import com.sun.jmx.snmp.SnmpStatusException;
@@ -141,6 +142,7 @@ public class SnmpParameters extends SnmpParams implements Cloneable, Serializabl
      * @param obj The object to compare <CODE>this</CODE> with.
      * @return <CODE>true</CODE> if <CODE>this</CODE> and the specified object are equal, <CODE>false</CODE> otherwise.
      */
+    @Override
     public synchronized boolean equals(Object obj) {
         if (!( obj instanceof SnmpParameters))
             return false;
@@ -152,6 +154,11 @@ public class SnmpParameters extends SnmpParams implements Cloneable, Serializabl
             if (_readCommunity.equals(param._readCommunity))
                 return true ;
         return false ;
+    }
+
+    @Override
+    public synchronized int hashCode() {
+        return (_protocolVersion * 31) ^ Objects.hashCode(_readCommunity);
     }
 
     /**

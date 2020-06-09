@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1995, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -823,7 +823,7 @@ public class Color implements Paint, java.io.Serializable {
      * <p>
      * The integer that is returned by <code>HSBtoRGB</code> encodes the
      * value of a color in bits 0-23 of an integer value that is the same
-     * format used by the method {@link #getRGB() <code>getRGB</code>}.
+     * format used by the method {@link #getRGB() getRGB}.
      * This integer can be supplied as an argument to the
      * <code>Color</code> constructor that takes a single integer argument.
      * @param     hue   the hue component of the color

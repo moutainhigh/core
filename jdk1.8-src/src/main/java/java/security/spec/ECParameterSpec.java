@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -49,12 +49,12 @@ public class ECParameterSpec implements AlgorithmParameterSpec {
      * @param curve the elliptic curve which this parameter
      * defines.
      * @param g the generator which is also known as the base point.
-     * @param n the order of the generator <code>g</code>.
+     * @param n the order of the generator {@code g}.
      * @param h the cofactor.
-     * @exception NullPointerException if <code>curve</code>,
-     * <code>g</code>, or <code>n</code> is null.
-     * @exception IllegalArgumentException if <code>n</code>
-     * or <code>h</code> is not positive.
+     * @exception NullPointerException if {@code curve},
+     * {@code g}, or {@code n} is null.
+     * @exception IllegalArgumentException if {@code n}
+     * or {@code h} is not positive.
      */
     public ECParameterSpec(EllipticCurve curve, ECPoint g,
                            BigInteger n, int h) {

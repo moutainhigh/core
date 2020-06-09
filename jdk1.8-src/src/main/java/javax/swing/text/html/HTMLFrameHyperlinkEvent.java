@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1998, 2000, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1998, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -92,7 +92,7 @@ public class HTMLFrameHyperlinkEvent extends HyperlinkEvent {
      * @param source the object responsible for the event
      * @param type the event type
      * @param targetURL the affected URL
-     * @param desc a desription
+     * @param desc a description
      * @param sourceElement the element that corresponds to the source
      *                      of the event
      * @param targetFrame the Frame to display the document in
@@ -109,7 +109,7 @@ public class HTMLFrameHyperlinkEvent extends HyperlinkEvent {
      * @param source the object responsible for the event
      * @param type the event type
      * @param targetURL the affected URL
-     * @param desc a desription
+     * @param desc a description
      * @param sourceElement the element that corresponds to the source
      *                      of the event
      * @param inputEvent  InputEvent that triggered the hyperlink event

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -34,7 +34,7 @@ import java.awt.Image;
  * to organize complex memory on a particular <code>Canvas</code> or
  * <code>Window</code>.  Hardware and software limitations determine whether and
  * how a particular buffer strategy can be implemented.  These limitations
- * are detectible through the capabilities of the
+ * are detectable through the capabilities of the
  * <code>GraphicsConfiguration</code> used when creating the
  * <code>Canvas</code> or <code>Window</code>.
  * <p>
@@ -54,8 +54,7 @@ import java.awt.Image;
  * <p>
  * Alternatively, the contents of the back buffer can be copied, or
  * <i>blitted</i> forward in a chain instead of moving the video pointer.
- * <p>
- * <pre>
+ * <pre>{@code
  * Double buffering:
  *
  *                    ***********         ***********
@@ -72,7 +71,7 @@ import java.awt.Image;
  *          *         * <------ *         * <----- *         *
  *          ***********         ***********        ***********
  *
- * </pre>
+ * }</pre>
  * <p>
  * Here is an example of how buffer strategies can be created and used:
  * <pre><code>

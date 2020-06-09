@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1999, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1999, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -33,11 +33,11 @@ abstract class AttributeValue {
     private final String[] names;
 
     protected AttributeValue(int value, String[] names) {
-        if (log.isLoggable(PlatformLogger.FINEST)) {
+        if (log.isLoggable(PlatformLogger.Level.FINEST)) {
             log.finest("value = " + value + ", names = " + names);
         }
 
-        if (log.isLoggable(PlatformLogger.FINER)) {
+        if (log.isLoggable(PlatformLogger.Level.FINER)) {
             if ((value < 0) || (names == null) || (value >= names.length)) {
                 log.finer("Assertion failed");
             }

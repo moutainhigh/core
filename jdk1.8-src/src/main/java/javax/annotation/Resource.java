@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -78,7 +78,7 @@ public @interface Resource {
      * For class annotations, there is no default and this must be
      * specified.
      */
-    Class type() default java.lang.Object.class;
+    Class<?> type() default java.lang.Object.class;
 
     /**
      * The two possible authentication types for a resource.

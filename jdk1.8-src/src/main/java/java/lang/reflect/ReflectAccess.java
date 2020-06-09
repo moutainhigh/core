@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2001, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -126,6 +126,10 @@ class ReflectAccess implements sun.reflect.LangReflectAccess {
 
     public byte[] getConstructorParameterAnnotations(Constructor<?> c) {
         return c.getRawParameterAnnotations();
+    }
+
+    public byte[] getExecutableTypeAnnotationBytes(Executable ex) {
+        return ex.getTypeAnnotationBytes();
     }
 
     //

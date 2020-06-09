@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -41,7 +41,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.FocusEvent;
 
 /**
- * Provides the Synth L&F UI delegate for
+ * Provides the Synth L&amp;F UI delegate for
  * {@link javax.swing.JScrollPane}.
  *
  * @author Scott Violet
@@ -119,7 +119,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void paintBorder(SynthContext context, Graphics g, int x,
@@ -128,7 +128,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installDefaults(JScrollPane scrollpane) {
@@ -154,7 +154,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void installListeners(JScrollPane c) {
@@ -171,7 +171,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallDefaults(JScrollPane c) {
@@ -186,7 +186,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     protected void uninstallListeners(JComponent c) {
@@ -203,7 +203,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public SynthContext getContext(JComponent c) {
@@ -211,8 +211,7 @@ public class SynthScrollPaneUI extends BasicScrollPaneUI
     }
 
     private SynthContext getContext(JComponent c, int state) {
-        return SynthContext.getContext(SynthContext.class, c,
-                    SynthLookAndFeel.getRegion(c), style, state);
+        return SynthContext.getContext(c, style, state);
     }
 
     private int getComponentState(JComponent c) {

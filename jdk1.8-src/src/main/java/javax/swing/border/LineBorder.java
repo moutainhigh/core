@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2007, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -44,7 +44,7 @@ import java.beans.ConstructorProperties;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -133,8 +133,8 @@ public class LineBorder extends AbstractBorder
             int offs = this.thickness;
             int size = offs + offs;
             if (this.roundedCorners) {
-                int arc = offs + size;
-                outer = new RoundRectangle2D.Float(x, y, width, height, arc, arc);
+                float arc = .2f * offs;
+                outer = new RoundRectangle2D.Float(x, y, width, height, offs, offs);
                 inner = new RoundRectangle2D.Float(x + offs, y + offs, width - size, height - size, arc, arc);
             }
             else {

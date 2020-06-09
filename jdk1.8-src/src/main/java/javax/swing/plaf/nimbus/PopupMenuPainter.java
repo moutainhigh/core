@@ -149,7 +149,7 @@ final class PopupMenuPainter extends AbstractRegionPainter {
         float w = (float)bounds.getWidth();
         float h = (float)bounds.getHeight();
         return decodeGradient((0.5f * w) + x, (0.0f * h) + y, (0.5f * w) + x, (1.0f * h) + y,
-                new float[] { 0.0f,0.0030f,0.02f,0.5f,0.98f,0.996f,1.0f },
+                new float[] { 0.0f,0.003f,0.02f,0.5f,0.98f,0.996f,1.0f },
                 new Color[] { color2,
                             decodeColor(color2,color3,0.5f),
                             color3,

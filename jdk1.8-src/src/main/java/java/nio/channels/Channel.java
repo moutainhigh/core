@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2000, 2003, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -56,7 +56,7 @@ import java.io.Closeable;
 public interface Channel extends Closeable {
 
     /**
-     * Tells whether or not this channel is open.  </p>
+     * Tells whether or not this channel is open.
      *
      * @return <tt>true</tt> if, and only if, this channel is open
      */

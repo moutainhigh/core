@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -98,7 +98,7 @@ import javax.xml.transform.Source;
  * or, to set the result value from SAX events:
  * <pre>
  *   SAXResult saxResult = sqlxml.setResult(SAXResult.class);
- *   ContentHandler contentHandler = saxResult.getXMLReader().getContentHandler();
+ *   ContentHandler contentHandler = saxResult.getHandler();
  *   contentHandler.startDocument();
  *   // set the XML elements and attributes into the result
  *   contentHandler.endDocument();
@@ -177,8 +177,8 @@ import javax.xml.transform.Source;
  * The state moves from writable to not writeable once free() or any of the
  * writing APIs are called: setBinaryStream(), setCharacterStream(), setResult(), and setString().
  * Implementations may also change the state to not readable when this occurs.
+ *
  * <p>
-  * <p>
  * All methods on the <code>SQLXML</code> interface must be fully implemented if the
  * JDBC driver supports the data type.
  *
@@ -360,8 +360,9 @@ public interface SQLXML
    *   xmlReader.parse(saxSource.getInputSource());
    * </pre>
    *
+   * @param <T> the type of the class modeled by this Class object
    * @param sourceClass The class of the source, or null.
-   * If the class is null, a vendor specifc Source implementation will be returned.
+   * If the class is null, a vendor specific Source implementation will be returned.
    * The following classes are supported at a minimum:
    * <pre>
    *   javax.xml.transform.dom.DOMSource - returns a DOMSource
@@ -401,6 +402,7 @@ public interface SQLXML
    *   contentHandler.endDocument();
    * </pre>
    *
+   * @param <T> the type of the class modeled by this Class object
    * @param resultClass The class of the result, or null.
    * If resultClass is null, a vendor specific Result implementation will be returned.
    * The following classes are supported at a minimum:

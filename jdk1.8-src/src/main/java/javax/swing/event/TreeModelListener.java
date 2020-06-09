@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 1999, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -32,7 +32,7 @@ import java.util.EventListener;
  * to changes in a TreeModel.
  * For further information and examples see
  * <a
- href="http://java.sun.com/docs/books/tutorial/uiswing/events/treemodellistener.html">How to Write a Tree Model Listener</a>,
+ href="https://docs.oracle.com/javase/tutorial/uiswing/events/treemodellistener.html">How to Write a Tree Model Listener</a>,
  * a section in <em>The Java Tutorial.</em>
  *
  * @author Rob Davis
@@ -86,7 +86,7 @@ public interface TreeModelListener extends EventListener {
      * <p>Invoked after the tree has drastically changed structure from a
      * given node down.  If the path returned by e.getPath() is of length
      * one and the first element does not identify the current root node
-     * the first element should become the new root of the tree.<p>
+     * the first element should become the new root of the tree.
      *
      * <p>Use <code>e.getPath()</code>
      * to get the path to the node.

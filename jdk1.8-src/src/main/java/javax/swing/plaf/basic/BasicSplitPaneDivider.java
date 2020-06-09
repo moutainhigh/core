@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2006, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2013, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  *
  *
@@ -53,7 +53,7 @@ import sun.swing.DefaultLookup;
  * future Swing releases. The current serialization support is
  * appropriate for short term storage or RMI between applications running
  * the same version of Swing.  As of 1.4, support for long term storage
- * of all JavaBeans<sup><font size="-2">TM</font></sup>
+ * of all JavaBeans&trade;
  * has been added to the <code>java.beans</code> package.
  * Please see {@link java.beans.XMLEncoder}.
  *
@@ -521,7 +521,7 @@ public class BasicSplitPaneDivider extends Container
      * MouseHandler is responsible for converting mouse events
      * (released, dragged...) into the appropriate DragController
      * methods.
-     * <p>
+     *
      */
     protected class MouseHandler extends MouseAdapter
             implements MouseMotionListener
@@ -671,7 +671,7 @@ public class BasicSplitPaneDivider extends Container
      * future Swing releases. The current serialization support is
      * appropriate for short term storage or RMI between applications running
      * the same version of Swing.  As of 1.4, support for long term storage
-     * of all JavaBeans<sup><font size="-2">TM</font></sup>
+     * of all JavaBeans&trade;
      * has been added to the <code>java.beans</code> package.
      * Please see {@link java.beans.XMLEncoder}.
      */
@@ -890,7 +890,7 @@ public class BasicSplitPaneDivider extends Container
      * Used to layout a <code>BasicSplitPaneDivider</code>.
      * Layout for the divider
      * involves appropriately moving the left/right buttons around.
-     * <p>
+     *
      */
     protected class DividerLayout implements LayoutManager
     {
