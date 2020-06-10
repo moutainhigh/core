@@ -1,4 +1,4 @@
-package bom.gupaoedu.vip.concurrency.threadtools.condition;
+package bom.gupaoedu.vip.concurrency.threadtools.blockingqueue.demo;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
