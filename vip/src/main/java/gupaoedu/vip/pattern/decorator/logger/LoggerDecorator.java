@@ -4,10 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 
 /**
- * Created by Tom.
+ * 抽象装饰器：在这里Logger是抽象组件，抽象组件的具体实现jar中原始就有，这里就直接使用
  */
 public class LoggerDecorator implements Logger {
 
+    // 被修饰的抽象组件对象
     protected Logger logger;
 
     public LoggerDecorator(Logger logger) {

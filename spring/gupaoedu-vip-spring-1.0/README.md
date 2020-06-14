@@ -1,1 +1,1 @@
-http://localhost:8080/demo/query?name=tom
+- http://localhost:8080/demo/query?name=tom
