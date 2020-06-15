@@ -1,4 +1,4 @@
-package dom.gupaoedu.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.serialize;
 
 /**
  * 咕泡学院，只为更好的你

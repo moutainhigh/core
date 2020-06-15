@@ -1,4 +1,4 @@
-package dom.gupaoedu.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.serialize;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;

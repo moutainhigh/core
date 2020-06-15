@@ -1,4 +1,4 @@
-package dom.gupaoedu.vip.distributed.socket.client;
+package com.gupaoedu.vip.distributed.socket.client;
 
 import java.io.*;
 import java.net.Socket;

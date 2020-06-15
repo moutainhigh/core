@@ -1,4 +1,4 @@
-package dom.gupaoedu.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.socket.client;
 
 /**
  * Hello world!

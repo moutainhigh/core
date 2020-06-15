@@ -1,4 +1,4 @@
-package dom.gupaoedu.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.serialize;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
