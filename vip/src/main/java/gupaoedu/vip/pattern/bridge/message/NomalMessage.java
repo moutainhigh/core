@@ -1,7 +1,7 @@
 package gupaoedu.vip.pattern.bridge.message;
 
 /**
- * Created by Tom.
+ * 普通消息发送
  */
 public class NomalMessage extends AbastractMessage {
     public NomalMessage(IMessage message) {

@@ -1,7 +1,7 @@
 package gupaoedu.vip.pattern.bridge.message;
 
 /**
- * Created by Tom.
+ * 抽象实现的 具体实现  邮件发送
  */
 public class EmailMessage implements IMessage {
     public void send(String message, String toUser) {
