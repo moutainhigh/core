@@ -1,7 +1,7 @@
 package dom.gupaoedu.vip.pattern.iteratorAndcommand.command.player;
 
 /**
- * Created by Tom.
+ * 请求接受者  负责具体实施或执行一个请求
  */
 public class GPlayer {
     public void play(){

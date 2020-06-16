@@ -5,7 +5,7 @@ import dom.gupaoedu.vip.pattern.iteratorAndcommand.command.player.GPlayer;
 import dom.gupaoedu.vip.pattern.iteratorAndcommand.command.player.IAction;
 
 /**
- * Created by Tom.
+ * 具体命令角色 拖动进度条   内部维护一个接受者，在execute()方法中调用接受者的相关方法
  */
 public class SpeedAction implements IAction {
     private GPlayer gplayer;

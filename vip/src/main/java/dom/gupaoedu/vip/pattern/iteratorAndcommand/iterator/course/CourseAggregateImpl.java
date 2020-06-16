@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 具体容器
+ * 具体容器:抽象容器的实现
  */
 public class CourseAggregateImpl implements ICourseAggregate {
     private List courseList;
