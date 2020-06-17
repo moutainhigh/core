@@ -1,6 +1,6 @@
 package dom.gupaoedu.vip.pattern.visitor.general;
 
-// 具体访问者
+// 具体访问者  实现对具体元素的操作
 public class ConcreteVisitorB implements IVisitor {
 
     public void visit(ConcreteElementA element) {

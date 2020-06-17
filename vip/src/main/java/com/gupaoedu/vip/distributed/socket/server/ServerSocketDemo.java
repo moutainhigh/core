@@ -24,7 +24,7 @@ public class ServerSocketDemo {
             while (true) {
                 Socket socket = serverSocket.accept(); //监听客户端连接(连接阻塞）
                 System.out.println(socket.getPort());
-                executorService.execute(new SocketThread(socket)); //异步
+                executorService.execute(new SocketThread(socket)); //异步  Socket是阻塞的，这里用线程池解决阻塞问题
             }
         } catch (IOException e) {
             e.printStackTrace();

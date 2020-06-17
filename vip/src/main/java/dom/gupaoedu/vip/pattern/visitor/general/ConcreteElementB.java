@@ -2,7 +2,7 @@ package dom.gupaoedu.vip.pattern.visitor.general;
 
 import java.util.Random;
 
-// 具体元素
+// 具体元素  提供接受访问者的具体实现。
 public class ConcreteElementB implements IElement {
 
     public void accept(IVisitor visitor) {
