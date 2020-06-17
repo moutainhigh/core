@@ -19,3 +19,4 @@ public class Test {
         eventBus.post(new Pojo("Tom"));
     }
 }
+
