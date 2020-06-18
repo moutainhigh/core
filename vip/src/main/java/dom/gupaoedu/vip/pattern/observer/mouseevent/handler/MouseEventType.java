@@ -1,7 +1,7 @@
 package dom.gupaoedu.vip.pattern.observer.mouseevent.handler;
 
 /**
- * Created by Tom.
+ * 鼠标事件类型
  */
 public interface MouseEventType {
     String ON_CLICK = "click";

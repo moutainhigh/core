@@ -1,25 +1,14 @@
 package dom.gupaoedu.vip.pattern.observer.gper;
 
+import lombok.Data;
+
 /**
- * Created by Tom.
+ * 用户行为
  */
+@Data
 public class Question {
+    // 提问人
     private String userName;
+    // 提问内容
     private String content;
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }

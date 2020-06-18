@@ -10,7 +10,7 @@ public class Event {
     private Object source;
     //事件触发，要通知谁（观察者）
     private EventListener target;
-    //观察者给的回应
+    //观察者给的回应（要调用的方法）
     private Method callback;
     //事件的名称
     private String trigger;

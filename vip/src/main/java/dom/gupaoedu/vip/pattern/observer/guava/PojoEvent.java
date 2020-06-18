@@ -7,11 +7,10 @@ import com.google.common.eventbus.Subscribe;
  */
 public class PojoEvent {
 
+    // 使用guave注解注册通知到的方法
     @Subscribe
-    public void observer(Pojo pojo){
-//        if(arg instanceof Pojo){
-            System.out.println("执行PojoEvent方法，传参为：" + pojo);
-//        }
+    public void observer(Parpojo pojo) {
+        System.out.println("校长收到通知 ：" + pojo.getName() + "，成绩：" + pojo.getMessage());
     }
 
 }

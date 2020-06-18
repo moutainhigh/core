@@ -7,12 +7,10 @@ import com.google.common.eventbus.Subscribe;
  */
 public class VoEvent {
 
+    // 使用guave注解注册通知到的方法
     @Subscribe
-    public void observer(Vo arg){
-//        if(arg instanceof Vo){
-            System.out.println("执行VoEvent方法，传参为：" + arg);
-//        }
-
+    public void observer(Parpojo arg) {
+        System.out.println("班主任收到通知 ：" + arg.getName() + "，成绩：" + arg.getMessage());
     }
 
 }
