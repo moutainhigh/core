@@ -10,9 +10,11 @@ public class Test {
         ISubject<String> observable = new ConcreteSubject<String>();
         // 观察者
         IObserver<String> observer = new ConcreteObserver<String>();
-        // 注册
+
+        // 观察者去进行注册
         observable.attach(observer);
-        // 通知
+
+        // 发布通知,上面的观者者就能收到通知
         observable.notify("hello");
     }
 

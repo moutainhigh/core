@@ -8,6 +8,7 @@ public class ConcreteSubject<E> implements ISubject<E> {
     private List<IObserver<E>> observers = new ArrayList<IObserver<E>>();
 
     public boolean attach(IObserver<E> observer) {
+        // 只要不包含就注册
         return !this.observers.contains(observer) && this.observers.add(observer);
     }
 
