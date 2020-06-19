@@ -1,4 +1,4 @@
-package com.example.springbootthreaddemo.service;
+package com.example.threaddemo.service;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;

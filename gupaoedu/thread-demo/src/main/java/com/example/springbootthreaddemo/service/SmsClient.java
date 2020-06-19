@@ -1,4 +1,4 @@
-package com.example.springbootthreaddemo.service;
+package com.example.threaddemo.service;
 
 /**
  * 风骚的Mic 老师

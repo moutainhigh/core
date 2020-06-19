@@ -1,6 +1,6 @@
-package com.example.springbootthreaddemo.service;
+package com.example.threaddemo.service;
 
-import com.example.springbootthreaddemo.persistence.User;
+import com.example.threaddemo.persistence.User;
 
 /**
  * 风骚的Mic 老师

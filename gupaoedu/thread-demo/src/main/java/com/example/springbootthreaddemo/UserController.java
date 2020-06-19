@@ -1,8 +1,8 @@
-package com.example.springbootthreaddemo;
+package com.example.threaddemo;
 
-import com.example.springbootthreaddemo.persistence.User;
-import com.example.springbootthreaddemo.service.IUserService;
-import com.example.springbootthreaddemo.service.SmsClient;
+import com.example.threaddemo.persistence.User;
+import com.example.threaddemo.service.IUserService;
+import com.example.threaddemo.service.SmsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

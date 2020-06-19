@@ -1,4 +1,4 @@
-package com.example.springbootthreaddemo.persistence;
+package com.example.threaddemo.persistence;
 
 /**
  * 风骚的Mic 老师

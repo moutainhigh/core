@@ -1,14 +1,16 @@
-package com.example.springbootthreaddemo.demo03;
+package bom.gupaoedu.vip.concurrency.threaduse.interrupt;
 
 /**
- * 风骚的Mic 老师
+ * 线程的终止4
+ * 不用jvm的中断
  * create-date: 2020/5/16-22:12
  */
-public class InterruptDemo03 implements Runnable{
-    static volatile boolean interrupt=false;
+public class InterruptDemo03 implements Runnable {
+    static volatile boolean interrupt = false;
+
     @Override
     public void run() {
-        while(!interrupt){
+        while (!interrupt) {
         }
         try {
             Thread.sleep(100);
@@ -27,7 +29,8 @@ public class InterruptDemo03 implements Runnable{
         }
         ;
     }
+
     public static void main(String[] args) {
-        interrupt=true;
+        interrupt = true;
     }
 }

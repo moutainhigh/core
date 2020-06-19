@@ -1,4 +1,4 @@
-package com.example.springbootthreaddemo;
+package com.example.threaddemo;
 
 
 import org.mybatis.spring.annotation.MapperScan;

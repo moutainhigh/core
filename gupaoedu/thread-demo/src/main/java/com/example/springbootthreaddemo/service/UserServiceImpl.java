@@ -1,7 +1,7 @@
-package com.example.springbootthreaddemo.service;
+package com.example.threaddemo.service;
 
-import com.example.springbootthreaddemo.persistence.User;
-import com.example.springbootthreaddemo.persistence.UserMapper;
+import com.example.threaddemo.persistence.User;
+import com.example.threaddemo.persistence.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
