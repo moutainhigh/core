@@ -1,4 +1,4 @@
-package com.example.springbootthreaddemo.persistence;
+package com.example.threaddemo.persistence;
 
 import org.apache.ibatis.annotations.Mapper;
 
