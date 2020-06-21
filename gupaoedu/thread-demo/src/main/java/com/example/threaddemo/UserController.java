@@ -1,7 +1,7 @@
 package com.example.threaddemo;
 
 import com.example.threaddemo.persistence.User;
-import com.example.threaddemo.service.IUserService;
+import com.example.threaddemo.service.UserService;
 import com.example.threaddemo.service.SmsClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class UserController {
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     @Autowired
-    private IUserService userService;
+    private UserService userService;
 
     @Autowired
     private SmsClient smsClient;

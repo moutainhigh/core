@@ -3,15 +3,15 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.csf.gupaoedu</groupId>
-	<artifactId>gupaodeu</artifactId>
+	<artifactId>version2</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
-	<name>gupaoedu demo</name>
-	<description>gupaoedu vip thread</description>
+	<name>spring rpc -version2</name>
+	<description>gupaoedu vip rpc-demo version2</description>
 
 	<modules>
-	    <module>thread-demo</module>
-	    <module>rpc-demo</module>
+	    <module>order-service</module>
+		<module>user-service</module>
 	</modules>
 </project>

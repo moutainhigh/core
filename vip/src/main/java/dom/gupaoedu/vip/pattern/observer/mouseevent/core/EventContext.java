@@ -19,7 +19,7 @@ public class EventContext {
      */
     public void addLisenter(String eventType, EventListener target) {
         try {
-            // 得到类，再得到方法
+            // 得到类，再得到方法 参数： 方法名 方法的参数
             this.addLisenter(eventType, target, target.getClass().getMethod("on" + toUpperFirstCase(eventType), Event.class));
         } catch (NoSuchMethodException e) {
             return;

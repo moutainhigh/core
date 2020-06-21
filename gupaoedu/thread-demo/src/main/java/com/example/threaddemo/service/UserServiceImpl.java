@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * create-date: 2020/5/16-20:45
  */
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
 
