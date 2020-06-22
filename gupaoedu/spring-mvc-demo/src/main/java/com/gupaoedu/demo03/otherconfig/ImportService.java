@@ -1,4 +1,4 @@
-package com.gupaoedu.demo04;
+package com.gupaoedu.demo03.otherconfig;
 
 /**
  * 咕泡学院，只为更好的你

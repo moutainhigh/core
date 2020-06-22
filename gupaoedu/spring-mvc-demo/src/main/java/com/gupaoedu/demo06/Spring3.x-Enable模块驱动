@@ -1,0 +1,35 @@
+
+
+
+定时任务
+
+ <task:annotation-driven scheduler="scheduler"/>
+ <task:scheduler id="scheduler" pool-size="5"/>
+
+
+ AnnotationDrivenBeanDefinitionParser parse方法  spring-context-5.1.3.RELEASE.jar
+
+builder = BeanDefinitionBuilder.genericBeanDefinition("org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor");
+registerPostProcessor(parserContext, builder, "org.springframework.context.annotation.internalScheduledAnnotationProcessor");
+---------------------------------------------------------------------------------
+ 跟 @EnableScheduling是一样的
+
+
+ @Configuration
+ @Role(2)
+ public class SchedulingConfiguration {
+     public SchedulingConfiguration() {
+     }
+
+     @Bean(
+         name = {"org.springframework.context.annotation.internalScheduledAnnotationProcessor"}
+     )
+     @Role(2)
+     public ScheduledAnnotationBeanPostProcessor scheduledAnnotationProcessor() {
+         return new ScheduledAnnotationBeanPostProcessor();
+     }
+ }
+
+
+
+

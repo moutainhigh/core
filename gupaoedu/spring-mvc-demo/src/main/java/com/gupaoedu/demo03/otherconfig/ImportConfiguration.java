@@ -1,4 +1,4 @@
-package com.gupaoedu.demo04;
+package com.gupaoedu.demo03.otherconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 public class ImportConfiguration {
-
 
     @Bean
     public ImportService importService(){

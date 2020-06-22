@@ -12,6 +12,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 public class Demo02Main {
     public static void main(String[] args) {
 
+        // FileSystemXmlApplicationContext 为基于xml文件形式的去加载
         ApplicationContext context=new FileSystemXmlApplicationContext("classpath:applicationContext.xml");
         System.out.println(context.getBean(Demo02Service.class));
     }

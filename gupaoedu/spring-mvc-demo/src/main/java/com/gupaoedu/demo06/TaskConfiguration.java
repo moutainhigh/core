@@ -6,12 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * 咕泡学院，只为更好的你
- * 咕泡学院-Mic: 2227324689
- * http://www.gupaoedu.com
+ * Spring  3.x  Enable  模块驱动
  **/
 @ComponentScan("com.gupaoedu.demo06")
-@EnableScheduling
+@EnableScheduling // 启动完成定时任务的
 @Configuration
 public class TaskConfiguration {
 
