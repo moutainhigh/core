@@ -1,0 +1,13 @@
+package com.gupaoedu.spring.example.spring3xdemo;
+
+import org.springframework.stereotype.Service;
+
+/**
+ * 咕泡学院，只为更好的你
+ * 咕泡学院-Mic: 2227324689
+ * http://www.gupaoedu.com
+ **/
+@Service
+public class Demo03Service {
+
+}
