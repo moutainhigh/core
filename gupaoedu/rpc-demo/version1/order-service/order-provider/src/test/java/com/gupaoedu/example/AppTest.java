@@ -1,4 +1,4 @@
-package com.gupaoedu.example;
+package com.gupaoedu.spring1xdemo;
 
 import static org.junit.Assert.assertTrue;
 

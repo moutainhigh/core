@@ -1,4 +1,4 @@
-package com.gupaoedu.example.rcp;
+package com.gupaoedu.spring1xdemo.rcp;
 
 import java.lang.reflect.Proxy;
 

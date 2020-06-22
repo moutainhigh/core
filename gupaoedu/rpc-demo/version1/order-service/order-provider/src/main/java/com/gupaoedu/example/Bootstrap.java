@@ -1,4 +1,4 @@
-package com.gupaoedu.example;
+package com.gupaoedu.spring1xdemo;
 
 /**
  * 启动入口

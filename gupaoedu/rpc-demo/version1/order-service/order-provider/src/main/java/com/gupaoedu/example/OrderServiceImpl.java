@@ -1,4 +1,4 @@
-package com.gupaoedu.example;
+package com.gupaoedu.spring1xdemo;
 
 /**
  * 咕泡学院，只为更好的你

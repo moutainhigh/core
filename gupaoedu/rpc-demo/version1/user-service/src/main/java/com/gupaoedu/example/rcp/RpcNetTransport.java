@@ -1,6 +1,6 @@
-package com.gupaoedu.example.rcp;
+package com.gupaoedu.spring1xdemo.rcp;
 
-import com.gupaoedu.example.RpcRequest;
+import com.gupaoedu.spring1xdemo.RpcRequest;
 
 import java.io.IOException;
 import java.io.ObjectInput;

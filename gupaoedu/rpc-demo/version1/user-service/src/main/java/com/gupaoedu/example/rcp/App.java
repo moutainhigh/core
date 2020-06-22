@@ -1,6 +1,6 @@
-package com.gupaoedu.example.rcp;
+package com.gupaoedu.spring1xdemo.rcp;
 
-import com.gupaoedu.example.IOrderService;
+import com.gupaoedu.spring1xdemo.IOrderService;
 
 /**
  * Hello world!

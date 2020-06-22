@@ -1,6 +1,6 @@
-package com.gupaoedu.example.rcp;
+package com.gupaoedu.spring1xdemo.rcp;
 
-import com.gupaoedu.example.RpcRequest;
+import com.gupaoedu.spring1xdemo.RpcRequest;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
