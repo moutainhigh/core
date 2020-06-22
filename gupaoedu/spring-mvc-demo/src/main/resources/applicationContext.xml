@@ -21,7 +21,7 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
     <!-- Spring 1.x   -->
-    <bean name="helloService" class="com.gupaoedu.spring1xdemo.HelloService"/>
+    <bean name="helloService" class="com.gupaoedu.spring.example.spring1xdemo.HelloService"/>
 
     <!-- Spring 2.x  自动扫描包路径 -->
     <context:component-scan base-package="com.gupaoedu"/>
