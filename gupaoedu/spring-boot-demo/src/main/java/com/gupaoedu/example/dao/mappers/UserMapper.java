@@ -1,6 +1,7 @@
-package com.gupaoedu.spring.example.spring1xdemo.dao.mappers;
+package com.gupaoedu.example.dao.mappers;
 
-import com.gupaoedu.spring1xdemo.dao.entity.User;
+
+import com.gupaoedu.example.dao.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

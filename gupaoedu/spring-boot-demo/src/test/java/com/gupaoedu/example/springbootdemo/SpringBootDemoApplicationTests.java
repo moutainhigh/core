@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.spring1xdemo.springbootdemo;
+package com.gupaoedu.example.springbootdemo;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

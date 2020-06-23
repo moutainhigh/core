@@ -1,6 +1,7 @@
-package com.gupaoedu.spring.example.spring1xdemo.services;
+package com.gupaoedu.example.services;
 
-import com.gupaoedu.spring1xdemo.dao.entity.User;
+
+import com.gupaoedu.example.dao.entity.User;
 
 /**
  * 咕泡学院，只为更好的你

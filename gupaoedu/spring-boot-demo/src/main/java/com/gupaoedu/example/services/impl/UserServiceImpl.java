@@ -1,8 +1,9 @@
-package com.gupaoedu.spring.example.spring1xdemo.services.impl;
+package com.gupaoedu.example.services.impl;
 
-import com.gupaoedu.spring1xdemo.dao.entity.User;
-import com.gupaoedu.spring1xdemo.dao.mappers.UserMapper;
-import com.gupaoedu.spring1xdemo.services.IUserService;
+
+import com.gupaoedu.example.dao.entity.User;
+import com.gupaoedu.example.dao.mappers.UserMapper;
+import com.gupaoedu.example.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
  **/
 
 @Service
-public class UserServiceImpl implements IUserService{
+public class UserServiceImpl implements IUserService {
 
     @Autowired
     UserMapper userMapper;  //代理对象

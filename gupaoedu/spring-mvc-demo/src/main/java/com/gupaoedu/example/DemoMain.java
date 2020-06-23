@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.spring1xdemo;
+package com.gupaoedu.example;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;

@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.spring1xdemo.dao.entity;
+package com.gupaoedu.example.dao.entity;
 
 /**
  * 咕泡学院，只为更好的你

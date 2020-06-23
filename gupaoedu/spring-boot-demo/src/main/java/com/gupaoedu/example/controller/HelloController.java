@@ -1,7 +1,8 @@
-package com.gupaoedu.spring.example.spring1xdemo.controller;
+package com.gupaoedu.example.controller;
 
-import com.gupaoedu.spring1xdemo.dao.entity.User;
-import com.gupaoedu.spring1xdemo.services.IUserService;
+
+import com.gupaoedu.example.dao.entity.User;
+import com.gupaoedu.example.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
