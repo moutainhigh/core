@@ -1,6 +1,6 @@
 package com.gupaoedu.spring.example.spring3xdemo;
 
-import com.gupaoedu.spring3xdemo.otherconfig.ImportConfiguration;
+import com.gupaoedu.spring.example.spring3xdemo.otherconfig.ImportConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 /**
  * Spring 3.x 去xml化，通过spirng注解驱动去加载bean
  **/
-@ComponentScan("com.gupaoedu.spring3xdemo")   // 等同于<context:component-scan base-package="com.gupaoedu"/>
+@ComponentScan("com.gupaoedu.spring.example.spring3xdemo")   // 等同于<context:component-scan base-package="com.gupaoedu"/>
 @Configuration  //<applicationContext.xml
 @Import(ImportConfiguration.class) // 加载另外一个配置文件 动态导入
 public class SpringConfiguration {

@@ -1,6 +1,6 @@
 package com.gupaoedu.spring.example.spring3xdemo;
 
-import com.gupaoedu.spring3xdemo.otherconfig.ImportConfiguration;
+import com.gupaoedu.spring.example.spring3xdemo.otherconfig.ImportConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
