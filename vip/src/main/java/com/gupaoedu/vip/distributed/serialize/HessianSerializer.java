@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.serialize;
 
 import com.caucho.hessian.io.HessianInput;
 import com.caucho.hessian.io.HessianOutput;

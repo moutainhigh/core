@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.vip.distributed.serialize;
+package com.gupaoedu.vip.distributed.serialize;
 
 import java.io.*;
 

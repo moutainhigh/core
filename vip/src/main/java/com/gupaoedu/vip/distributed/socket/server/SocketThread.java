@@ -1,4 +1,4 @@
-package com.gupaoedu.spring.example.vip.distributed.socket.server;
+package com.gupaoedu.vip.distributed.socket.server;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
