@@ -1,0 +1,17 @@
+// 固定语法
+syntax="proto2";
+
+package com.gupaoedu.vip.distributed.serialize.protobuf;
+
+// 包的路径
+option java_package="com.gupaoedu.vip.distributed.serialize.protobuf";
+// 类的名字
+option java_outer_classname="UserProto";
+
+
+// User为proto的文件名字
+message User{
+    // require说表示是唯一的，这里的1和2表示字段的顺序
+    required string name=1;
+    required int32 age=2;
+}

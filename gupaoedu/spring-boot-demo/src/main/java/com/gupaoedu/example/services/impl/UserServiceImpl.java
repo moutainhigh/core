@@ -1,6 +1,5 @@
 package com.gupaoedu.example.services.impl;
 
-
 import com.gupaoedu.example.dao.entity.User;
 import com.gupaoedu.example.dao.mappers.UserMapper;
 import com.gupaoedu.example.services.IUserService;
