@@ -14,7 +14,7 @@ public class MyTest {
     @Test
     public void test() {
         ApplicationContext app = new AnnotationConfigApplicationContext(MyConfig.class);
-        Object bean = app.getBean("person");
+        Object bean = app.getBean("person1");
         System.out.println(bean);
 
         String [] beanNames = app.getBeanNamesForType(Person.class);

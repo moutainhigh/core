@@ -9,7 +9,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.stereotype.Controller;
 
 @Configuration
-@ComponentScan(value = "com.gupaoedu.project",
+@ComponentScan(value = "com.gupaoedu.demo.annotaions.configures.component",
 //        includeFilters = {@Filter(type = FilterType.ANNOTATION,value = {Component.class})},
         includeFilters = {@Filter(type = FilterType.ANNOTATION,value = {Controller.class})},
         useDefaultFilters = false)

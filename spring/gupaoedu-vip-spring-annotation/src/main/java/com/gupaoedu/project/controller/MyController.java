@@ -9,5 +9,7 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 public class MyController {
-    @Autowired private MyService service;
+
+    @Autowired
+    private MyService service;
 }

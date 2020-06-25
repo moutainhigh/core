@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @Configuration
-@ComponentScan(value = "com.gupaoedu.project",
+@ComponentScan(value = "com.gupaoedu.demo.annotaions.configures.componentscan",
 //                includeFilters = {@Filter(type = FilterType.ANNOTATION,value = {Controller.class})},
 //                includeFilters = {@Filter(type = FilterType.ASSIGNABLE_TYPE,value = {MyController.class})},
 //                  includeFilters = {@Filter(type = FilterType.CUSTOM,value = {GPTypeFilter.class})},

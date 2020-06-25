@@ -11,9 +11,9 @@ import java.util.Arrays;
 public class Test {
     public static void main(String[] args) {
         ApplicationContext app = new AnnotationConfigApplicationContext(MyConfig.class);
-        String [] beanNames = app.getBeanDefinitionNames();
+        String[] beanNames = app.getBeanDefinitionNames();
         System.out.println(Arrays.toString(beanNames)
-                .replaceAll("\\[|\\]","")
-                .replaceAll(", ","\n"));
+                .replaceAll("\\[|\\]", "")
+                .replaceAll(", ", "\n"));
     }
 }
