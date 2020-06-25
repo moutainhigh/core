@@ -2,17 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.csf.gupaoedu.vip</groupId>
-    <artifactId>demo</artifactId>
+    <groupId>com.csf.gupaoedu</groupId>
+    <artifactId>spi</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>spring-boot-demo</name>
-    <description>gupaoedu vip spring boot demo</description>
+    <name>spi driver-use</name>
+    <description>gupaoedu vip spi demo</description>
 
     <modules>
-        <module>demo</module>
-        <module>spi</module>
-        <module>starter</module>
+        <module>driver-api</module>
+        <module>driver-impl</module>
+        <module>driver-use</module>
     </modules>
 </project>
