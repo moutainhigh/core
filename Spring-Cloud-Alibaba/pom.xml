@@ -16,10 +16,9 @@
 	<module>sentinel-dashboard</module>
 	<module>spi</module>
 	<module>spring-boot-conditional</module>
-	<module>springboot-consumer</module>
+	<module>spring-boot-dubbo</module>
 	<module>spring-boot-dubbo-nacos-sample</module>
 	<module>spring-boot-nacos-discovery</module>
-	<module>springboot-provider</module>
 	<module>spring-cloud-dubbo-consumer</module>
 	<module>spring-cloud-dubbo-sample</module>
 	<module>spring-cloud-gateway-sample</module>
@@ -35,12 +34,10 @@
 	<module>spring-cloud-sentinel-dubbo-provider</module>
 	<module>spring-cloud-sentinel-dynamic-rule</module>
 	<module>spring-cloud-sentinel-sample</module>
-	<module>user-service</module>
-	
+
   </modules>
 
   <name>Spring-Cloud-Alibaba</name>
   <url>http://www.example.com</url>
-
 
 </project>
