@@ -3,6 +3,7 @@ package com.gupaoedu.book.dubbo.springbootconsumer;
 import com.gupaoedu.book.dubbo.IHelloService;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloController {
 
-    @Reference(url = "dubbo://192.168.13.1:20880/com.gupaoedu.book.dubbo.IHelloService")
+//    @Reference(url = "dubbo://192.168.13.1:20880/com.gupaoedu.book.dubbo.IHelloService")
+    @Reference(url = "dubbo://localhost:20880/com.gupaoedu.book.dubbo.IHelloService")
     private IHelloService helloService;
 
     @GetMapping("/say")
     public String sayHello(){
+        System.out.println("do...");
         return helloService.sayHello("Mic");
     }
 
