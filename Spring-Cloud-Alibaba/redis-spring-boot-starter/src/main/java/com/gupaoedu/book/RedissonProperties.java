@@ -16,7 +16,9 @@ public class RedissonProperties {
     private String host = "localhost";
     private String password;
     private int port = 6379;
+    // 超时时间
     private int timeout;
+    // 加密
     private boolean ssl;
 
     public String getHost() {return host;}
