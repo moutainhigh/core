@@ -18,24 +18,29 @@ import org.springframework.util.StringUtils;
  * create-date: 2020/1/3-19:30
  */
 @Configuration
+// 条件装配 在classpath存在Redisson类时才将RedissonAutoConfiguration装载，不存在时不装载
 @ConditionalOnClass(Redisson.class)
+// 自动将RedissonProperties类装配到Spring容器
 @EnableConfigurationProperties(RedissonProperties.class)
 public class RedissonAutoConfiguration {
     @Autowired
     RedissonProperties redissonProperties;
+
     @Bean
-    RedissonClient redissonClient(){
-       Config config=new Config();
-       String prefix="redis://";
-       if(redissonProperties.isSsl()){
-           prefix="rediss://";
-       }
-       SingleServerConfig singleServerConfig=config.useSingleServer()
-               .setAddress(prefix+redissonProperties.getHost()+":"+redissonProperties.getPort())
-               .setConnectTimeout(redissonProperties.getTimeout());
-       if(!StringUtils.isEmpty(redissonProperties.getPassword())){
-           singleServerConfig.setPassword(redissonProperties.getPassword());
-       }
-       return Redisson.create(config);
+    RedissonClient redissonClient() {
+        Config config = new Config();
+        String prefix = "redis://";
+
+        // 是否加密判断
+        if (redissonProperties.isSsl()) {
+            prefix = "rediss://";
+        }
+        SingleServerConfig singleServerConfig = config.useSingleServer()
+                .setAddress(prefix + redissonProperties.getHost() + ":" + redissonProperties.getPort())
+                .setConnectTimeout(redissonProperties.getTimeout());
+        if (!StringUtils.isEmpty(redissonProperties.getPassword())) {
+            singleServerConfig.setPassword(redissonProperties.getPassword());
+        }
+        return Redisson.create(config);
     }
 }

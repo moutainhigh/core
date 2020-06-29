@@ -1,2 +1,3 @@
+# 告诉spring boot在扫描的时候自动将RedissonAutoConfiguration进行装载
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.gupaoedu.book.RedissonAutoConfiguration
