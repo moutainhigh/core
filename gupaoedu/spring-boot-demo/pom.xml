@@ -14,5 +14,7 @@
         <module>demo</module>
         <module>spi</module>
         <module>starter</module>
+        <module>actuator</module>
+        <module>redisson-spring-boot-starter</module>
     </modules>
 </project>
