@@ -31,7 +31,7 @@ public class RedissonAutoConfiguration {
         config.useSingleServer().
                 setAddress(prefix + redissonProperties.getHost() + ":" + redissonProperties.getPort()).
                 setConnectTimeout(redissonProperties.getTimeout());
-
+        System.out.println("手写 redis 单机 starter组件");
         return Redisson.create(config);
     }
 }

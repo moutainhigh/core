@@ -34,20 +34,26 @@
 <!--            <optional>true</optional>-->
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring-context</artifactId>-->
+<!--            <version>5.2.7.RELEASE</version>-->
+<!--&lt;!&ndash;            <version>5.1.7.RELEASE</version>&ndash;&gt;-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>3.13.1</version>
         </dependency>
 
-        <!-- 加入配置文件自动提示，让使用此组件，在添加配置文件属性时候自动提示 -->
+        <!-- 加入配置文件自动提示，让使用此组件的项目，在添加配置文件属性时候自动提示 -->
         <!-- 加入好之后还需要增加additional-spring-configuration-metadata.json文件-->
-        <!-- additional-spring-configuration-metadata.json文件为解析文件的属性和配置-->
+        <!-- additional-spring-configuration-metadata.json文件为解析文件的属性和配置， 文件名称跟内容配置都是固定的-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-<!--            <version>2.3.1.RELEASE</version>-->
-            <version>2.2.4.RELEASE</version>
+            <version>2.3.1.RELEASE</version>
         </dependency>
 
     </dependencies>

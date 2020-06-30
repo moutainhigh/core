@@ -1,21 +1,23 @@
-package com.gupaoedu.example.springbootdemo02;
+package com.gupaoedu.example.jmxdemo;
 
 /**
- * 咕泡学院，只为更好的你
- * 咕泡学院-Mic: 2227324689
- * http://www.gupaoedu.com
+ * 接口的实现类名称去掉MBean
  **/
-public class SystemInfo implements SystemInfoMBean{
+public class SystemInfo implements SystemInfoMBean {
+
+    // 获取cpu核数
     @Override
     public int getCpuCore() {
         return Runtime.getRuntime().availableProcessors();
     }
 
+    // 获取总内存
     @Override
     public long getTotalMemory() {
         return Runtime.getRuntime().totalMemory();
     }
 
+    // 关机
     @Override
     public void shutdown() {
         System.exit(0);

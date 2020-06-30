@@ -1,4 +1,4 @@
-package com.gupaoedu.example.springbootdemo02;
+package com.gupaoedu.example;
 
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
