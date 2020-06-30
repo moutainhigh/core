@@ -28,9 +28,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>2.3.1.RELEASE</version>
+            <version>2.2.4.RELEASE</version>
+<!--            <version>2.3.1.RELEASE</version>-->
             <!-- 禁止依赖传递 -->
-            <optional>true</optional>
+<!--            <optional>true</optional>-->
         </dependency>
 
         <dependency>
@@ -45,7 +46,8 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
-            <version>2.3.1.RELEASE</version>
+<!--            <version>2.3.1.RELEASE</version>-->
+            <version>2.2.4.RELEASE</version>
         </dependency>
 
     </dependencies>
