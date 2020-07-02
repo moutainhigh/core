@@ -16,5 +16,6 @@
         <module>starter</module>
         <module>actuator</module>
         <module>redisson-spring-boot-starter</module>
+        <module>spring-boot-annotation</module>
     </modules>
 </project>
