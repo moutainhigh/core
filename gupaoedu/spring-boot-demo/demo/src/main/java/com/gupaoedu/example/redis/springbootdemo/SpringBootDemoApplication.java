@@ -2,6 +2,7 @@ package com.gupaoedu.example.redis.springbootdemo;
 
 
 import com.gupaoedu.autoconfiguration.demo.GupaoEduCore;
+import com.gupaoedu.example.condition.conditionalonclass.BeanClass;
 import com.gupaoedu.example.redis.demo02.GpRedisTemplate;
 import com.gupaoedu.example.redis.demo02.RedisConfiguration;
 import com.gupaoedu.example.redis.demo03.GpSqlSessionFactory;
@@ -34,5 +35,10 @@ public class SpringBootDemoApplication {
         // 验证手写的starer是否成功调用
         GupaoEduCore bean = ca.getBean(GupaoEduCore.class);
         System.out.println(bean.study());
+
+        // 验证手写的starer组件2是否成功调用
+        BeanClass bean1 = ca.getBean(BeanClass.class);
+        bean1.print();
+        System.out.println(bean1);
     }
 }
