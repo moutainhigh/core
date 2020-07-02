@@ -1,3 +1,0 @@
-
-
-@ConditionalOnBean注解的作用是 容器中存在某个Bean时, 则进行当前Bean的装载(实例化)。

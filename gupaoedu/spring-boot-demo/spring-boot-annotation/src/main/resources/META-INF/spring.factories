@@ -1,3 +1,0 @@
-# 配置自动扫描
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.gupaoedu.example.condition.conditionalonclass.ConditionClassConfig
