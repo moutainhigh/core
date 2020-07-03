@@ -25,8 +25,10 @@ public class DipTest {
 
 
         //=====  V4  ========
+        // Spring中好多都是怎么干的，依赖倒置原则
         Tom tom = new Tom();
         tom.setiCourse(new JavaCourse());
+        //study方法的具体实现依赖于抽象 JavaCourse
         tom.study();
     }
 }

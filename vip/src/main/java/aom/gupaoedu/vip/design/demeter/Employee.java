@@ -9,6 +9,7 @@ import java.util.List;
 public class Employee {
 
     public void checkNumberOfCourses(){
+        /** 逻辑放到我自己的里面，这样别人就不知道我做了什么 */
         List<Course> courseList = new ArrayList<Course>();
         for (int i = 0; i < 20; i ++){
             courseList.add(new Course());

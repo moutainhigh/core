@@ -1,6 +1,7 @@
 package aom.gupaoedu.vip.design.dependencyinversion;
 
 /**
+ * 抽象实现二
  * Created by Tom on 2020/2/16.
  */
 public class PythonCourse implements ICourse {
