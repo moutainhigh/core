@@ -2,7 +2,7 @@ package com.gupaoedu.example.redis.springbootdemo;
 
 
 import com.gupaoedu.autoconfiguration.demo.GupaoEduCore;
-import com.gupaoedu.example.condition.conditionalonclass.BeanClass;
+import com.gupaoedu.example.configures.condition.conditionalonclass.BeanClass;
 import com.gupaoedu.example.redis.demo02.GpRedisTemplate;
 import com.gupaoedu.example.redis.demo02.RedisConfiguration;
 import com.gupaoedu.example.redis.demo03.GpSqlSessionFactory;
