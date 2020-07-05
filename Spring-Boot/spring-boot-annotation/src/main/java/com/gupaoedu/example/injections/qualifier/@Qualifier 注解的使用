@@ -1,0 +1,4 @@
+
+
+@Qualifier 注解作用：当容器中存在多个相同的类型Bean时，用Qualifier注解进行候选，指定要注入的明确的那个类型
+当使用@Qualifier 注解，没有指定注入确定的Bean，就会把所有加了@Qualifier注解的bean都注入过来。

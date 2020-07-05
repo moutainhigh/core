@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
  * @Author: fengleima  2020/7/2 14:49
  */
 @Configuration
-@EnableConfigurationProperties(ConfigBeanProp.class)
+@EnableConfigurationProperties(ConfigBeanProp.class)  // @EnableConfigurationProperties注解作用：自动将类RedissonProperties进行装配
 public class EnableBeanproperties {
 
 }
