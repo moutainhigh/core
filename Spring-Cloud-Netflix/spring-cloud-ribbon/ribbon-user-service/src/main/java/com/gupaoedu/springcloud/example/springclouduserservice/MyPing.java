@@ -4,15 +4,14 @@ import com.netflix.loadbalancer.IPing;
 import com.netflix.loadbalancer.Server;
 
 /**
- * 咕泡学院，只为更好的你
- * 咕泡学院-Mic: 2227324689
- * http://www.gupaoedu.com
+ * 设置自己ping服务器是否可用的策略 BaseLoadBalancer.etupPingTask默认每10秒执行一次
+ * 心跳
  **/
-public class MyPing implements IPing{
+public class MyPing implements IPing {
 
     @Override
     public boolean isAlive(Server server) {
-        System.out.println("isAlive"+server.getHost()+":"+server.getPort());
+        System.out.println("isAlive" + server.getHost() + ":" + server.getPort());
         return true;
     }
 }
