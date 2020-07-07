@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>order-api</artifactId>
+    <artifactId>orders-api</artifactId>
 
     <name>order-api</name>
     <!-- FIXME change it to the project's website -->

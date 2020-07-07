@@ -7,7 +7,8 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
- * Bean的动态装载
+ * ImportBeanDefinitionRegistrar的作用是Bean的动态装载
+ * 定义一个ImportBeanDefinitionRegistrar的实现，装载到IOC容器
  **/
 public class GpImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 

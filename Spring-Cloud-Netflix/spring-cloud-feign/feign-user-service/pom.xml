@@ -25,7 +25,7 @@
         </dependency>-->
 
         <dependency>
-            <artifactId>order-api</artifactId>
+            <artifactId>orders-api</artifactId>
             <groupId>com.gupaoedu.example</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

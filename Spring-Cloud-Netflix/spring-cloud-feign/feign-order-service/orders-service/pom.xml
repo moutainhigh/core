@@ -6,9 +6,10 @@
         <artifactId>feign-order-service</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.gupaoedu.example</groupId>
-    <artifactId>order-service</artifactId>
+    <artifactId>orders-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>order-service</name>
     <description>Demo project for Spring Boot</description>
@@ -21,7 +22,7 @@
 
     <dependencies>
         <dependency>
-            <artifactId>order-api</artifactId>
+            <artifactId>orders-api</artifactId>
             <groupId>com.gupaoedu.example</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>

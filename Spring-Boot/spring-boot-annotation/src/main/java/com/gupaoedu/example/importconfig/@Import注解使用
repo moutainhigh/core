@@ -1,0 +1,5 @@
+
+ImportBeanDefinitionRegistrar  动态装载 动态的把Bean装载到IOC容器。
+动态装载的功能实现，他相比于@Configuration配置注入，多了很多灵活性。
+
+@Import注解的作用是用来导入一个配置类。
