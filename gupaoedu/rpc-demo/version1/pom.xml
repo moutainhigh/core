@@ -11,7 +11,7 @@
 	<description>gupaoedu vip rpc-demo version1</description>
 
 	<modules>
-	    <module>order-service</module>
-		<module>user-service</module>
+	    <module>orders-services</module>
+		<module>users-services</module>
 	</modules>
 </project>

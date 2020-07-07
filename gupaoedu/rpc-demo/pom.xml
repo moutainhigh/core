@@ -11,7 +11,7 @@
 	<description>gupaoedu vip rpc-demo</description>
 
 	<modules>
-<!--	    <module>version1</module>-->
+	    <module>version1</module>
 		<module>version2</module>
 	</modules>
 </project>
