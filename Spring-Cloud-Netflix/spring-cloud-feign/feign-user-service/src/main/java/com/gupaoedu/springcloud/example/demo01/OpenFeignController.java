@@ -14,7 +14,7 @@ public class OpenFeignController {
 
 
     @Autowired
-    OrderServiceFeignClient orderServiceFeignClient;
+    OrderServiceFeignClient orderServiceFeignClient;  // 动态代理
 
     @GetMapping("/test")
     public String test(){
