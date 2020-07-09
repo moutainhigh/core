@@ -1,6 +1,11 @@
 
 
+http://localhost:8088/orders
+http://localhost:8082/orders
 http://localhost:8080/orders
+
+启动多个进程
+启动输入 -Dserver.port=8082
 
 Feign： http通信，伪RPC，和Ribbon结合使用。如果用OpenFeign离不开Ribbon。
 声明式的伪RPC,实现了远程通信的机制，提供了一种面相接口的代理的封装，默认继承Ribbon来完成负载均衡。
