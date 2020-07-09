@@ -4,18 +4,17 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.gupaoedu.netflix</groupId>
-  <artifactId>Spring-Cloud-Netflix</artifactId>
+  <groupId>com.gupaoedu.example</groupId>
+  <artifactId>spring-cloud-eureka</artifactId>
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  
-  <modules>
-    <module>spring-cloud-ribbon</module>
-    <module>spring-cloud-feign</module>
-    <module>spring-cloud-eureka</module>
-  </modules>
 
-  <name>Spring-Cloud-Netflix</name>
-  <url>http://spring.io</url>
+  <modules>
+    <module>spring-cloud-eureka-server</module>
+    <module>spring-cloud-eureka-server-02</module>
+
+    <module>eureka-client-order-service</module>
+    <module>eureka-client-user-service</module>
+  </modules>
 
 </project>
