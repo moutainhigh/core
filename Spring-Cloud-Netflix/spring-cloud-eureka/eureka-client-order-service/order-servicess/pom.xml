@@ -27,10 +27,13 @@
             <groupId>com.gupaoedu.example</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
+        <!-- 添加Eureka client 依赖 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
