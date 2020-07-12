@@ -91,6 +91,7 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 	 * @param configLocations array of resource locations
 	 * @throws BeansException if context creation failed
 	 */
+	// 基于XML的IOC容器的初始化的    入口
 	public ClassPathXmlApplicationContext(String... configLocations) throws BeansException {
 		this(configLocations, true, null);
 	}
@@ -138,11 +139,13 @@ public class ClassPathXmlApplicationContext extends AbstractXmlApplicationContex
 			String[] configLocations, boolean refresh, @Nullable ApplicationContext parent)
 			throws BeansException {
 
+		// 调用父类的构造方法设置Bean的资源加载器
 		super(parent);
+		// 设置Bean配置信息的定位路径
 		setConfigLocations(configLocations);
 		if (refresh) {
 			//重启、刷新、重置
-			refresh();
+			refresh();   // TODO 重点 跟进
 		}
 	}
 

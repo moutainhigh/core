@@ -97,7 +97,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		logger.debug("Loading bean definitions");
 		//获得Document的根元素
 		Element root = doc.getDocumentElement();
-		doRegisterBeanDefinitions(root);
+		doRegisterBeanDefinitions(root);   // TODO 重点 跟进
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		//在解析Bean定义之前，进行自定义的解析，增强解析过程的可扩展性
 		preProcessXml(root);
 		//从Document的根元素开始进行Bean定义的Document对象
-		parseBeanDefinitions(root, this.delegate);
+		parseBeanDefinitions(root, this.delegate);  // TODO 重点 跟进
 		//在解析Bean定义之后，进行自定义的解析，增加解析过程的可扩展性
 		postProcessXml(root);
 
@@ -188,7 +188,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 					//Bean定义的Document的元素节点使用的是Spring默认的XML命名空间
 					if (delegate.isDefaultNamespace(ele)) {
 						//使用Spring的Bean规则解析元素节点
-						parseDefaultElement(ele, delegate);
+						parseDefaultElement(ele, delegate);  // TODO 重点 跟进
 					}
 					else {
 						//没有使用Spring默认的XML命名空间，则使用用户自定义的解//析规则解析元素节点
@@ -218,7 +218,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		//元素节点既不是导入元素，也不是别名元素，即普通的<Bean>元素，
 		//按照Spring的Bean规则解析元素
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
-			processBeanDefinition(ele, delegate);
+			processBeanDefinition(ele, delegate);   // TODO 重要  跟进
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
 			// recurse
@@ -360,7 +360,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 			try {
 				// Register the final decorated instance.
 				//向Spring IOC容器注册解析得到的Bean定义，这是Bean定义向IOC容器注册的入口
-				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());
+				BeanDefinitionReaderUtils.registerBeanDefinition(bdHolder, getReaderContext().getRegistry());   // TODO 重要  跟进
 			}
 			catch (BeanDefinitionStoreException ex) {
 				getReaderContext().error("Failed to register bean definition with name '" +

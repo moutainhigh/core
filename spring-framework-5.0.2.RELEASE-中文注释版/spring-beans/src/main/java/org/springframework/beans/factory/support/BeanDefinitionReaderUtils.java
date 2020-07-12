@@ -150,7 +150,7 @@ public class BeanDefinitionReaderUtils {
 		//获取解析的BeanDefinition的名称
 		String beanName = definitionHolder.getBeanName();
 		//向IOC容器注册BeanDefinition
-		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());   // TODO 重要  跟进  DefaultListableBeanFactory
 
 		// Register aliases for bean name, if any.
 		//如果解析的BeanDefinition有别名，向容器为其注册别名

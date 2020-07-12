@@ -302,7 +302,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	@Override
 	public int loadBeanDefinitions(Resource resource) throws BeanDefinitionStoreException {
 		//将读入的XML资源进行特殊编码处理
-		return loadBeanDefinitions(new EncodedResource(resource));
+		return loadBeanDefinitions(new EncodedResource(resource));  // TODO 重点 跟进
 	}
 
 	/**
@@ -338,7 +338,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 					inputSource.setEncoding(encodedResource.getEncoding());
 				}
 				//这里是具体的读取过程
-				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());
+				return doLoadBeanDefinitions(inputSource, encodedResource.getResource());  // TODO 重点 跟进
 			}
 			finally {
 				//关闭从Resource中得到的IO流
@@ -398,7 +398,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 			//将XML文件转换为DOM对象，解析过程由documentLoader实现
 			Document doc = doLoadDocument(inputSource, resource);
 			//这里是启动对Bean定义解析的详细过程，该解析过程会用到Spring的Bean配置规则
-			return registerBeanDefinitions(doc, resource);
+			return registerBeanDefinitions(doc, resource);  // TODO 重点 跟进
 		}
 		catch (BeanDefinitionStoreException ex) {
 			throw ex;
@@ -519,7 +519,7 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		int countBefore = getRegistry().getBeanDefinitionCount();
 		//解析过程入口，这里使用了委派模式，BeanDefinitionDocumentReader只是个接口,
 		//具体的解析实现过程有实现类DefaultBeanDefinitionDocumentReader完成
-		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
+		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));  // TODO 重点 跟进 DefaultBeanDefinitionDocumentReader
 		//统计解析的Bean数量
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}

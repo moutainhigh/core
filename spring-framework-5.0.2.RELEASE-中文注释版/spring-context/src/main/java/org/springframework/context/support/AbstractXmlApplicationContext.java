@@ -98,7 +98,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 		//当Bean读取器读取Bean定义的Xml资源文件时，启用Xml的校验机制
 		initBeanDefinitionReader(beanDefinitionReader);
 		//Bean读取器真正实现加载的方法
-		loadBeanDefinitions(beanDefinitionReader);
+		loadBeanDefinitions(beanDefinitionReader); // TODO 重点 跟进
 	}
 
 	/**
@@ -132,7 +132,7 @@ public abstract class AbstractXmlApplicationContext extends AbstractRefreshableC
 		if (configResources != null) {
 			//Xml Bean读取器调用其父类AbstractBeanDefinitionReader读取定位
 			//的Bean定义资源
-			reader.loadBeanDefinitions(configResources);
+			reader.loadBeanDefinitions(configResources);  // TODO 重点 跟进
 		}
 		//如果子类中获取的Bean定义资源定位为空，则获取FileSystemXmlApplicationContext构造方法中setConfigLocations方法设置的资源
 		String[] configLocations = getConfigLocations();

@@ -754,7 +754,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	// Implementation of BeanDefinitionRegistry interface
 	//---------------------------------------------------------------------
 
-	//向IOC容器注册解析的BeanDefiniton
+	//向IOC容器注册解析的BeanDefiniton 最底层
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {
@@ -775,7 +775,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		BeanDefinition oldBeanDefinition;
 
-		oldBeanDefinition = this.beanDefinitionMap.get(beanName);
+		oldBeanDefinition = this.beanDefinitionMap.get(beanName);  // TODO  IOC容器终点站  先从IOC容器中获取
 
 		if (oldBeanDefinition != null) {
 			if (!isAllowBeanDefinitionOverriding()) {
@@ -805,7 +805,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							"] with [" + beanDefinition + "]");
 				}
 			}
-			this.beanDefinitionMap.put(beanName, beanDefinition);
+			this.beanDefinitionMap.put(beanName, beanDefinition); // 向IOC容器存入元素
 		}
 		else {
 			if (hasBeanCreationStarted()) {
@@ -826,7 +826,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 			}
 			else {
 				// Still in startup registration phase
-				this.beanDefinitionMap.put(beanName, beanDefinition);
+				this.beanDefinitionMap.put(beanName, beanDefinition);  // 向IOC容器存入元素
 				this.beanDefinitionNames.add(beanName);
 				this.manualSingletonNames.remove(beanName);
 			}

@@ -526,7 +526,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Tell the subclass to refresh the internal bean factory.
 			//2、告诉子类启动refreshBeanFactory()方法，Bean定义资源文件的载入从
 			//子类的refreshBeanFactory()方法启动
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();   // TODO 重点 跟进
 
 			// Prepare the bean factory for use in this context.
 			//3、为BeanFactory配置容器特性，例如类加载器、事件处理器等
@@ -640,7 +640,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 		//这里使用了委派设计模式，父类定义了抽象的refreshBeanFactory()方法，具体实现调用子类容器的refreshBeanFactory()方法
-		refreshBeanFactory();
+		refreshBeanFactory();  // TODO 重点 跟进 AbstractRefreshableApplicationContext
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);

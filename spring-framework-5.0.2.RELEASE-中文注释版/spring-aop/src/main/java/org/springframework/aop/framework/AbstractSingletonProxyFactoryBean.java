@@ -81,7 +81,7 @@ public abstract class AbstractSingletonProxyFactoryBean extends ProxyConfig
 
 	/**
 	 * Specify the set of interfaces being proxied.
-	 * <p>If not specified (the default), the AOP infrastructure works
+	 * <p>If not specified (the deInstrumentationSavingAgentfault), the AOP infrastructure works
 	 * out which interfaces need proxying by analyzing the target,
 	 * proxying all the interfaces that the target object implements.
 	 */
