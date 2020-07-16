@@ -18,10 +18,14 @@ spring:
         enabled: true
       refresh:
         enabled: true
+  # kafka地址 默认端口是9092,启动kafka之前必须启动zookeeper
   kafka:
-    bootstrap-servers: 192.168.216.128:9092
+    bootstrap-servers: 127.0.0.1:9092
     consumer:
       group-id: config-server
+  # 如果不想用远程配置，可以配置spring.profiles.active=native
+#  profiles:
+#    active: native
 
 # 端口
 server:
@@ -37,3 +41,5 @@ management:
     web:
       exposure:
         include: bus-refresh
+
+
