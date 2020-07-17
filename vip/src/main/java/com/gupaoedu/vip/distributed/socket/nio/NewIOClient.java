@@ -1,4 +1,4 @@
-package com.gupaoedu.vip.distributed.socket.client;
+package com.gupaoedu.vip.distributed.socket.nio;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

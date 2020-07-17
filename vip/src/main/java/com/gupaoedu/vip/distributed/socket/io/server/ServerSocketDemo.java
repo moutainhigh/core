@@ -1,4 +1,4 @@
-package com.gupaoedu.vip.distributed.socket.server;
+package com.gupaoedu.vip.distributed.socket.io.server;
 
 
 import java.io.*;
@@ -8,16 +8,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 咕泡学院，只为更好的你
- * 咕泡学院-Mic: 2227324689
- * http://www.gupaoedu.com
+ * 使用线程池解决IO阻塞问题
  **/
 public class ServerSocketDemo {
-
     static ExecutorService executorService = Executors.newFixedThreadPool(20);
 
     public static void main(String[] args) {
         ServerSocket serverSocket = null;
+        System.out.println("开始监听");
         try {
             //localhost: 8080
             serverSocket = new ServerSocket(8080);
@@ -38,7 +36,6 @@ public class ServerSocketDemo {
                 }
             }
         }
-
     }
 
 }
