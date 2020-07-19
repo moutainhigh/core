@@ -12,15 +12,17 @@ spring:
           uri: https://gitee.com/mafenglei/spring-cloud-conifg-server.git
           username: mafenglei
           password: mfl900114@
+    #  开启bus的配置
     bus:
       enabled: true
       trace:
         enabled: true
       refresh:
         enabled: true
-  # kafka地址 默认端口是9092,启动kafka之前必须启动zookeeper
+  # 配置kafka地址 默认端口是9092,启动kafka之前必须启动zookeeper
   kafka:
     bootstrap-servers: 127.0.0.1:9092
+    # kafaka分组信息 不同组可以收到不同的消息
     consumer:
       group-id: config-server
   # 如果不想用远程配置，可以配置spring.profiles.active=native
@@ -36,6 +38,8 @@ eureka:
   client:
     service-url:
        defaultZone: http://localhost:9090/eureka
+
+# 配置消息总线bus的信息，开放刷新refresh的端点，就是后面刷线的话，就会触发这个端点
 management:
   endpoints:
     web:

@@ -46,10 +46,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- 加入@RefreshScope注解后，这里需要加actuator依赖，配置文件还要增加主动刷新配置
+            management.endpoints.web.exposure.include=refresh，然后发送post请求去主动刷新-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!-- 引入消息总线bus，bus底层使用kafka  -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>

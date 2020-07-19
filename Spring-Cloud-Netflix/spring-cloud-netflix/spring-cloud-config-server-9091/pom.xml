@@ -43,14 +43,21 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
+
+
+        <!-- 引入消息总线bus，bus底层使用kafka  -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bus-kafka</artifactId>
         </dependency>
+
+        <!-- 可以去触发刷新，所以要引入acutator-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+
+        <!--   把地址配置在git上去触发http://localhost:9091/actuator/bus-refresh地址，发现返回的josn数据无法解析，所以在spring boot2x版本以上 提供了一个monitor端点解决，所以要引入包     -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-monitor</artifactId>

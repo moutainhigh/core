@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 咕泡学院-Mic: 2227324689
  * http://www.gupaoedu.com
  **/
-@RefreshScope
+@RefreshScope  // 这个注解的作用是当git上配置文件更新的时候，下面获取的值能实时去刷新 还需要增加依赖，增加配置，发送post请求
 @RestController
 public class ConfigController {
 

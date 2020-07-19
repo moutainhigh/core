@@ -1,8 +1,11 @@
+#  在spring boot项目中 会优先加载bootstrap.yml文件，然后再去加载application.yml文件
+
 spring:
   cloud:
     config:
       discovery:
         enabled: true
+        # 从下面配置的eureka上找到spring-cloud-config-server-9091服务进行访问
         service-id: spring-cloud-config-server-9091
 eureka:
   client:

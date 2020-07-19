@@ -1,0 +1,8 @@
+
+
+bootstrap.yml   如果希望外部配置（远程配置）文件优先加载可以使用bootstrap.yml
+在spring boot项目中 会优先加载bootstrap.yml文件，然后再去加载application.yml文件
+
+
+http://localhost:8082/config
+访问后 信息从远程配置中心读取配置

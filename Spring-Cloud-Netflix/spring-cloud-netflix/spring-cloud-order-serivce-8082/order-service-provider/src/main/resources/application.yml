@@ -1,16 +1,21 @@
 spring:
   application:
     name: order-service
+  # 开启bus的功能
   cloud:
     bus:
       enabled: true
+  # 配置kafka的地址信息  默认端口是9092,启动kafka之前必须启动zookeeper
   kafka:
-    bootstrap-servers: 192.168.216.128:9092
+    bootstrap-servers: 127.0.0.1:9092
+    #kafka消息分组，实现不同组消息订阅
     consumer:
       group-id: order-service
 server:
   port: 8082
 
+
+# 主动去刷新
 management:
   endpoints:
     web:
