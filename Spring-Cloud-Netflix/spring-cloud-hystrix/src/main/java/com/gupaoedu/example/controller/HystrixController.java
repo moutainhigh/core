@@ -15,8 +15,8 @@ import org.springframework.web.client.RestTemplate;
  * 从熔断开启到后续5s之内的请求，都不会发起到远程服务器端。
  *
  * 默认是关闭的
- * http://localhsot:8081/hystrix/order/1   访问多次后 触发熔断，然后在访问下面的2地址，发现2也不能访问了，过了会2又能访问了
- * http://localhsot:8081/hystrix/order/2
+ * http://localhost:9999/hystrix/order/1   访问多次后 触发熔断，然后在访问下面的2地址，发现2也不能访问了，过了会2又能访问了
+ * http://localhost:9999/hystrix/order/2
  **/
 @DefaultProperties(defaultFallback = "fallback")
 @RestController
