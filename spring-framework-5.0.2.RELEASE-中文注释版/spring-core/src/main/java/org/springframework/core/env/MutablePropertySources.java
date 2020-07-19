@@ -39,10 +39,12 @@ import org.springframework.lang.Nullable;
  * @since 3.1
  * @see PropertySourcesPropertyResolver
  */
+// 可变的
 public class MutablePropertySources implements PropertySources {
 
 	private final Log logger;
 
+	// 这里包括加载的所有的环境dev pro  test 所有的配置文件
 	private final List<PropertySource<?>> propertySourceList = new CopyOnWriteArrayList<>();
 
 

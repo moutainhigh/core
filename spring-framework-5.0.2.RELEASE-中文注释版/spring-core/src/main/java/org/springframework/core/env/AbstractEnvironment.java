@@ -119,6 +119,8 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * appropriate.
 	 * @see #customizePropertySources(MutablePropertySources)
 	 */
+	// 在构造方法里面调用 customizePropertySources方法，而当前类并没有实现，最终调用的是用的是
+	// 被StandardServletEnvironment重写的方法
 	public AbstractEnvironment() {
 		customizePropertySources(this.propertySources);
 		if (logger.isDebugEnabled()) {
@@ -202,6 +204,8 @@ public abstract class AbstractEnvironment implements ConfigurableEnvironment {
 	 * @see PropertySourcesPropertyResolver
 	 * @see org.springframework.context.ApplicationContextInitializer
 	 */
+	// 这个方法允许被子类重写  -> StandardEnvironment -> StandardServletEnvironment 最终调
+	// 用的是被StandardServletEnvironment重写的方法
 	protected void customizePropertySources(MutablePropertySources propertySources) {
 	}
 

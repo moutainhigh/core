@@ -1,0 +1,2 @@
+org.springframework.cloud.bootstrap.BootstrapConfiguration=\
+  com.gupaoedu.environment.sourceloader.JsonProperySourceLocator

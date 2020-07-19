@@ -51,6 +51,7 @@ package org.springframework.core.env;
  * @see SystemEnvironmentPropertySource
  * @see org.springframework.web.context.support.StandardServletEnvironment
  */
+// 标准环境变量
 public class StandardEnvironment extends AbstractEnvironment {
 
 	/** System environment property source name: {@value} */
@@ -75,6 +76,8 @@ public class StandardEnvironment extends AbstractEnvironment {
 	 */
 	@Override
 	protected void customizePropertySources(MutablePropertySources propertySources) {
+		// 放入系统环境变量
+		// 这里是addLast操作，最先先加载的会在最上面，最后加载的会在最后面
 		propertySources.addLast(new MapPropertySource(SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));
 		propertySources.addLast(new SystemEnvironmentPropertySource(SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));
 	}

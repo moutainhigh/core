@@ -1,0 +1,14 @@
+
+
+server:
+  port: 8080
+
+envt: Hello,Word
+#env: ${random.long}
+
+# spring boot 在启动的时候会去加载application-prd.yml配置
+# 在启动时候idea 加 VM options 启动参数 -Dspring.profiles.active=prd
+spring:
+  profiles:
+#    active: dev
+    active: ${env}
