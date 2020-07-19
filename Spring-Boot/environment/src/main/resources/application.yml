@@ -10,5 +10,5 @@ envt: Hello,Word
 # 在启动时候idea 加 VM options 启动参数 -Dspring.profiles.active=prd
 spring:
   profiles:
-#    active: dev
-    active: ${env}
+    active: dev
+#    active: ${env}
