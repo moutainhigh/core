@@ -11,27 +11,8 @@ import org.springframework.stereotype.Component;
  * http://www.gupaoedu.com
  **/
 
-//@FeignClient("order-service")
-//public interface OrderServiceFeignClient extends OrderService{
-//
-//}
-
-
-@FeignClient(value = "order-service",fallback = OrderServiceFeignClient.OrderServiceFeignClientFallback.class)
+@FeignClient("order-service")
 public interface OrderServiceFeignClient extends OrderService{
 
-    @Component
-    class OrderServiceFeignClientFallback implements OrderServiceFeignClient{
-
-        @Override
-        public String orders() {
-            return "查询订单失败，请稍候重试";
-        }
-
-        @Override
-        public int insert(OrderDto dto) {
-            System.out.println("insert失败");
-            return -1;
-        }
-    }
 }
+
