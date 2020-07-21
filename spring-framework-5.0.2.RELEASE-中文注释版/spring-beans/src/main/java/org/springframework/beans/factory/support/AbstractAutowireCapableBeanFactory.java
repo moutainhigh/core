@@ -156,6 +156,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	private final NamedThreadLocal<String> currentlyCreatedBean = new NamedThreadLocal<>("Currently created bean");
 
 	/** Cache of unfinished FactoryBean instances: FactoryBean name --> BeanWrapper */
+	// 用来存BeanWrapper
 	private final Map<String, BeanWrapper> factoryBeanInstanceCache = new ConcurrentHashMap<>(16);
 
 	/** Cache of filtered PropertyDescriptors: bean Class -> PropertyDescriptor array */
@@ -466,7 +467,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 * populates the bean instance, applies post-processors, etc.
 	 * @see #doCreateBean
 	 */
-	//创建Bean实例对象
+	//创建Bean实例对象   mdb为拿到所有对象的配置信息
 	@Override
 	protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
 			throws BeanCreationException {
@@ -511,7 +512,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			//创建Bean的入口
-			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+			Object beanInstance = doCreateBean(beanName, mbdToUse, args);   // TODO 重要 跟进
 			if (logger.isDebugEnabled()) {
 				logger.debug("Finished creating instance of bean '" + beanName + "'");
 			}
@@ -552,11 +553,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Instantiate the bean.
 		//封装被创建的Bean对象
 		BeanWrapper instanceWrapper = null;
+		// 判断是不是单利
 		if (mbd.isSingleton()) {
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
-			instanceWrapper = createBeanInstance(beanName, mbd, args);
+			instanceWrapper = createBeanInstance(beanName, mbd, args); // 负责创建对象   // TODO 可以看看
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
 		//获取实例化对象的类型
@@ -599,8 +601,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		//这个exposedObject在初始化完成之后返回作为依赖注入完成后的Bean
 		Object exposedObject = bean;
 		try {
-			//将Bean实例对象封装，并且Bean定义中配置的属性值赋值给实例对象
-			populateBean(beanName, mbd, instanceWrapper);
+			//将Bean实例对象封装，并且Bean定义中配置的属性值赋值给实例对象   负责依赖注入
+			populateBean(beanName, mbd, instanceWrapper);   // TODO 重要 跟进
 			//初始化Bean对象
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
@@ -1152,7 +1154,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			else {
 				//使用默认的无参构造方法实例化
-				return instantiateBean(beanName, mbd);
+				return instantiateBean(beanName, mbd);   // TODO 重要 跟进
 			}
 		}
 
@@ -1215,7 +1217,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			registerDependentBean(beanName, currentlyCreatedBean);
 		}
 
-		return super.getObjectForBeanInstance(beanInstance, name, beanName, mbd);
+		return super.getObjectForBeanInstance(beanInstance, name, beanName, mbd);    // TODO 重要 跟进 AbstractBeanFactory
 	}
 
 	/**
@@ -1265,7 +1267,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			else {
 				//将实例化的对象封装起来
-				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);
+				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);   // TODO 重要 跟进 SimpleInstantiationStrategy
 			}
 			BeanWrapper bw = new BeanWrapperImpl(beanInstance);
 			initBeanWrapper(bw);
@@ -1405,7 +1407,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		if (pvs != null) {
 			//对属性进行注入
-			applyPropertyValues(beanName, mbd, bw, pvs);
+			applyPropertyValues(beanName, mbd, bw, pvs);  // TODO 重要 跟进
 		}
 	}
 
@@ -1738,7 +1740,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		// Set our (possibly massaged) deep copy.
 		//进行属性依赖注入
 		try {
-			bw.setPropertyValues(new MutablePropertyValues(deepCopy));
+			bw.setPropertyValues(new MutablePropertyValues(deepCopy));  // TODO 重要 跟进 AbstractPropertyAccessor
 		}
 		catch (BeansException ex) {
 			throw new BeanCreationException(

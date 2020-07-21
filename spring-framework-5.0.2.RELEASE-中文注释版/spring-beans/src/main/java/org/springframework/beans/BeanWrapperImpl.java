@@ -324,6 +324,7 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 					return null;
 				});
 				try {
+					// 用反射调用setter方法完成赋值  最底层了 结束
 					AccessController.doPrivileged((PrivilegedExceptionAction<Object>) () ->
 							writeMethod.invoke(getWrappedInstance(), value), acc);
 				}

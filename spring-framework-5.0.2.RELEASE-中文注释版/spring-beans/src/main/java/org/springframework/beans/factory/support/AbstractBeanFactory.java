@@ -153,7 +153,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	@Override
 	public Object getBean(String name) throws BeansException {
 		//doGetBean才是真正向IoC容器获取被管理Bean的过程
-		return doGetBean(name, null, null, false);
+		return doGetBean(name, null, null, false); // TODO 重要 跟进
 	}
 
 	//获取IOC容器中指定名称和类型的Bean
@@ -302,7 +302,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							//创建一个指定Bean实例对象，如果有父级继承，则合并子类和父类的定义
-							return createBean(beanName, mbd, args);
+							return createBean(beanName, mbd, args);   // TODO 重要 跟进  AbstractAutowireCapableBeanFactory
 						}
 						catch (BeansException ex) {
 							// Explicitly remove instance from singleton cache: It might have been put there
@@ -313,8 +313,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 							throw ex;
 						}
 					});
-					//获取给定Bean的实例对象
-					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
+					//获取给定Bean的实例对象  缓存
+					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd); // TODO  AbstractAutowireCapableBeanFactory 可以看看代码
 				}
 
 				//IOC容器创建原型模式Bean实例对象

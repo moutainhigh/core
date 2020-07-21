@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry {
 
 	/** Cache of singleton objects created by FactoryBeans: FactoryBean name --> object */
+	// 缓存
 	private final Map<String,  Object> factoryBeanObjectCache = new ConcurrentHashMap<>(16);
 
 

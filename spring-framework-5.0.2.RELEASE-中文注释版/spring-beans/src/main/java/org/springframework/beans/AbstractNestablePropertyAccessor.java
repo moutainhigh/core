@@ -254,7 +254,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			nestedPa.setPropertyValue(tokens, pv);
 		}
 		else {
-			setPropertyValue(tokens, pv);
+			setPropertyValue(tokens, pv); // TODO 重要 跟进
 		}
 	}
 
@@ -264,7 +264,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			processKeyedProperty(tokens, pv);
 		}
 		else {
-			processLocalProperty(tokens, pv);
+			processLocalProperty(tokens, pv);  // TODO 重要 跟进
 		}
 	}
 
@@ -463,7 +463,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 				}
 				pv.getOriginalPropertyValue().conversionNecessary = (valueToApply != originalValue);
 			}
-			ph.setValue(valueToApply);
+			ph.setValue(valueToApply);  // TODO 重要 跟进  BeanPropertyHandler in BeanWrapperImpl
 		}
 		catch (TypeMismatchException ex) {
 			throw ex;

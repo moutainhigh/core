@@ -140,7 +140,7 @@ public interface BeanFactory {
 	 * @throws BeansException if the bean could not be obtained
 	 */
 	//根据bean的名字，获取在IOC容器中得到bean实例
-	Object getBean(String name) throws BeansException;
+	Object getBean(String name) throws BeansException;  // TODO 重要 跟进 AbstractBeanFactory
 
 	/**
 	 * Return an instance, which may be shared or independent, of the specified bean.

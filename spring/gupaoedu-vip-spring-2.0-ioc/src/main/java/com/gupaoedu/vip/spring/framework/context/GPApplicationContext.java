@@ -20,13 +20,13 @@ public class GPApplicationContext {
 
     private GPBeanDefinitionReader reader;
 
-    // 存储注册信息的BeanDefinition
+    // 存储注册信息的BeanDefinition  存储配置信息
     private Map<String,GPBeanDefinition> beanDefinitionMap = new HashMap<String, GPBeanDefinition>();
 
-    // 通用的IOC容器
+    // 通用的IOC容器  用来存储BeanWrapper的map， 存储原生Bean的包装类
     private Map<String,GPBeanWrapper> factoryBeanInstanceCache = new HashMap<String, GPBeanWrapper>();
 
-    // 单列的IOC容器缓存
+    // 单列的IOC容器缓存  存储反射创建出来的是的对象
     private Map<String,Object> factoryBeanObjectCache = new HashMap<String, Object>();
 
     public GPApplicationContext(String... configLocations) {
