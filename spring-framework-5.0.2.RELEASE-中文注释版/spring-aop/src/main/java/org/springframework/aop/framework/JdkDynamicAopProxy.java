@@ -124,7 +124,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 		}
 		Class<?>[] proxiedInterfaces = AopProxyUtils.completeProxiedInterfaces(this.advised, true);
 		findDefinedEqualsAndHashCodeMethods(proxiedInterfaces);
-		return Proxy.newProxyInstance(classLoader, proxiedInterfaces, this);
+		return Proxy.newProxyInstance(classLoader, proxiedInterfaces, this);  // TODO JDK代理代码
 	}
 
 	/**
@@ -202,26 +202,26 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			Class<?> targetClass = (target != null ? target.getClass() : null);
 
 			// Get the interception chain for this method.
-			//获取可以应用到此方法上的Interceptor列表
-			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
+			//获取可以应用到此方法上的Interceptor列表  （根据这个方法拿到这个方法的通知） 责任链模式
+			List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass); // TODO 重要 跟进
 
 			// Check whether we have any advice. If we don't, we can fallback on direct
 			// reflective invocation of the target, and avoid creating a MethodInvocation.
 			//如果没有可以应用到此方法的通知(Interceptor)，此直接反射调用 method.invoke(target, args)
-			if (chain.isEmpty()) {
-				// We can skip creating a MethodInvocation: just invoke the target directly
-				// Note that the final invoker must be an InvokerInterceptor so we know it does
-				// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
-				Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
-				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
-			}
-			else {
-				// We need to create a method invocation...
-				//创建MethodInvocation
-				invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
-				// Proceed to the joinpoint through the interceptor chain.
-				retVal = invocation.proceed();
-			}
+				if (chain.isEmpty()) {
+					// We can skip creating a MethodInvocation: just invoke the target directly
+					// Note that the final invoker must be an InvokerInterceptor so we know it does
+					// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
+					Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
+					retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
+				}
+				else {
+					// We need to create a method invocation...
+					//创建MethodInvocation，    ReflectiveMethodInvocation为通过反射调用方法
+					invocation = new ReflectiveMethodInvocation(proxy, target, method, args, targetClass, chain);
+					// Proceed to the joinpoint through the interceptor chain.
+					retVal = invocation.proceed(); // TODO   最重要 责任链跟踪    ReflectiveMethodInvocation
+				}
 
 			// Massage return value if necessary.
 			Class<?> returnType = method.getReturnType();

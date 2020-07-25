@@ -443,7 +443,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
 			//调用Bean实例所有的后置处理中的初始化后处理方法，为Bean实例对象在
 			//初始化之后做一些自定义的处理操作
-			Object current = beanProcessor.postProcessAfterInitialization(result, beanName);
+			Object current = beanProcessor.postProcessAfterInitialization(result, beanName);  // TODO 重要  跟进  AbstractAutoProxyCreator
 			if (current == null) {
 				return result;
 			}
@@ -604,7 +604,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			//将Bean实例对象封装，并且Bean定义中配置的属性值赋值给实例对象   负责依赖注入
 			populateBean(beanName, mbd, instanceWrapper);   // TODO 重要 跟进
 			//初始化Bean对象
-			exposedObject = initializeBean(beanName, exposedObject, mbd);
+			exposedObject = initializeBean(beanName, exposedObject, mbd);  //  TODO   这里是AOP的入口
 		}
 		catch (Throwable ex) {
 			if (ex instanceof BeanCreationException && beanName.equals(((BeanCreationException) ex).getBeanName())) {
@@ -1818,7 +1818,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		//对BeanPostProcessor后置处理器的postProcessAfterInitialization
 		//回调方法的调用，为Bean实例初始化之后做一些处理
 		if (mbd == null || !mbd.isSynthetic()) {
-			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
+			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);    // TODO 重要  跟进
 		}
 
 		return wrappedBean;

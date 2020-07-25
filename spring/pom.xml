@@ -16,5 +16,6 @@
 		<module>gupaoedu-vip-spring-2.0-ioc</module>
 		<module>gupaoedu-vip-spring-2.0-mvc</module>
 		<module>gupaoedu-vip-spring-2.0-aop</module>
+		<module>gupaoedu-vip-spring-2.0-aop-2</module>
 	</modules>
 </project>
