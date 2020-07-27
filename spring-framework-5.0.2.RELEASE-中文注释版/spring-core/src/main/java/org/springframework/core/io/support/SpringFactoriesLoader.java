@@ -60,6 +60,8 @@ import org.springframework.util.StringUtils;
  * @author Sam Brannen
  * @since 3.2
  */
+//SpringFactoriesLoader属于Spring框架私有的一种扩展方案,其主要功能就是从指定的配置文件META-INF/spring. factories加载配置,即根据@EnableAutoConfiguration的完整类名
+//org.springframework.boot.autoconfigure.EnableAutoConfiguratior作为查找的key,获取对应的一组eConfiguration类
 public abstract class SpringFactoriesLoader {
 
 	/**
