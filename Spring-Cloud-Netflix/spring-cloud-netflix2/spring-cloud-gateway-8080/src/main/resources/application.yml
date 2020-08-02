@@ -17,9 +17,11 @@ spring:
   redis:
     host: 192.168.216.128
     port: 6379
+  # 链路追踪数据发送，1.0代表所有数据大发送过去
   sleuth:
     sampler:
       probability: 1.0
+  # 链路追踪数据展示地址，需要在服务器上启动zikbin应用，自行下载  java jar  xxxx.jar
   zipkin:
     base-url: http://192.168.216.128:9411/
 server:
