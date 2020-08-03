@@ -56,6 +56,18 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- java -jar运行会报错没有主清单属性，所以这里要加mainClass-->
+                <configuration>
+                    <mainClass>com.gupaoedu.example.springcloudeurekaserver.SpringCloudEurekaServerApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
