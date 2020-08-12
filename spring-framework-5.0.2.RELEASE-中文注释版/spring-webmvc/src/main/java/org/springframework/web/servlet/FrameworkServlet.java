@@ -497,7 +497,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 
 		try {
 
-			this.webApplicationContext = initWebApplicationContext();
+			this.webApplicationContext = initWebApplicationContext();  // TODO 重要 跟进
 			initFrameworkServlet();
 		}
 		catch (ServletException ex) {
@@ -572,7 +572,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// Either the context is not a ConfigurableApplicationContext with refresh
 			// support or the context injected at construction time had already been
 			// refreshed -> trigger initial onRefresh manually here.
-			onRefresh(wac);
+			onRefresh(wac); // TODO 重要  跟进
 		}
 
 		if (this.publishContext) {
@@ -832,6 +832,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 	 * @param context the current WebApplicationContext
 	 * @see #refresh()
 	 */
+	// TODO 重要  跟进   DispatcherServlet
 	protected void onRefresh(ApplicationContext context) {
 		// For subclasses: do nothing by default.
 	}

@@ -66,6 +66,8 @@ public class BeanNameUrlHandlerMapping extends AbstractDetectingUrlHandlerMappin
 			}
 		}
 		return StringUtils.toStringArray(urls);
+
+		//  TODO 重要  到这里 初始化阶段已经完成了，接下来就是调用阶段  入口为DispatcherServlet的核心方法doDispatch()实现
 	}
 
 }

@@ -84,7 +84,7 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 	public final ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		return handleInternal(request, response, (HandlerMethod) handler);
+		return handleInternal(request, response, (HandlerMethod) handler); //  TODO  重要  跟进
 	}
 
 	/**
@@ -97,6 +97,7 @@ public abstract class AbstractHandlerMethodAdapter extends WebContentGenerator i
 	 * or {@code null} if the request has been handled directly
 	 * @throws Exception in case of errors
 	 */
+	// TODO  重要  跟进  RequestMappingHandlerAdapter
 	@Nullable
 	protected abstract ModelAndView handleInternal(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception;

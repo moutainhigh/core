@@ -167,7 +167,7 @@ public class UrlPathHelper {
 			return getPathWithinApplication(request);
 		}
 		// Else, use path within current servlet mapping if applicable
-		String rest = getPathWithinServletMapping(request);
+		String rest = getPathWithinServletMapping(request); // TODO 跟进看看
 		if (!"".equals(rest)) {
 			return rest;
 		}

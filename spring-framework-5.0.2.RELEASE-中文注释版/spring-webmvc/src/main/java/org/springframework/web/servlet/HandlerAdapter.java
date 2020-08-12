@@ -74,6 +74,7 @@ public interface HandlerAdapter {
 	 * @return ModelAndView object with the name of the view and the required
 	 * model data, or {@code null} if the request has been handled directly
 	 */
+	// TODO  重要  跟进   AbstractHandlerMethodAdapter
 	@Nullable
 	ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 

@@ -162,7 +162,7 @@ public abstract class AbstractTemplateView extends AbstractUrlBasedView {
 
 		applyContentType(response);
 
-		renderMergedTemplateModel(model, request, response);
+		renderMergedTemplateModel(model, request, response); // TODO 重要  跟进  FreeMarkerView
 	}
 
 	/**

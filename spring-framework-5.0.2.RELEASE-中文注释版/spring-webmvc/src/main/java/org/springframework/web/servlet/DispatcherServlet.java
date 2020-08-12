@@ -504,6 +504,10 @@ public class DispatcherServlet extends FrameworkServlet {
 		//FlashMap管理器
 		initFlashMapManager(context);
 	}
+	/**
+	*  url和Controller的关系是如何建立的呢? HandlerMapping 的子类 {@link #AbstractDetectingUrlHandlerMapping}
+	*  实现了initApplicationContext()方法,所以我们直接看子类中的初始化容器方法。
+	*/
 
 	/**
 	 * Initialize the MultipartResolver used by this class.
@@ -921,7 +925,7 @@ public class DispatcherServlet extends FrameworkServlet {
 		}
 
 		try {
-			doDispatch(request, response);
+			doDispatch(request, response); // TODO Spring MVC入口 重要跟进
 		}
 		finally {
 			if (!WebAsyncUtils.getAsyncManager(request).isConcurrentHandlingStarted()) {
@@ -966,7 +970,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// 	 第一个步骤的意义就在这里体现了.这里并不是直接返回controller,
 				//	 而是返回的HandlerExecutionChain请求处理器链对象,
 				//	 该对象封装了handler和interceptors.
-				mappedHandler = getHandler(processedRequest);
+				mappedHandler = getHandler(processedRequest);  // TODO  跟进看看 这里返回的是一个责任链
 				// 如果handler为空,则返回404
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
@@ -997,7 +1001,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 				// Actually invoke the handler.
 				// 4.实际的处理器处理请求,返回结果视图对象
-				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());  // TODO 重要  跟进
 
 				if (asyncManager.isConcurrentHandlingStarted()) {
 					return;
@@ -1015,7 +1019,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
-			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException); // TODO 重要 跟进  视图渲染
 		}
 		catch (Exception ex) {
 			triggerAfterCompletion(processedRequest, response, mappedHandler, ex);
@@ -1077,7 +1081,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Did the handler return a view to render?
 		if (mv != null && !mv.wasCleared()) {
-			render(mv, request, response);
+			render(mv, request, response);  // TODO 重要 跟进  DispatcherServlet
 			if (errorView) {
 				WebUtils.clearErrorRequestAttributes(request);
 			}
@@ -1196,7 +1200,7 @@ public class DispatcherServlet extends FrameworkServlet {
 					logger.trace(
 							"Testing handler map [" + hm + "] in DispatcherServlet with name '" + getServletName() + "'");
 				}
-				HandlerExecutionChain handler = hm.getHandler(request);
+				HandlerExecutionChain handler = hm.getHandler(request); //  TODO  跟进看看 AbstractHandlerMapping
 				if (handler != null) {
 					return handler;
 				}
@@ -1333,7 +1337,7 @@ public class DispatcherServlet extends FrameworkServlet {
 			if (mv.getStatus() != null) {
 				response.setStatus(mv.getStatus().value());
 			}
-			view.render(mv.getModelInternal(), request, response);
+			view.render(mv.getModelInternal(), request, response);  // TODO 重要  跟进  AbstractView
 		}
 		catch (Exception ex) {
 			if (logger.isDebugEnabled()) {

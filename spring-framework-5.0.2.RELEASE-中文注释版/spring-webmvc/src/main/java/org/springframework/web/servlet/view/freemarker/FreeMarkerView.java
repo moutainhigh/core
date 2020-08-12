@@ -254,7 +254,7 @@ public class FreeMarkerView extends AbstractTemplateView {
 			Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		exposeHelpers(model, request);
-		doRender(model, request, response);
+		doRender(model, request, response);  // TODO  重要  跟进
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class FreeMarkerView extends AbstractTemplateView {
 		}
 		// Grab the locale-specific version of the template.
 		Locale locale = RequestContextUtils.getLocale(request);
-		processTemplate(getTemplate(locale), fmModel, response);
+		processTemplate(getTemplate(locale), fmModel, response); // TODO 重要  跟进
 	}
 
 	/**
@@ -393,7 +393,7 @@ public class FreeMarkerView extends AbstractTemplateView {
 	protected void processTemplate(Template template, SimpleHash model, HttpServletResponse response)
 			throws IOException, TemplateException {
 
-		template.process(model, response.getWriter());
+		template.process(model, response.getWriter());  // TODO 重要  跟进 Template  最终是 通过 out.flush();把数据写出去
 	}
 
 
