@@ -31,6 +31,7 @@ public class Config {
     public People people(City city) { // 上面City已经装载到容器了，这里会自动注入  或者public People people(city())
         //这里如果city实体没有成功注入 这里就会报空指针
         city.setCityCode(301701);
+        city.getCityCode();
         new People();
         return new People("小小", 3, city);
     }
