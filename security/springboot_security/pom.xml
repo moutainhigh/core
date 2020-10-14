@@ -12,7 +12,7 @@
     <groupId>com.gupaoedu.security</groupId>
     <artifactId>springboot_security</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>gp_vip_security_1011</name>
+    <name>springboot_security</name>
     <description>Demo project for Spring Boot</description>
 
     <properties>
