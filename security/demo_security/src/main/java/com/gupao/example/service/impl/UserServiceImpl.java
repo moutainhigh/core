@@ -28,13 +28,13 @@ public class UserServiceImpl implements UserService {
         // 保存权限的集合
         List<SimpleGrantedAuthority> list = new ArrayList<SimpleGrantedAuthority>();
         // 此处我们直接写在代码中，此处能实现那么数据库的验证自然能实现
-        list.add(new SimpleGrantedAuthority("USER"));
+        list.add(new SimpleGrantedAuthority("ROLE_USER"));
         if (!"lisi".equals(s)) {
             return null;
         }
 //        UserDetails user = new User("lisi", "{noop}222", list);
         UserDetails user = new User("lisi"
-                ,"$2a$10$TxrezMczwVOhqolqeFy2buk7tB.c3wghMJOUaBL7qZqUNVi/90OIq" //明文就不需要{noop}了
+                ,"$2a$10$TxrezMczwVOhqolqeFy2buk7tB.c3wghMJOUaBL7qZqUNVi/90OIq" //密文就不需要{noop}了
                 , true // 是否可用
                 , true // 账号是否过期
                 , true // 密码过期
