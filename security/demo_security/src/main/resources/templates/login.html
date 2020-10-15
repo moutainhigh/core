@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style type="text/css">
+        .styled{ margin: 20px 20px 20px 100px;}
+    </style>
 </head>
 <body>
-<h1>登录管理</h1>
-
-<form th:action="@{/login.do}" method="post">
-    账号:<input type="text" name="username"><br>
-    密码:<input type="password" name="password"><br>
-    <input type="submit" value="登录"><br>
-</form>
+    <div class="styled">
+        <h1>登录管理</h1>
+        <form th:action="@{/login.do}" method="post">
+            账号:<input type="text" name="username" id="username"><br>
+            密码:<input type="password" name="password" id="password"><br>
+            <input type="submit" value="登录"><br>
+        </form>
+    </div>
 </body>
 </html>

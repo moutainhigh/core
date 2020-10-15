@@ -13,5 +13,6 @@
 	<modules>
 	    <module>GpSpringSecurityDemo</module>
 	    <module>springboot_security</module>
+	    <module>demo_security</module>
 	</modules>
 </project>
