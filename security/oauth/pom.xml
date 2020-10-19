@@ -3,17 +3,16 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.csf.gupaoedu</groupId>
-	<artifactId>security</artifactId>
+	<artifactId>oauth</artifactId>
 	<version>1.0.0</version>
 	<packaging>pom</packaging>
 
-	<name>spring</name>
+	<name>oauth</name>
 	<description>gupaoedu vip spring</description>
 
 	<modules>
-	    <module>GpSpringSecurityDemo</module>
-	    <module>springboot_security</module>
-	    <module>demo_security</module>
-	    <module>oauth</module>
+	    <module>oauth_authorization_server</module>
+	    <module>oauth_resourcs_server</module>
+	    <module></module>
 	</modules>
 </project>

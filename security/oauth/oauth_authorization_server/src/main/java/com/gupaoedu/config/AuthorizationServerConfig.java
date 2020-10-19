@@ -33,54 +33,60 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Autowired
     private ClientDetailsService clientDetailsService;
-
     @Autowired
     private AuthorizationCodeServices authorizationCodeServices;
-
     @Autowired
     private AuthenticationManager authenticationManager;
 
     /**
      * 配置客户端信息
-     * @param clients
-     * @throws Exception
      */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory() // 使用内存来存储客户端的信息
                 .withClient("c1") // 客户端编号
-                .secret(new BCryptPasswordEncoder().encode("secret"))
+                .secret(new BCryptPasswordEncoder().encode("secret")) // 客户端的密码
                 .resourceIds("res1")//可以访问的资源的编号
-                .authorizedGrantTypes("authorization_code", "password","client_credentials","implicit","refresh_token") //该客户端允许的授权类型
+                .authorizedGrantTypes(
+                        "authorization_code", // 授权码模式
+                        "password",//密码模式
+                        "client_credentials",//客户端模式
+                        "implicit",//简化模式
+                        "refresh_token" //刷新token
+                ) //该客户端允许的授权类型
                 .scopes("all") // 允许授权的范围  我们对资源操作的作用域 读 写
                 .autoApprove(false) // false的话 请求到来的时候会跳转到授权页面
-                .redirectUris("http://www.baidu.com") // 回调的地址  授权码会作为参赛绑定在重定向的地址中
-        ;
+                .redirectUris("http://www.baidu.com"); // 回调的地址  授权码会作为参赛绑定在重定向的地址中
     }
 
+    /**
+     * 访问服务的配置信息
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints.authenticationManager(authenticationManager) // 管理认证管理器
                 .authorizationCodeServices(authorizationCodeServices) // 授权码服务
-                .tokenServices(tokenServices()) // token服务
+                .tokenServices(tokenServices()) // 设置token相关的服务
                 .allowedTokenEndpointRequestMethods(HttpMethod.POST,HttpMethod.GET);
     }
 
+    /**
+     * 授权服务的权限配置信息
+     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        security.tokenKeyAccess("permitAll()")
-                .checkTokenAccess("permitAll()")
-                .allowFormAuthenticationForClients()
-        ;
+        security.tokenKeyAccess("permitAll()")  // 资源服务发送检查Token是否合法，合法的请求放过
+                .checkTokenAccess("permitAll()") // 客户端发送的获取Token的服务方法
+                .allowFormAuthenticationForClients(); // 支持客户端表单提交
     }
 
     /**
-     * token令牌 服务
+     * 设置token相关的服务(token令牌 服务)
      * @return
      */
     @Bean
     public AuthorizationServerTokenServices tokenServices(){
-        DefaultTokenServices services = new DefaultTokenServices();
+        DefaultTokenServices services = new DefaultTokenServices(); //存储方式
         services.setClientDetailsService(clientDetailsService); // 客户端的配置信息
         services.setSupportRefreshToken(true); // 支持刷新token
         services.setTokenStore(tokenStore); // 关联存储方式
