@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.csf.gupaoedu</groupId>
+	<artifactId>rabbitmq-code</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+
+	<name>rabbitmq-code</name>
+	<description>gupaoedu rabbitmq-code demo</description>
+
+	<modules>
+	    <module>gupaoedu-vip-rabbitmq-javaapi</module>
+	    <module>gupaoedu-vip-springboot-amqp</module>
+	    <module>gupaoedu-vip-springboot-demo</module>
+	    <module>gupaoedu-vip-springboot-project</module>
+	    <module>gupaoedu-vip-spring-rabbitmq</module>
+	</modules>
+</project>
